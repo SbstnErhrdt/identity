@@ -16,6 +16,15 @@ Under development
 
 Sebastian Erhardt
 
+## Environment Variables
+```
+SMPT_USER=user_name
+SMPT_PASSWORD=secure_password
+SMPT_SERVER=email-smtp.eu-central-1.amazonaws.com
+SMPT_PORT=465
+```
+
+
 ## Usage
 
 ```go
