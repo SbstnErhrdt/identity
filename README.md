@@ -1,5 +1,9 @@
 # Identity
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/SbstnErhrdt/identity)](https://goreportcard.com/badge/github.com/SbstnErhrdt/identity)
+[![Go Reference](https://pkg.go.dev/badge/https://pkg.go.dev/github.com/SbstnErhrdt/identity.svg)](https://pkg.go.dev/https://pkg.go.dev/github.com/SbstnErhrdt/identity)
+
+
 An identity management system written in go using
 
 * ORM (Object Relational Mapping) - Gorm
