@@ -22,7 +22,7 @@ var ErrUsernameLongerThan = errors.New("The username must be longer than 3 chars
 // ErrInvalidUsername is returned when the username is invalid
 var ErrInvalidUsername = errors.New("The username must be alphanumeric and longer than 3 chars")
 
-var regexUsername = regexp.MustCompile("^([0-9_A-Za-zÄÖÜäöüß]){3,60}")
+var regexUsername = regexp.MustCompile("^([0-9_A-Za-zÄÖÜäöüß]){3,60}$")
 
 // CheckIfUsernameIsValid check if the username is valid
 func CheckIfUsernameIsValid(userName string) (err error) {

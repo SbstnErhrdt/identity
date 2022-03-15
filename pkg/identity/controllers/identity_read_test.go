@@ -43,6 +43,9 @@ func TestCheckIfUsernameIsValid(t *testing.T) {
 	err := CheckIfUsernameIsValid("uGQ5j")
 	ass.NoError(err)
 
+	err = CheckIfUsernameIsValid("helloWorld")
+	ass.NoError(err)
+
 	err = CheckIfUsernameIsValid("a")
 	ass.Error(err)
 
