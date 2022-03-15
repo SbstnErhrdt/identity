@@ -14,9 +14,16 @@ import (
 	"time"
 )
 
+// ErrNoEmail is returned when no email is provided
 var ErrNoEmail = errors.New("no email address")
+
+// ErrNoPassword is returned when no password is provided
 var ErrNoPassword = errors.New("no password")
+
+// ErrEmailAlreadyExists is returned when the email address is already in use
 var ErrEmailAlreadyExists = errors.New("email already exists")
+
+// ErrRegistrationConfirmationExpired is returned when the registration confirmation has expired
 var ErrRegistrationConfirmationExpired = errors.New("registration confirmation expired. Please re-register.")
 
 // Register registers a new user
@@ -119,6 +126,7 @@ func Register(service IdentityService, emailAddress, password string, termAndCon
 	return
 }
 
+// RegistrationConfirmation confirms a registration
 func RegistrationConfirmation(service IdentityService, token, userAgent, ip string) (err error) {
 	logger := log.WithFields(log.Fields{
 		"token":   token,
@@ -200,6 +208,7 @@ func RegistrationConfirmation(service IdentityService, token, userAgent, ip stri
 	return
 }
 
+// Login logs in a user
 func Login(service IdentityService, emailAddress, password, userAgent, ip string) (token string, err error) {
 	// sanitize input
 	emailAddress = strings.ToLower(emailAddress)
@@ -486,6 +495,7 @@ func SetPasswordOfIdentity(service IdentityService, email, newPassword string) (
 	return
 }
 
+// UpdateIdentity updates the identity
 func UpdateIdentity(service IdentityService, newIdentity *models.Identity) (err error) {
 	// check if necessary fields are set
 	if newIdentity.UID.String() == "" {

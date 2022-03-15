@@ -10,6 +10,7 @@ import (
 //go:embed templates
 var passwordResetTemplate embed.FS
 
+// PasswordResetTemplate is the template for the password reset email.
 type PasswordResetTemplate struct {
 	GlobalTemplate
 	EmailOfNewUser string
@@ -19,6 +20,7 @@ type PasswordResetTemplate struct {
 	HtmlTemplate   string
 }
 
+// DefaultPasswordResetEmailResolver is the default resolver for the password reset email.
 func DefaultPasswordResetEmailResolver(origin, email, token string) PasswordResetTemplate {
 	return PasswordResetTemplate{
 		GlobalTemplate: DefaultGlobalTemplate,
@@ -29,11 +31,12 @@ func DefaultPasswordResetEmailResolver(origin, email, token string) PasswordRese
 	}
 }
 
+// Content returns the content of the email
 func (obj *PasswordResetTemplate) Content() (html string, err error) {
 	// init buffer
 	var tpl bytes.Buffer
 	// Note the call to ParseFS instead of Parse
-	t, err := template.ParseFS(passwordResetTemplate, "templates/registration.gohtml")
+	t, err := template.ParseFS(passwordResetTemplate, "templates/reset_password.gohtml")
 	if err != nil {
 		log.Error(err)
 	}

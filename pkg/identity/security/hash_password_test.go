@@ -9,8 +9,8 @@ import (
 func TestHashPassword(t *testing.T) {
 	ass := assert.New(t)
 	pw := "Hello World"
-	hashPw, hash_salt := HashPassword("aa", pw, []byte{})
-	hashPw2, hash_salt := HashPassword("aa", pw, hash_salt)
+	hashPw, hashSalt := HashPassword("aa", pw, []byte{})
+	hashPw2, hashSalt := HashPassword("aa", pw, hashSalt)
 	ass.True(reflect.DeepEqual(hashPw, hashPw2))
 }
 

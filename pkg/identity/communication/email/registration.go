@@ -10,6 +10,7 @@ import (
 //go:embed templates
 var registrationTemplate embed.FS
 
+// RegistrationEmailTemplate is the template for the registration email
 type RegistrationEmailTemplate struct {
 	GlobalTemplate
 	EmailOfNewUser string
@@ -19,6 +20,7 @@ type RegistrationEmailTemplate struct {
 	HtmlTemplate   string
 }
 
+// DefaultRegistrationEmailResolver is the default resolver for the registration email
 func DefaultRegistrationEmailResolver(origin, email, token string) RegistrationEmailTemplate {
 	return RegistrationEmailTemplate{
 		GlobalTemplate: DefaultGlobalTemplate,
@@ -29,6 +31,7 @@ func DefaultRegistrationEmailResolver(origin, email, token string) RegistrationE
 	}
 }
 
+// Content returns the content of the registration email
 func (obj *RegistrationEmailTemplate) Content() (html string, err error) {
 	// init buffer
 	var tpl bytes.Buffer

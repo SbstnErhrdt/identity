@@ -16,12 +16,22 @@ var ErrEmailIsAlreadyRegistered = errors.New("email is already registered")
 // ErrNoUserFound is returned when no user is found
 var ErrNoUserFound = errors.New("no user has been found with this email")
 
+// ErrUsernameLongerThan is returned when the username is shorter than 3 characters
+var ErrUsernameLongerThan = errors.New("The username must be longer than 3 chars")
+
+// ErrInvalidUsername is returned when the username is invalid
+var ErrInvalidUsername = errors.New("The username must be alphanumeric and longer than 3 chars")
+
+var regexUsername = regexp.MustCompile("^([0-9_A-Za-zÄÖÜäöüß]){3,60}")
+
 // CheckIfUsernameIsValid check if the username is valid
-func CheckIfUsernameIsValid(service IdentityService, userName string) (match bool, err error) {
+func CheckIfUsernameIsValid(userName string) (err error) {
 	if len(userName) < 3 {
-		return false, errors.New("The username must be longer than 2 chars")
+		return ErrUsernameLongerThan
 	}
-	match, err = regexp.Match("^([0-9_A-Za-zÄÖÜäöüß]){3,60}", []byte(userName))
+	if !regexUsername.Match([]byte(userName)) {
+		return ErrInvalidUsername
+	}
 	return
 }
 

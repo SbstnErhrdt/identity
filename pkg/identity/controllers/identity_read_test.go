@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -33,5 +34,19 @@ func TestSetPasswordOfUserByName(t *testing.T) {
 		err = SetPasswordOfUserByName(&sha, "uGQ5j", "Db1!VnZLD")
 		assert.NoError(err)
 	*/
+
+}
+
+func TestCheckIfUsernameIsValid(t *testing.T) {
+	ass := assert.New(t)
+
+	err := CheckIfUsernameIsValid("uGQ5j")
+	ass.NoError(err)
+
+	err = CheckIfUsernameIsValid("a")
+	ass.Error(err)
+
+	err = CheckIfUsernameIsValid("awfafaww...")
+	ass.Error(err)
 
 }

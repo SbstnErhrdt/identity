@@ -7,6 +7,7 @@ import (
 	"html/template"
 )
 
+// GlobalTemplate is a global template for email
 type GlobalTemplate struct {
 	BackgroundColor     string
 	PrimaryColor        string
@@ -18,6 +19,7 @@ type GlobalTemplate struct {
 	UnsubscribeLink     string
 }
 
+// DefaultGlobalTemplate returns the default global template
 var DefaultGlobalTemplate = GlobalTemplate{
 	BackgroundColor:     "#f6f6f6",
 	PrimaryColor:        "#0099ff",
@@ -32,6 +34,7 @@ var DefaultGlobalTemplate = GlobalTemplate{
 //go:embed templates
 var cssTemplate embed.FS // css template
 
+// Style returns the css of the email
 func (globalTemplate *GlobalTemplate) Style() (result template.HTML) {
 	// init buffer
 	var tpl bytes.Buffer

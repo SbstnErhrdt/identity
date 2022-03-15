@@ -5,6 +5,7 @@ import (
 	"github.com/SbstnErhrdt/identity/pkg/identity/models"
 )
 
+// Install will create the database schema
 func Install() {
 	client, err := sql.ConnectToDatabase()
 	if err != nil {
