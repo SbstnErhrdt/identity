@@ -8,6 +8,7 @@ An identity management system written in go using
 
 * ORM (Object Relational Mapping) - Gorm
 * JWT (JSON Web Token)
+* Gin (HTTP framework)
 * GraphQL
 
 ## Status
