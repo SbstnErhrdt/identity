@@ -23,27 +23,43 @@ func HashPassword(pepper string, password string, salt []byte) (hashedPassword [
 	return
 }
 
+// Err7Chars is an error that is returned when the password is not 7 characters long
+var Err7Chars = errors.New("password should have more than 7 characters.")
+
+// ErrNumeric is an error that is returned when the password does not contain any numeric characters
+var ErrNumeric = errors.New("password should have a minimum of 1 numeric character! e.g. 1,..,9,0.")
+
+// ErrUppercase is an error that is returned when the password does not contain any uppercase characters
+var ErrUppercase = errors.New("password should have a minimum of 1 upper case letter [A-Z].")
+
+// ErrLowercase is an error that is returned when the password does not contain any lowercase characters
+var ErrLowercase = errors.New("password should have a minimum of 1 lower case letter [a-z].")
+
+// ErrSpecial is an error that is returned when the password does not contain any special characters
+var ErrSpecial = errors.New("password should have a minimum of 1 special character: ~!@#$%^&*()-_+={}[]|:<>,./?...")
+
 // CheckPasswordComplexity checks if the user password matches the conditions
 func CheckPasswordComplexity(password string) (err error) {
 	sevenMore, number, upper, lower, special := ValidatePassword(password)
 	if !sevenMore {
-		err = errors.New("password should have more than 7 characters.")
+		err = Err7Chars
 		return err
 	}
 	if !number {
-		err = errors.New("password should have a minimum of 1 numeric character! e.g. 1,..,9,0.")
+		err = ErrNumeric
 		return err
 	}
 	if !upper {
-		err = errors.New("password should have a minimum of 1 upper case letter [A-Z].")
+		err = ErrUppercase
 		return err
 	}
 	if !lower {
-		err = errors.New("password should have a minimum of 1 lower case letter [a-z].")
+		err = ErrLowercase
+
 		return err
 	}
 	if !special {
-		err = errors.New("password should have a minimum of 1 special character: ~!@#$%^&*()-_+={}[]|:<>,./?...")
+		err = ErrSpecial
 		return err
 	}
 	return

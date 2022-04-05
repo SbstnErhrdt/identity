@@ -49,7 +49,7 @@ func CheckIfEmailIsFree(service IdentityService, email string) (isFree bool, err
 		log.Error(err)
 		return false, ErrEmailIsAlreadyRegistered
 	}
-	return false, err
+	return false, nil
 }
 
 // CheckUserLogin check if the credentials of a user are correct
