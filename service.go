@@ -41,6 +41,7 @@ type Service struct {
 	passwordResetEmailResolver ResolvePasswordResetEmailTemplate
 }
 
+// NewService inits a new identity service
 func NewService(issuer string, senderEmailAddress mail.Address) *Service {
 	s := Service{
 		Issuer:                    issuer,
