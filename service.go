@@ -1,9 +1,9 @@
 package identity
 
 import (
-	"github.com/SbstnErhrdt/identity/pkg/identity/communication/email"
-	"github.com/SbstnErhrdt/identity/pkg/identity/identity_interface_graphql"
-	"github.com/SbstnErhrdt/identity/pkg/identity/services"
+	"github.com/SbstnErhrdt/identity/communication/email"
+	"github.com/SbstnErhrdt/identity/identity_interface_graphql"
+	"github.com/SbstnErhrdt/identity/services"
 	"github.com/graphql-go/graphql"
 	"gorm.io/gorm"
 	"net/mail"

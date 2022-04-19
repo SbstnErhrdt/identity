@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"github.com/SbstnErhrdt/identity/pkg/identity/communication/email"
+	"github.com/SbstnErhrdt/identity/communication/email"
 	"gorm.io/gorm"
 	"net/mail"
 )

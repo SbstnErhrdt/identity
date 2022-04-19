@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"github.com/SbstnErhrdt/env"
-	"github.com/SbstnErhrdt/identity/pkg/identity/models"
-	"github.com/SbstnErhrdt/identity/pkg/identity/security"
+	"github.com/SbstnErhrdt/identity/models"
+	"github.com/SbstnErhrdt/identity/security"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"net/mail"
