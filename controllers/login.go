@@ -3,8 +3,8 @@ package controllers
 import (
 	"errors"
 	"github.com/SbstnErhrdt/env"
-	"github.com/SbstnErhrdt/identity/pkg/identity/models"
-	"github.com/SbstnErhrdt/identity/pkg/identity/security"
+	"github.com/SbstnErhrdt/identity/models"
+	"github.com/SbstnErhrdt/identity/security"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )

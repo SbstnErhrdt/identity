@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"github.com/SbstnErhrdt/identity/pkg/identity/models"
+	"github.com/SbstnErhrdt/identity/models"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"

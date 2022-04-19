@@ -1,6 +1,6 @@
 package communication
 
-import "github.com/SbstnErhrdt/identity/pkg/identity/models"
+import "github.com/SbstnErhrdt/identity/models"
 
 // Communication is the interface for communication (email/sms)
 type Communication interface {

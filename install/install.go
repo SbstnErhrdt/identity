@@ -2,7 +2,7 @@ package install
 
 import (
 	"github.com/SbstnErhrdt/go-gorm-all-sql/pkg/sql"
-	"github.com/SbstnErhrdt/identity/pkg/identity/models"
+	"github.com/SbstnErhrdt/identity/models"
 )
 
 // Install will create the database schema

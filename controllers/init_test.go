@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"github.com/SbstnErhrdt/identity/pkg/identity/communication/email"
-	"github.com/SbstnErhrdt/identity/pkg/identity/services"
+	"github.com/SbstnErhrdt/identity/communication/email"
+	"github.com/SbstnErhrdt/identity/services"
 	"gorm.io/gorm"
 	"net/mail"
 )
