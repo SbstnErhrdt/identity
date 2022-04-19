@@ -25,6 +25,7 @@ type ResolveRegistrationEmailTemplate func(origin, emailAddress, token string) e
 // ResolvePasswordResetEmailTemplate resolves the password reset email template
 type ResolvePasswordResetEmailTemplate func(origin, emailAddress, token string) email.PasswordResetTemplate
 
+// Service is the identity service
 type Service struct {
 	Issuer                     string
 	Audience                   string
