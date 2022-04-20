@@ -12,6 +12,7 @@ type IdentityLogin struct {
 	Email     string
 	UserAgent string
 	IP        string
+	Origin    string
 }
 
 func (obj *IdentityLogin) TableName() string {

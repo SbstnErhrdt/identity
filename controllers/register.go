@@ -13,6 +13,12 @@ import (
 // ErrRegistrationConfirmationExpired is returned when the registration confirmation has expired
 var ErrRegistrationConfirmationExpired = errors.New("registration confirmation expired. Please re-register")
 
+// ErrAcceptTermsAndConditions is returned when the user did not accept the terms and conditions
+var ErrAcceptTermsAndConditions = errors.New("please accept the terms and conditions")
+
+// ErrGenericRegistration message
+var ErrGenericRegistration = errors.New("there was a problem during the registration process. Please try again")
+
 // Register registers a new user
 func Register(service IdentityService, emailAddress, password string, termAndConditions bool, userAgent, ip, origin string) (err error) {
 	// sanitize input
@@ -24,16 +30,18 @@ func Register(service IdentityService, emailAddress, password string, termAndCon
 	})
 	// check login data
 	if len(emailAddress) == 0 {
-		logger.Error(ErrNoEmail)
-		return ErrNoEmail
+		err = ErrNoEmail
+		logger.Error(err)
+		return
 	}
 	if len(password) == 0 {
-		logger.Error(ErrNoPassword)
-		return ErrNoPassword
+		err = ErrNoPassword
+		logger.Error(err)
+		return
 	}
 	// check terms and conditions
 	if !termAndConditions {
-		err = errors.New("please accept the terms and conditions")
+		err = ErrAcceptTermsAndConditions
 		return
 	}
 	// check if user exits already
@@ -72,7 +80,12 @@ func Register(service IdentityService, emailAddress, password string, termAndCon
 	identity.UID = uuid.New()
 	// set password
 	logger.Debug("SetNewPassword")
-	SetNewPassword(service, &identity, password)
+	err = identity.SetNewPassword(service.GetPepper(), password)
+	if err != nil {
+		logger.Error(err)
+		err = ErrGenericRegistration
+		return
+	}
 	// init transaction
 	tx := service.GetSQLClient().Begin()
 	// create user

@@ -6,8 +6,6 @@ import (
 	"github.com/SbstnErhrdt/identity/security"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
-	"net/mail"
-	"reflect"
 	"strings"
 	"time"
 )
@@ -27,65 +25,6 @@ func Logout(service IdentityService, token string) (err error) {
 }
 
 func LogoutAllDevices(service IdentityService, user *models.Identity) (err error) {
-	return
-}
-
-func InitResetPassword(service IdentityService, emailAddress, origin string) (err error) {
-	// init logger
-	logger := log.WithFields(log.Fields{
-		"email":   emailAddress,
-		"process": "InitResetPassword",
-	})
-	// get identity
-	res, err := GetIdentityByEmail(service, emailAddress)
-	if err != nil {
-		logger.Error(err)
-		return err
-	}
-	// create database entry
-	token, err := security.GenerateRandomString(32)
-	if err != nil {
-		logger.Error(err)
-		return err
-	}
-	resetPassword := models.IdentityResetPassword{
-		IdentityUID: res.UID,
-		Token:       token,
-		Expire:      time.Now().UTC().Add(time.Hour * 24),
-	}
-	// save in database
-	err = service.GetSQLClient().Create(&resetPassword).Error
-	if err != nil {
-		logger.Error(err)
-		return err
-	}
-	// gen random token
-	randomToken, err := security.GenerateRandomString(64)
-	if err != nil {
-		logger.Error(err)
-		return
-	}
-	// send email
-	// Build email template
-	logger.Debug("Build email template")
-	// resolve the email template
-	emailTemplate := service.ResolveRegistrationEmailTemplate(origin, emailAddress, randomToken)
-	// generate the content of the email
-	content, err := emailTemplate.Content()
-	if err != nil {
-		logger.Error(err)
-		return
-	}
-	// Send email
-	logger.Debug("Send registration email")
-	err = service.SendEmail(
-		service.GetSenderEmailAddress(),
-		mail.Address{
-			Name:    emailAddress,
-			Address: emailAddress,
-		},
-		"Registration",
-		content)
 	return
 }
 
@@ -118,15 +57,6 @@ func AnonymizeAccount(service IdentityService, user *models.Identity) (err error
 	return
 }
 
-// SetNewPassword sets a new password for the user
-func SetNewPassword(service IdentityService, user *models.Identity, password string) {
-	// Hash pw and salt
-	pw, salt := security.HashPassword(env.FallbackEnvVariable("SECURITY_PEPPER", "PEPPER"), password, []byte{})
-	user.Password = pw
-	user.Salt = salt
-	return
-}
-
 // Clear clears the user
 func Clear(service IdentityService, user *models.Identity) {
 	user.Cleared = true
@@ -143,11 +73,7 @@ func Block(service IdentityService, user *models.Identity) {
 
 // VerifyPassword verifies the user's password given the user object and the password
 func VerifyPassword(service IdentityService, user *models.Identity, password string) bool {
-	checkPassword, _ := security.HashPassword(
-		env.FallbackEnvVariable("SECURITY_PEPPER", "PEPPER"),
-		password,
-		user.Salt)
-	return reflect.DeepEqual(user.Password, checkPassword)
+	return user.CheckPassword(service.GetPepper(), password)
 }
 
 // GenerateJWT generates a Json Web Token from the user object
@@ -160,46 +86,6 @@ func GenerateJWT(service IdentityService, user *models.Identity) (result string,
 	result, _, err = security.GenerateJWTToken(user.UID, audience, payload)
 	if err != nil {
 		log.Error(err)
-	}
-	return
-}
-
-// CreatePasswordResetToken creates a password reset token
-func CreatePasswordResetToken(service IdentityService, identity *models.Identity) (token string, err error) {
-	// Init the token
-	userToken := models.IdentityResetPassword{
-		IdentityUID: identity.UID,
-		Expire:      time.Now().Add(12 * time.Hour),
-	}
-	// Save the token
-	err = service.GetSQLClient().Create(&userToken).Error
-	if err != nil {
-		log.Error(err)
-		err = errors.Wrap(err, "token can not be generated")
-		return
-	}
-	token, err = security.GeneratePasswordResetToken(identity.Email, time.Now().Add(12*time.Hour))
-	if err != nil {
-		log.Error(err)
-	}
-	return
-}
-
-// SetPasswordOfIdentity set the password of a user by its email
-func SetPasswordOfIdentity(service IdentityService, email, newPassword string) (err error) {
-	// Find user by name
-	user, err := GetIdentityByEmail(service, email)
-	if err != nil {
-		err = errors.Wrap(err, "can not find user")
-		return
-	}
-	// set password
-	SetNewPassword(service, user, newPassword)
-	err = service.GetSQLClient().Save(user).Error
-	if err != nil {
-		log.Error(err)
-		err = errors.Wrap(err, "can not save user")
-		return
 	}
 	return
 }

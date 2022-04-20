@@ -21,7 +21,7 @@ var ErrUserBlocked = errors.New("this identity can not login. please contact the
 // ErrEmailNotVerified is returned when the user email is not verified
 var ErrEmailNotVerified = errors.New("the email address is not confirmed yet")
 
-// Login logs in a user
+// Login logs in a user and returns a JWT token
 func Login(service IdentityService, emailAddress, password, userAgent, ip string) (token string, err error) {
 	// sanitize input
 	emailAddress = SanitizeEmail(emailAddress)

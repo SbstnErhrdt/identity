@@ -7,6 +7,7 @@ import (
 )
 
 type IdentityService interface {
+	GetPepper() string
 	GetSQLClient() *gorm.DB
 	GetIssuer() string
 	GetAudience() string

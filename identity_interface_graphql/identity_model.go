@@ -6,6 +6,7 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
+// IdentityGraphQlModel is the identity model for the GraphQL interface
 var IdentityGraphQlModel = graphql.NewObject(graphql.ObjectConfig{
 	Name:        "Identity",
 	Description: "The identity",

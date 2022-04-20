@@ -1,5 +1,11 @@
 package models
 
+import (
+	"errors"
+	"github.com/SbstnErhrdt/identity/security"
+	"reflect"
+)
+
 type Identity struct {
 	// Metadata
 	Base
@@ -21,4 +27,27 @@ type Identity struct {
 
 func (obj *Identity) TableName() string {
 	return "identity_identities"
+}
+
+// ErrNoPepper is returned if no pepper is provided
+var ErrNoPepper = errors.New("no pepper")
+
+// SetNewPassword sets a new password for the identity
+func (obj *Identity) SetNewPassword(pepper, password string) (err error) {
+	// Check for pepper
+	if pepper == "" {
+		err = ErrNoPepper
+		return
+	}
+	// Hash pw and salt
+	pw, salt := security.HashPassword(pepper, password, []byte{})
+	obj.Password = pw
+	obj.Salt = salt
+	return
+}
+
+// CheckPassword checks the password for the identity
+func (obj *Identity) CheckPassword(pepper, password string) bool {
+	checkPassword, _ := security.HashPassword(pepper, password, obj.Salt)
+	return reflect.DeepEqual(obj.Password, checkPassword)
 }

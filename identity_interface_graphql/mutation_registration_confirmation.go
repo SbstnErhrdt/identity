@@ -1,7 +1,6 @@
 package identity_interface_graphql
 
 import (
-	"errors"
 	"github.com/SbstnErhrdt/identity/controllers"
 	"github.com/graphql-go/graphql"
 )
@@ -20,15 +19,13 @@ func RegistrationConfirmationField(service controllers.IdentityService) *graphql
 		Resolve: func(p graphql.ResolveParams) (i interface{}, err error) {
 			// from context
 			// agent
-			userAgent, ok := p.Context.Value("USER_AGENT").(string)
-			if !ok {
-				err = errors.New("can not extract agent from context")
+			userAgent, err := GetUserAgentFromContext(&p)
+			if err != nil {
 				return
 			}
 			// ip
-			ip, ok := p.Context.Value("USER_IP").(string)
-			if !ok {
-				err = errors.New("can not extract ip from context")
+			ip, err := GetIpFromContext(&p)
+			if err != nil {
 				return
 			}
 			// params

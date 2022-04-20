@@ -1,10 +1,12 @@
 package identity
 
 import (
+	"github.com/SbstnErhrdt/env"
 	"github.com/SbstnErhrdt/identity/communication/email"
 	"github.com/SbstnErhrdt/identity/identity_interface_graphql"
 	"github.com/SbstnErhrdt/identity/services"
 	"github.com/graphql-go/graphql"
+	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"net/mail"
 )
@@ -28,6 +30,7 @@ type ResolvePasswordResetEmailTemplate func(origin, emailAddress, token string) 
 // Service is the identity service
 type Service struct {
 	Issuer                     string
+	Pepper                     string
 	Audience                   string
 	PrimaryIdentificationType  IdentificationType
 	sqlClient                  *gorm.DB
@@ -46,12 +49,16 @@ type Service struct {
 func NewService(issuer string, senderEmailAddress mail.Address) *Service {
 	s := Service{
 		Issuer:                    issuer,
+		Pepper:                    env.FallbackEnvVariable("SECURITY_PEPPER", "PEPPER"),
 		senderEmailAddress:        senderEmailAddress,
 		PrimaryIdentificationType: EmailIdentificationType,
 		sendEmail:                 services.SendEmail,
 		// fallback services
 		registrationEmailResolver:  email.DefaultRegistrationEmailResolver,
 		passwordResetEmailResolver: email.DefaultPasswordResetEmailResolver,
+	}
+	if s.Pepper == "PEPPER" {
+		log.Warn("please change the pepper value in the environment variable SECURITY_PEPPER")
 	}
 	return &s
 }
@@ -94,9 +101,19 @@ func (s *Service) SetRegistrationEmailResolver(fn ResolveRegistrationEmailTempla
 	return s
 }
 
+// SetPepper sets the pepper
+func (s *Service) SetPepper(pepper string) {
+	s.Pepper = pepper
+}
+
 // GetSQLClient returns the sql client
 func (s *Service) GetSQLClient() *gorm.DB {
 	return s.sqlClient
+}
+
+// GetPepper returns the pepper
+func (s *Service) GetPepper() string {
+	return s.Issuer
 }
 
 // GetIssuer returns the issuer
