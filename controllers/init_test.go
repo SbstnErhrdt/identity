@@ -51,6 +51,10 @@ func (t TestIdentityService) GetIssuer() string {
 	panic("implement me")
 }
 
+func (t TestIdentityService) GetPepper() string {
+	return "secure_pepper"
+}
+
 func (t TestIdentityService) GetAudience() string {
 	panic("implement me")
 }

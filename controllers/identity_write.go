@@ -71,11 +71,6 @@ func Block(service IdentityService, user *models.Identity) {
 	return
 }
 
-// VerifyPassword verifies the user's password given the user object and the password
-func VerifyPassword(service IdentityService, user *models.Identity, password string) bool {
-	return user.CheckPassword(service.GetPepper(), password)
-}
-
 // GenerateJWT generates a Json Web Token from the user object
 func GenerateJWT(service IdentityService, user *models.Identity) (result string, err error) {
 	// Init the token structure

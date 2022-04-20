@@ -126,7 +126,6 @@ func ResetPassword(service IdentityService, token string, newPassword string, us
 		logger.Error(err)
 		return
 	}
-
 	// update identity reset token
 	now := time.Now().UTC()
 	resetPassword.ConfirmationTime = &now

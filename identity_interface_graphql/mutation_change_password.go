@@ -1,9 +1,7 @@
 package identity_interface_graphql
 
 import (
-	"encoding/json"
 	"github.com/SbstnErhrdt/identity/controllers"
-	"github.com/SbstnErhrdt/identity/models"
 	"github.com/graphql-go/graphql"
 )
 
@@ -12,7 +10,7 @@ func ChangePasswordField(service controllers.IdentityService) *graphql.Field {
 	field := graphql.Field{
 		Name:        "changePassword",
 		Description: "Change the password of the identity of the current identity",
-		Type:        IdentityGraphQlModel,
+		Type:        graphql.Boolean,
 		Args: graphql.FieldConfigArgument{
 			"oldPassword": &graphql.ArgumentConfig{
 				Type:        graphql.NewNonNull(graphql.String),
@@ -29,25 +27,14 @@ func ChangePasswordField(service controllers.IdentityService) *graphql.Field {
 		},
 		Resolve: func(p graphql.ResolveParams) (i interface{}, err error) {
 			// params
-			jsonString, err := json.Marshal(p.Args["data"])
-			if err != nil {
-				return nil, err
-			}
-			identity := models.Identity{}
-			err = json.Unmarshal(jsonString, &identity)
-			if err != nil {
-				return nil, err
-			}
+			oldPassword := p.Args["oldPassword"].(string)
+			newPassword := p.Args["newPassword"].(string)
+			newPasswordConfirmation := p.Args["newPasswordConfirmation"].(string)
 			// extract uid
 			uid, err := GetUserUIDFromContext(&p)
-			if err != nil {
-				return nil, err
-			}
-			// overwrite uid
-			identity.UID = uid
 			// update
-			err = controllers.UpdateIdentity(service, &identity)
-			return &identity, err
+			err = controllers.ChangePassword(service, uid, oldPassword, newPassword, newPasswordConfirmation)
+			return err == nil, err
 		},
 	}
 	return &field
