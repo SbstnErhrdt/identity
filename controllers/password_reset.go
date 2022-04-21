@@ -42,17 +42,11 @@ func InitResetPassword(service IdentityService, emailAddress, userAgent, ip, ori
 		logger.Error(err)
 		return err
 	}
-	// gen random token
-	randomToken, err := security.GenerateRandomString(64)
-	if err != nil {
-		logger.Error(err)
-		return
-	}
 	// send email
 	// Build email template
 	logger.Debug("Build email template")
 	// resolve the email template
-	emailTemplate := service.ResolvePasswordResetEmailTemplate(origin, emailAddress, randomToken)
+	emailTemplate := service.ResolvePasswordResetEmailTemplate(origin, emailAddress, token)
 	// generate the content of the email
 	content, err := emailTemplate.Content()
 	if err != nil {
@@ -77,6 +71,9 @@ var ErrTokenExpired = errors.New("security token expired. Please request a new p
 
 // ErrTokenUsed is returned when the token was used
 var ErrTokenUsed = errors.New("security token already used. Please request a new password reset")
+
+// ErrTokenNotFound is returned when the token is not in the database
+var ErrTokenNotFound = errors.New("security token not found. Please request a new password reset")
 
 // ResetPassword resets the password
 func ResetPassword(service IdentityService, token, newPassword, newPasswordConfirmation, userAgent, ip, origin string) (err error) {
@@ -106,6 +103,7 @@ func ResetPassword(service IdentityService, token, newPassword, newPasswordConfi
 	err = service.GetSQLClient().Where("token = ?", token).First(&resetPassword).Error
 	if err != nil {
 		logger.Error(err)
+		err = ErrTokenNotFound
 		return err
 	}
 
@@ -116,7 +114,7 @@ func ResetPassword(service IdentityService, token, newPassword, newPasswordConfi
 		return
 	}
 	// check if the token was used
-	if resetPassword.ConfirmationTime.IsZero() {
+	if resetPassword.ConfirmationTime != nil {
 		err = ErrTokenUsed
 		logger.Error(err)
 		return
