@@ -20,7 +20,8 @@ func InitResetPassword(service IdentityService, emailAddress, userAgent, ip, ori
 	res, err := GetIdentityByEmail(service, emailAddress)
 	if err != nil {
 		logger.Error(err)
-		return err
+		// OWASP: return no error if the user does not exist
+		return nil
 	}
 	// create database entry
 	token, err := security.GenerateRandomString(32)
@@ -51,7 +52,7 @@ func InitResetPassword(service IdentityService, emailAddress, userAgent, ip, ori
 	// Build email template
 	logger.Debug("Build email template")
 	// resolve the email template
-	emailTemplate := service.ResolveRegistrationEmailTemplate(origin, emailAddress, randomToken)
+	emailTemplate := service.ResolvePasswordResetEmailTemplate(origin, emailAddress, randomToken)
 	// generate the content of the email
 	content, err := emailTemplate.Content()
 	if err != nil {
@@ -59,14 +60,14 @@ func InitResetPassword(service IdentityService, emailAddress, userAgent, ip, ori
 		return
 	}
 	// Send email
-	logger.Debug("Send registration email")
+	logger.Debug("Send reset password email")
 	err = service.SendEmail(
 		service.GetSenderEmailAddress(),
 		mail.Address{
 			Name:    emailAddress,
 			Address: emailAddress,
 		},
-		"Registration",
+		"Password reset",
 		content)
 	return
 }
@@ -78,12 +79,27 @@ var ErrTokenExpired = errors.New("security token expired. Please request a new p
 var ErrTokenUsed = errors.New("security token already used. Please request a new password reset")
 
 // ResetPassword resets the password
-func ResetPassword(service IdentityService, token string, newPassword string, userAgent, ip, origin string) (err error) {
+func ResetPassword(service IdentityService, token, newPassword, newPasswordConfirmation, userAgent, ip, origin string) (err error) {
 	// init logger
 	logger := log.WithFields(log.Fields{
 		"token":   token,
 		"process": "InitResetPassword",
 	})
+
+	// check password complexity
+	logger.Debug("CheckPasswordComplexity")
+	err = security.CheckPasswordComplexity(newPassword)
+	if err != nil {
+		logger.Error(err)
+		return
+	}
+
+	// check if the new password is the same as the confirmed password
+	if newPassword != newPasswordConfirmation {
+		err = ErrConfirmPassword
+		logger.Error(err)
+		return
+	}
 
 	// get the token from the database
 	resetPassword := models.IdentityResetPassword{}

@@ -113,7 +113,7 @@ func (s *Service) GetSQLClient() *gorm.DB {
 
 // GetPepper returns the pepper
 func (s *Service) GetPepper() string {
-	return s.Issuer
+	return s.Pepper
 }
 
 // GetIssuer returns the issuer

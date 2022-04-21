@@ -19,8 +19,11 @@ var ErrInvalidPassword = errors.New("old password is incorrect")
 // ErrConfirmPassword is returned when the new password and confirmation do not match
 var ErrConfirmPassword = errors.New("new password and confirmation do not match")
 
+// ErrOldPasswordIsSame is returned when the new password is the same as the old password
+var ErrOldPasswordIsSame = errors.New("the old password is the same as the new password")
+
 // ChangePassword changes the user's password given the user object and the new password
-func ChangePassword(service IdentityService, identityUID uuid.UUID, oldPassword, newPassword, newPasswordConfirmed string) (err error) {
+func ChangePassword(service IdentityService, identityUID uuid.UUID, oldPassword, newPassword, newPasswordConfirmation string) (err error) {
 	// init logger
 	logger := log.WithFields(log.Fields{
 		"process":     "ChangePassword",
@@ -41,9 +44,24 @@ func ChangePassword(service IdentityService, identityUID uuid.UUID, oldPassword,
 		return
 	}
 
+	// check password complexity
+	logger.Debug("CheckPasswordComplexity")
+	err = security.CheckPasswordComplexity(newPassword)
+	if err != nil {
+		logger.Error(err)
+		return
+	}
+
 	// check if the new password is the same as the confirmed password
-	if newPassword != newPasswordConfirmed {
+	if newPassword != newPasswordConfirmation {
 		err = ErrConfirmPassword
+		logger.Error(err)
+		return
+	}
+
+	// check if the old password is the same as the new password
+	if oldPassword == newPassword {
+		err = ErrOldPasswordIsSame
 		logger.Error(err)
 		return
 	}

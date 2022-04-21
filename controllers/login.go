@@ -21,6 +21,12 @@ var ErrUserBlocked = errors.New("this identity can not login. please contact the
 // ErrEmailNotVerified is returned when the user email is not verified
 var ErrEmailNotVerified = errors.New("the email address is not confirmed yet")
 
+// ErrIdentityNotFound is returned when the identity is not found
+var ErrIdentityNotFound = errors.New("identity not found")
+
+// ErrWrongPassword is returned when the password is wrong
+var ErrWrongPassword = errors.New("wrong password")
+
 // Login logs in a user and returns a JWT token
 func Login(service IdentityService, emailAddress, password, userAgent, ip string) (token string, err error) {
 	// sanitize input
@@ -62,7 +68,7 @@ func Login(service IdentityService, emailAddress, password, userAgent, ip string
 		First(&identity).
 		Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		err = errors.New("identity does not exist")
+		err = ErrIdentityNotFound
 		logger.Error(err)
 		// OWASP: generic error message if user does not exist
 		err = ErrLoginFailedInvalidUserOrPassword
@@ -93,9 +99,10 @@ func Login(service IdentityService, emailAddress, password, userAgent, ip string
 	// verify the password
 	logger.Debug("verify password")
 	if !(VerifyPassword(service, identity, password)) {
-		// OWASP: generic error message
-		err = ErrLoginFailedInvalidUserOrPassword
+		err = ErrWrongPassword
 		logger.Error(err)
+		// OWASP: return generic error message
+		err = ErrLoginFailedInvalidUserOrPassword
 		return "", err
 	}
 

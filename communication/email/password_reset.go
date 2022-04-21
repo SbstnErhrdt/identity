@@ -25,9 +25,9 @@ func DefaultPasswordResetEmailResolver(origin, email, token string) PasswordRese
 	return PasswordResetTemplate{
 		GlobalTemplate: DefaultGlobalTemplate,
 		EmailOfNewUser: email,
-		ContentText:    "Please click the button below to confirm your registration.",
-		ButtonText:     "Confirm registration",
-		ButtonUrl:      "https://" + origin + "/registration/confirm/" + token,
+		ContentText:    "Please click the button below to reset your password.",
+		ButtonText:     "Reset Password",
+		ButtonUrl:      "https://" + origin + "/identity/password-reset/" + token,
 	}
 }
 

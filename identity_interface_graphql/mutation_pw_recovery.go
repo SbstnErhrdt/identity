@@ -5,7 +5,8 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
-func InitPasswordResetField(service controllers.IdentityService) *graphql.Field {
+// InitResetPasswordField initializes the reset password flow
+func InitResetPasswordField(service controllers.IdentityService) *graphql.Field {
 	field := graphql.Field{
 		Name:        "InitPasswordReset",
 		Description: "Initialize the reset of the password of the identity",
@@ -43,10 +44,11 @@ func InitPasswordResetField(service controllers.IdentityService) *graphql.Field 
 	return &field
 }
 
-func ConfirmPasswordResetField(service controllers.IdentityService) *graphql.Field {
+// ConfirmResetPasswordField confirms the reset password flow
+func ConfirmResetPasswordField(service controllers.IdentityService) *graphql.Field {
 	field := graphql.Field{
-		Name:        "InitPasswordReset",
-		Description: "Initialize the reset of the password of the identity",
+		Name:        "ConfirmResetPassword",
+		Description: "Uses the token and sets an new password",
 		Type:        graphql.Boolean,
 		Args: graphql.FieldConfigArgument{
 			"token": &graphql.ArgumentConfig{
@@ -56,6 +58,10 @@ func ConfirmPasswordResetField(service controllers.IdentityService) *graphql.Fie
 			"newPassword": &graphql.ArgumentConfig{
 				Type:        graphql.NewNonNull(graphql.String),
 				Description: "the new password",
+			},
+			"newPasswordConfirmation": &graphql.ArgumentConfig{
+				Type:        graphql.NewNonNull(graphql.String),
+				Description: "the new password confirmation",
 			},
 		},
 		Resolve: func(p graphql.ResolveParams) (i interface{}, err error) {
@@ -78,8 +84,9 @@ func ConfirmPasswordResetField(service controllers.IdentityService) *graphql.Fie
 			// parameters
 			token := p.Args["token"].(string)
 			newPassword := p.Args["newPassword"].(string)
+			newPasswordConfirmation := p.Args["newPasswordConfirmation"].(string)
 			// get token of registration
-			err = controllers.ResetPassword(service, token, newPassword, userAgent, ip, origin)
+			err = controllers.ResetPassword(service, token, newPassword, newPasswordConfirmation, userAgent, ip, origin)
 			return err == nil, err
 		},
 	}
