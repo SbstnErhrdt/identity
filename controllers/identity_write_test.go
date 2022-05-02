@@ -7,10 +7,10 @@ import (
 
 func TestRegister(t *testing.T) {
 	ass := assert.New(t)
-	service := TestIdentityService{}
+
 	err := Register(
-		service,
-		"erhardt.sebastian@gmail.com",
+		s,
+		"test@erhardt.net",
 		"MaggieThatcherIs110%Sexy!",
 		true,
 		"test-agent",
@@ -25,7 +25,7 @@ func TestRegister(t *testing.T) {
 
 func TestLogin(t *testing.T) {
 	ass := assert.New(t)
-	token, err := Login(TestIdentityService{}, "", "", "", "")
+	token, err := Login(s, "", "", "", "")
 	ass.NoError(err)
 	ass.NotEmpty(token)
 }

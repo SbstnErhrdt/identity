@@ -45,15 +45,15 @@ func SendEmail(senderAddress mail.Address, receiverAddress mail.Address, subject
 	auth := smtp.PlainAuth("", user, password, host)
 
 	// TLS config
-	tlsconfig := &tls.Config{
+	tlsConfig := &tls.Config{
 		InsecureSkipVerify: true,
 		ServerName:         host,
 	}
 
 	// Here is the key, you need to call tls.Dial instead of smtp.Dial
-	// for smtp servers running on 465 that require an ssl connection
+	// for smtp servers running on 465 that require a ssl connection
 	// from the very beginning (no starttls)
-	conn, err := tls.Dial("tcp", servername, tlsconfig)
+	conn, err := tls.Dial("tcp", servername, tlsConfig)
 	if err != nil {
 		log.Error(err)
 		return err

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github.com/SbstnErhrdt/identity/communication/email"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"net/mail"
 )
@@ -16,4 +17,5 @@ type IdentityService interface {
 	SendSMS(receiver string, content string) (err error)
 	ResolveRegistrationEmailTemplate(origin, emailAddress, confirmationUrl string) email.RegistrationEmailTemplate
 	ResolvePasswordResetEmailTemplate(origin, emailAddress, confirmationUrl string) email.PasswordResetTemplate
+	ResolveInvitationEmailTemplate(mandateUID uuid.UUID, clientUID *uuid.UUID, orgName, firstName, lastName, emailAddress, link string) email.InvitationEmailTemplate
 }

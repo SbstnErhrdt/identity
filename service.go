@@ -5,6 +5,7 @@ import (
 	"github.com/SbstnErhrdt/identity/communication/email"
 	"github.com/SbstnErhrdt/identity/identity_interface_graphql"
 	"github.com/SbstnErhrdt/identity/services"
+	"github.com/google/uuid"
 	"github.com/graphql-go/graphql"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
@@ -27,6 +28,9 @@ type ResolveRegistrationEmailTemplate func(origin, emailAddress, token string) e
 // ResolvePasswordResetEmailTemplate resolves the password reset email template
 type ResolvePasswordResetEmailTemplate func(origin, emailAddress, token string) email.PasswordResetTemplate
 
+// ResolveInvitationEmailTemplate resolves the invitation email template
+type ResolveInvitationEmailTemplate func(mandateUID uuid.UUID, clientUID *uuid.UUID, orgName, firstName, lastName, emailAddress, link string) email.InvitationEmailTemplate
+
 // Service is the identity service
 type Service struct {
 	Issuer                     string
@@ -43,6 +47,7 @@ type Service struct {
 	authConfirmationEndpoint   string
 	registrationEmailResolver  ResolveRegistrationEmailTemplate
 	passwordResetEmailResolver ResolvePasswordResetEmailTemplate
+	invitationEmailResolver    ResolveInvitationEmailTemplate
 }
 
 // NewService inits a new identity service
@@ -155,4 +160,9 @@ func (s *Service) ResolveRegistrationEmailTemplate(origin, emailAddress, confirm
 // ResolvePasswordResetEmailTemplate returns the password reset email template
 func (s *Service) ResolvePasswordResetEmailTemplate(origin, emailAddress, confirmationUrl string) email.PasswordResetTemplate {
 	return s.passwordResetEmailResolver(origin, emailAddress, confirmationUrl)
+}
+
+// ResolveInvitationEmailTemplate returns the invitation email template
+func (s *Service) ResolveInvitationEmailTemplate(mandateUID uuid.UUID, clientUID *uuid.UUID, orgName, firstName, lastName, emailAddress, link string) email.InvitationEmailTemplate {
+	return s.invitationEmailResolver(mandateUID, clientUID, orgName, firstName, lastName, emailAddress, link)
 }
