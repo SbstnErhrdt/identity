@@ -27,7 +27,7 @@ func DefaultRegistrationEmailResolver(origin, email, token string) RegistrationE
 		EmailOfNewUser: email,
 		ContentText:    "Please click the button below to confirm your registration.",
 		ButtonText:     "Confirm registration",
-		ButtonUrl:      "https://" + origin + "/registration/confirm/" + token,
+		ButtonUrl:      "https://" + origin + "/register/" + token,
 	}
 }
 
