@@ -13,6 +13,8 @@ type Mutations struct {
 	ChangePassword           *graphql.Field
 	InitResetPassword        *graphql.Field
 	ConfirmResetPassword     *graphql.Field
+	DeleteIdentity           *graphql.Field
+	AnonymizeIdentity        *graphql.Field
 }
 
 func InitMutations(service controllers.IdentityService) *Mutations {
@@ -24,6 +26,8 @@ func InitMutations(service controllers.IdentityService) *Mutations {
 		ChangePassword:           ChangePasswordField(service),
 		InitResetPassword:        InitResetPasswordField(service),
 		ConfirmResetPassword:     ConfirmResetPasswordField(service),
+		DeleteIdentity:           DeleteField(service),
+		AnonymizeIdentity:        AnonymizeField(service),
 	}
 	return &gql
 }
@@ -36,4 +40,6 @@ func (gql *Mutations) GenerateMutationObjects(root *graphql.Object) {
 	root.AddFieldConfig("changePassword", gql.ChangePassword)
 	root.AddFieldConfig("initResetPassword", gql.InitResetPassword)
 	root.AddFieldConfig("confirmResetPassword", gql.ConfirmResetPassword)
+	root.AddFieldConfig("deleteIdentity", gql.DeleteIdentity)
+	root.AddFieldConfig("anonymizeIdentity", gql.AnonymizeIdentity)
 }

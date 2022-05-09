@@ -1,6 +1,7 @@
 package identity_interface_graphql
 
 import (
+	"errors"
 	"github.com/SbstnErhrdt/identity/controllers"
 	"github.com/graphql-go/graphql"
 )
@@ -28,8 +29,17 @@ func ChangePasswordField(service controllers.IdentityService) *graphql.Field {
 		Resolve: func(p graphql.ResolveParams) (i interface{}, err error) {
 			// params
 			oldPassword := p.Args["oldPassword"].(string)
+			if len(oldPassword) == 0 {
+				return nil, errors.New("password is required")
+			}
 			newPassword := p.Args["newPassword"].(string)
+			if len(newPassword) == 0 {
+				return nil, errors.New("password is required")
+			}
 			newPasswordConfirmation := p.Args["newPasswordConfirmation"].(string)
+			if len(newPasswordConfirmation) == 0 {
+				return nil, errors.New("password is required")
+			}
 			// extract uid
 			uid, err := GetUserUIDFromContext(&p)
 			// update

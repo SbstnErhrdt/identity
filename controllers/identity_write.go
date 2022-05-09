@@ -4,6 +4,7 @@ import (
 	"github.com/SbstnErhrdt/env"
 	"github.com/SbstnErhrdt/identity/models"
 	"github.com/SbstnErhrdt/identity/security"
+	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"strings"
@@ -42,7 +43,42 @@ func ConfirmOldEmail(service IdentityService, token string) {
 func ConfirmNewEmail(service IdentityService, token string) {
 }
 
-func DeleteAccount(service IdentityService, username, password string) (user *models.Identity, err error) {
+// DeleteIdentity deletes an identity
+func DeleteIdentity(service IdentityService, uid uuid.UUID, password string) (err error) {
+	logger := log.WithFields(log.Fields{
+		"method": "DeleteIdentity",
+		"uid":    uid,
+	})
+	// get the user
+	identity, err := GetIdentityByUID(service, uid)
+	if err != nil {
+		logger.Error(err)
+		return
+	}
+	// check if the password is correct
+	if !VerifyPassword(service, identity, password) {
+		err = ErrInvalidPassword
+		logger.Error(err)
+		return
+	}
+	// anonymize the pii
+	err = anonymize(service, identity)
+	if err != nil {
+		logger.Error(err)
+		return
+	}
+	// anonymize the email and phone
+	err = deleteAnonymize(service, identity)
+	if err != nil {
+		logger.Error(err)
+		return
+	}
+	//delete the account
+	err = deleteAccount(service, identity)
+	if err != nil {
+		logger.Error(err)
+		return
+	}
 	return
 }
 
@@ -52,9 +88,52 @@ func deleteAccount(service IdentityService, identity *models.Identity) (err erro
 	return
 }
 
-func AnonymizeAccount(service IdentityService, user *models.Identity) (err error) {
-	// todo: anonymize user
+func anonymize(service IdentityService, identity *models.Identity) (err error) {
+	// hash emails and phone numbers
+	identity.FirstName = Hash(identity.FirstName)
+	identity.LastName = Hash(identity.LastName)
+	identity.Salutation = Hash(identity.Salutation)
+	// save the account
+	// Set other metadata
+	identity.UpdatedAt = time.Now().UTC()
+	// create new entry
+	err = service.GetSQLClient().Save(identity).Error
 	return
+}
+
+func deleteAnonymize(service IdentityService, identity *models.Identity) (err error) {
+	// hash emails and phone numbers
+	identity.Email = Hash(identity.Email)
+	identity.BackupEmail = Hash(identity.BackupEmail)
+	identity.Phone = Hash(identity.Phone)
+	identity.BackupPhone = Hash(identity.BackupPhone)
+	// save the account
+	// Set other metadata
+	identity.UpdatedAt = time.Now().UTC()
+	// create new entry
+	err = service.GetSQLClient().Save(identity).Error
+	return
+}
+
+// AnonymizeIdentity anonymize an account
+func AnonymizeIdentity(service IdentityService, uid uuid.UUID, password string) (err error) {
+	logger := log.WithFields(log.Fields{
+		"method": "AnonymizeIdentity",
+		"uid":    uid,
+	})
+	// get the user
+	identity, err := GetIdentityByUID(service, uid)
+	if err != nil {
+		logger.Error(err)
+		return
+	}
+	// check if the password is correct
+	if !VerifyPassword(service, identity, password) {
+		err = ErrInvalidPassword
+		logger.Error(err)
+		return
+	}
+	return anonymize(service, identity)
 }
 
 // Clear clears the user
