@@ -1,4 +1,4 @@
-package install
+package identity_install
 
 import (
 	"github.com/SbstnErhrdt/go-gorm-all-sql/pkg/sql"
