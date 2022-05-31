@@ -89,10 +89,9 @@ func deleteAccount(service IdentityService, identity *identity_models.Identity) 
 }
 
 func anonymize(service IdentityService, identity *identity_models.Identity) (err error) {
-	// hash emails and phone numbers
+	// hash firstname and lastname
 	identity.FirstName = Hash(identity.FirstName)
 	identity.LastName = Hash(identity.LastName)
-	identity.Salutation = Hash(identity.Salutation)
 	// save the account
 	// Set other metadata
 	identity.UpdatedAt = time.Now().UTC()

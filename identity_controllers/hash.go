@@ -2,6 +2,7 @@ package identity_controllers
 
 import (
 	"crypto/sha1"
+	"encoding/hex"
 )
 
 // Hash provides a SHA1 hash of the request body
@@ -20,5 +21,5 @@ func Hash(s string) string {
 	// to an existing byte slice: it usually isn't needed.
 	bs := h.Sum(nil)
 
-	return string(bs)
+	return hex.EncodeToString(bs)
 }
