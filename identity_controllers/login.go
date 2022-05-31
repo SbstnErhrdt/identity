@@ -1,9 +1,8 @@
-package controllers
+package identity_controllers
 
 import (
 	"errors"
 	"github.com/SbstnErhrdt/env"
-	"github.com/SbstnErhrdt/identity/models"
 	"github.com/SbstnErhrdt/identity/security"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
@@ -47,7 +46,7 @@ func Login(service IdentityService, emailAddress, password, userAgent, ip string
 	}
 	// track login attempt
 	logger.Debug("track login attempt")
-	loginAttempt := models.IdentityLogin{
+	loginAttempt := identity_models.IdentityLogin{
 		Email:     emailAddress,
 		UserAgent: userAgent,
 		IP:        ip,
@@ -59,7 +58,7 @@ func Login(service IdentityService, emailAddress, password, userAgent, ip string
 	}
 	// Check if identity exists
 	// init identity object
-	identity := &models.Identity{}
+	identity := &identity_models.Identity{}
 
 	// Find the identity in the database
 	logger.Debug("find identity")
@@ -118,9 +117,9 @@ func Login(service IdentityService, emailAddress, password, userAgent, ip string
 	}
 
 	// save token id in token table
-	tokenMeta := models.IdentityTokenMeta{
+	tokenMeta := identity_models.IdentityTokenMeta{
 		TokenUID:  tokenUID,
-		TokenType: models.LoginToken,
+		TokenType: identity_models.LoginToken,
 	}
 	errTokenMet := service.GetSQLClient().Create(&tokenMeta).Error
 	if errToken != nil {

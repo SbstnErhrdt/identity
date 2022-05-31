@@ -1,8 +1,7 @@
-package controllers
+package identity_controllers
 
 import (
 	"github.com/SbstnErhrdt/env"
-	"github.com/SbstnErhrdt/identity/models"
 	"github.com/SbstnErhrdt/identity/security"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
@@ -25,7 +24,7 @@ func Logout(service IdentityService, token string) (err error) {
 	return
 }
 
-func LogoutAllDevices(service IdentityService, user *models.Identity) (err error) {
+func LogoutAllDevices(service IdentityService, user *identity_models.Identity) (err error) {
 	return
 }
 
@@ -33,7 +32,7 @@ func ConfirmResetPassword(service IdentityService, token, password string) (err 
 	return
 }
 
-func InitChangeEmail(service IdentityService, username, password string) (user *models.Identity, err error) {
+func InitChangeEmail(service IdentityService, username, password string) (user *identity_models.Identity, err error) {
 	return
 }
 
@@ -82,13 +81,13 @@ func DeleteIdentity(service IdentityService, uid uuid.UUID, password string) (er
 	return
 }
 
-func deleteAccount(service IdentityService, identity *models.Identity) (err error) {
+func deleteAccount(service IdentityService, identity *identity_models.Identity) (err error) {
 	// delete identity
 	err = service.GetSQLClient().Delete(&identity).Error
 	return
 }
 
-func anonymize(service IdentityService, identity *models.Identity) (err error) {
+func anonymize(service IdentityService, identity *identity_models.Identity) (err error) {
 	// hash emails and phone numbers
 	identity.FirstName = Hash(identity.FirstName)
 	identity.LastName = Hash(identity.LastName)
@@ -101,7 +100,7 @@ func anonymize(service IdentityService, identity *models.Identity) (err error) {
 	return
 }
 
-func deleteAnonymize(service IdentityService, identity *models.Identity) (err error) {
+func deleteAnonymize(service IdentityService, identity *identity_models.Identity) (err error) {
 	// hash emails and phone numbers
 	identity.Email = Hash(identity.Email)
 	identity.BackupEmail = Hash(identity.BackupEmail)
@@ -137,21 +136,21 @@ func AnonymizeIdentity(service IdentityService, uid uuid.UUID, password string) 
 }
 
 // Clear clears the user
-func Clear(service IdentityService, user *models.Identity) {
+func Clear(service IdentityService, user *identity_models.Identity) {
 	user.Cleared = true
 	service.GetSQLClient().Save(user)
 	return
 }
 
 // Block blocks a user
-func Block(service IdentityService, user *models.Identity) {
+func Block(service IdentityService, user *identity_models.Identity) {
 	user.Blocked = true
 	service.GetSQLClient().Save(user)
 	return
 }
 
 // GenerateJWT generates a Json Web Token from the user object
-func GenerateJWT(service IdentityService, user *models.Identity) (result string, err error) {
+func GenerateJWT(service IdentityService, user *identity_models.Identity) (result string, err error) {
 	// Init the token structure
 	payload := map[string]interface{}{}
 	payload["userUID"] = user.UID
@@ -165,7 +164,7 @@ func GenerateJWT(service IdentityService, user *models.Identity) (result string,
 }
 
 // UpdateIdentity updates the identity
-func UpdateIdentity(service IdentityService, newIdentity *models.Identity) (err error) {
+func UpdateIdentity(service IdentityService, newIdentity *identity_models.Identity) (err error) {
 	// check if necessary fields are set
 	if newIdentity.UID.String() == "" {
 		return errors.New("UpdateIdentity: no uid provided")

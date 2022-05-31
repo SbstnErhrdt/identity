@@ -2,12 +2,11 @@ package identity_interface_graphql
 
 import (
 	"errors"
-	"github.com/SbstnErhrdt/identity/controllers"
 	"github.com/graphql-go/graphql"
 )
 
 // DeleteField is the graphql field for deleting an identity
-func DeleteField(service controllers.IdentityService) *graphql.Field {
+func DeleteField(service identity_controllers.IdentityService) *graphql.Field {
 	field := graphql.Field{
 		Name:        "DeleteIdentity",
 		Description: "Delete the current identity",
@@ -31,7 +30,7 @@ func DeleteField(service controllers.IdentityService) *graphql.Field {
 				return nil, errors.New("password is required")
 			}
 			// delete account
-			err = controllers.DeleteIdentity(service, uid, password)
+			err = identity_controllers.DeleteIdentity(service, uid, password)
 			return err == nil, err
 		},
 	}

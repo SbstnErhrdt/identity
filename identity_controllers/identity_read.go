@@ -1,7 +1,6 @@
-package controllers
+package identity_controllers
 
 import (
-	"github.com/SbstnErhrdt/identity/models"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -41,7 +40,7 @@ func CheckIfEmailIsFree(service IdentityService, email string) (isFree bool, err
 	err = service.GetSQLClient().Limit(1).
 		Where("lower(email) = lower(?)", email).
 		Where("deleted_at is NULL"). // only users that are not deleted
-		First(&models.Identity{}).Error
+		First(&identity_models.Identity{}).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		// username is free
 		return true, nil
@@ -64,9 +63,9 @@ func CheckUserLogin(service IdentityService, email string, password string) (res
 }
 
 // GetIdentityByEmail retrieves the identity from the database
-func GetIdentityByEmail(service IdentityService, username string) (result *models.Identity, err error) {
+func GetIdentityByEmail(service IdentityService, username string) (result *identity_models.Identity, err error) {
 	// Load identity from database
-	identity := models.Identity{}
+	identity := identity_models.Identity{}
 	err = service.GetSQLClient().Limit(1).
 		Where("email = ?", username).
 		Where("deleted_at is NULL"). // only users that are not deleted
@@ -79,9 +78,9 @@ func GetIdentityByEmail(service IdentityService, username string) (result *model
 }
 
 // GetIdentityByUID retrieves the identity from the database
-func GetIdentityByUID(service IdentityService, uid uuid.UUID) (result *models.Identity, err error) {
+func GetIdentityByUID(service IdentityService, uid uuid.UUID) (result *identity_models.Identity, err error) {
 	// Load identity from database
-	identity := models.Identity{}
+	identity := identity_models.Identity{}
 	err = service.GetSQLClient().Limit(1).
 		Where("uid = ?", uid.String()).
 		Where("deleted_at is NULL"). // only users that are not deleted

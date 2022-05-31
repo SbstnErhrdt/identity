@@ -1,11 +1,10 @@
 package identity_interface_graphql
 
 import (
-	"github.com/SbstnErhrdt/identity/controllers"
 	"github.com/graphql-go/graphql"
 )
 
-func RegistrationConfirmationField(service controllers.IdentityService) *graphql.Field {
+func RegistrationConfirmationField(service identity_controllers.IdentityService) *graphql.Field {
 	field := graphql.Field{
 		Name:        "RegistrationConfirmation",
 		Description: "Confirm the token that was received via email",
@@ -31,7 +30,7 @@ func RegistrationConfirmationField(service controllers.IdentityService) *graphql
 			// params
 			token := p.Args["token"].(string)
 			// login
-			err = controllers.RegistrationConfirmation(service, token, userAgent, ip)
+			err = identity_controllers.RegistrationConfirmation(service, token, userAgent, ip)
 			return err == nil, err
 		},
 	}

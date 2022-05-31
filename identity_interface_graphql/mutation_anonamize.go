@@ -2,12 +2,11 @@ package identity_interface_graphql
 
 import (
 	"errors"
-	"github.com/SbstnErhrdt/identity/controllers"
 	"github.com/graphql-go/graphql"
 )
 
 // AnonymizeField is the graphql field to anonymize an identity
-func AnonymizeField(service controllers.IdentityService) *graphql.Field {
+func AnonymizeField(service identity_controllers.IdentityService) *graphql.Field {
 	field := graphql.Field{
 		Name:        "AnonymizeIdentity",
 		Description: "anonymize the current identity",
@@ -31,7 +30,7 @@ func AnonymizeField(service controllers.IdentityService) *graphql.Field {
 				return nil, errors.New("password is required")
 			}
 			// delete account
-			err = controllers.AnonymizeIdentity(service, uid, password)
+			err = identity_controllers.AnonymizeIdentity(service, uid, password)
 			return err == nil, err
 		},
 	}

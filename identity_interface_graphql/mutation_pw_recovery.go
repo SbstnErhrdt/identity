@@ -1,12 +1,11 @@
 package identity_interface_graphql
 
 import (
-	"github.com/SbstnErhrdt/identity/controllers"
 	"github.com/graphql-go/graphql"
 )
 
 // InitResetPasswordField initializes the reset password flow
-func InitResetPasswordField(service controllers.IdentityService) *graphql.Field {
+func InitResetPasswordField(service identity_controllers.IdentityService) *graphql.Field {
 	field := graphql.Field{
 		Name:        "InitPasswordReset",
 		Description: "Initialize the reset of the password of the identity",
@@ -37,7 +36,7 @@ func InitResetPasswordField(service controllers.IdentityService) *graphql.Field 
 			// parameters
 			identity := p.Args["identity"].(string)
 			// get token of registration
-			err = controllers.InitResetPassword(service, identity, userAgent, ip, origin)
+			err = identity_controllers.InitResetPassword(service, identity, userAgent, ip, origin)
 			return err == nil, err
 		},
 	}
@@ -45,7 +44,7 @@ func InitResetPasswordField(service controllers.IdentityService) *graphql.Field 
 }
 
 // ConfirmResetPasswordField confirms the reset password flow
-func ConfirmResetPasswordField(service controllers.IdentityService) *graphql.Field {
+func ConfirmResetPasswordField(service identity_controllers.IdentityService) *graphql.Field {
 	field := graphql.Field{
 		Name:        "ConfirmResetPassword",
 		Description: "Uses the token and sets an new password",
@@ -86,7 +85,7 @@ func ConfirmResetPasswordField(service controllers.IdentityService) *graphql.Fie
 			newPassword := p.Args["newPassword"].(string)
 			newPasswordConfirmation := p.Args["newPasswordConfirmation"].(string)
 			// get token of registration
-			err = controllers.ResetPassword(service, token, newPassword, newPasswordConfirmation, userAgent, ip, origin)
+			err = identity_controllers.ResetPassword(service, token, newPassword, newPasswordConfirmation, userAgent, ip, origin)
 			return err == nil, err
 		},
 	}

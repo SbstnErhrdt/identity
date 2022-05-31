@@ -1,12 +1,11 @@
 package identity_interface_graphql
 
 import (
-	"github.com/SbstnErhrdt/identity/controllers"
 	"github.com/graphql-go/graphql"
 	"strings"
 )
 
-func LoginField(service controllers.IdentityService) *graphql.Field {
+func LoginField(service identity_controllers.IdentityService) *graphql.Field {
 	field := graphql.Field{
 		Name:        "Login",
 		Description: "Submit identity and password to retrieve a token",
@@ -38,7 +37,7 @@ func LoginField(service controllers.IdentityService) *graphql.Field {
 			identity = strings.ToLower(identity)
 			password := p.Args["password"].(string)
 			// login
-			token, err := controllers.Login(service, identity, password, userAgent, ip)
+			token, err := identity_controllers.Login(service, identity, password, userAgent, ip)
 			return token, err
 		},
 	}

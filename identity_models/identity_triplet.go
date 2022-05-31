@@ -1,4 +1,4 @@
-package models
+package identity_models
 
 type IdentityTriplet struct {
 	// Metadata

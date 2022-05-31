@@ -1,4 +1,4 @@
-package models
+package identity_models
 
 import "github.com/google/uuid"
 

@@ -2,12 +2,11 @@ package identity_interface_graphql
 
 import (
 	"errors"
-	"github.com/SbstnErhrdt/identity/controllers"
 	"github.com/graphql-go/graphql"
 )
 
 // ChangePasswordField is the graphql field for change password
-func ChangePasswordField(service controllers.IdentityService) *graphql.Field {
+func ChangePasswordField(service identity_controllers.IdentityService) *graphql.Field {
 	field := graphql.Field{
 		Name:        "changePassword",
 		Description: "Change the password of the identity of the current identity",
@@ -43,7 +42,7 @@ func ChangePasswordField(service controllers.IdentityService) *graphql.Field {
 			// extract uid
 			uid, err := GetUserUIDFromContext(&p)
 			// update
-			err = controllers.ChangePassword(service, uid, oldPassword, newPassword, newPasswordConfirmation)
+			err = identity_controllers.ChangePassword(service, uid, oldPassword, newPassword, newPasswordConfirmation)
 			return err == nil, err
 		},
 	}

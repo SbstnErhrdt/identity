@@ -1,7 +1,6 @@
 package identity_interface_graphql
 
 import (
-	"github.com/SbstnErhrdt/identity/controllers"
 	"github.com/graphql-go/graphql"
 )
 
@@ -17,7 +16,7 @@ type Mutations struct {
 	AnonymizeIdentity        *graphql.Field
 }
 
-func InitMutations(service controllers.IdentityService) *Mutations {
+func InitMutations(service identity_controllers.IdentityService) *Mutations {
 	gql := Mutations{
 		Login:                    LoginField(service),
 		Register:                 RegistrationField(service),

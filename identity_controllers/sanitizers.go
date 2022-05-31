@@ -1,4 +1,4 @@
-package controllers
+package identity_controllers
 
 import "strings"
 

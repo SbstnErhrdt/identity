@@ -1,4 +1,4 @@
-package controllers
+package identity_controllers
 
 import (
 	"github.com/stretchr/testify/assert"

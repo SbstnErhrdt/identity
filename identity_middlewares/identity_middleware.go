@@ -1,4 +1,4 @@
-package middlewares
+package identity_middlewares
 
 import (
 	"github.com/gin-gonic/gin"

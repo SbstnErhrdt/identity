@@ -2,8 +2,6 @@ package identity_interface_graphql
 
 import (
 	"encoding/json"
-	"github.com/SbstnErhrdt/identity/controllers"
-	"github.com/SbstnErhrdt/identity/models"
 	"github.com/graphql-go/graphql"
 )
 
@@ -37,7 +35,7 @@ var IdentityMutationObject = graphql.NewInputObject(graphql.InputObjectConfig{
 	},
 })
 
-func UpdateIdentityField(service controllers.IdentityService) *graphql.Field {
+func UpdateIdentityField(service identity_controllers.IdentityService) *graphql.Field {
 	field := graphql.Field{
 		Name:        "updateIdentity",
 		Description: "Update the identity of the current identity",
@@ -54,7 +52,7 @@ func UpdateIdentityField(service controllers.IdentityService) *graphql.Field {
 			if err != nil {
 				return nil, err
 			}
-			identity := models.Identity{}
+			identity := identity_models.Identity{}
 			err = json.Unmarshal(jsonString, &identity)
 			if err != nil {
 				return nil, err
@@ -67,7 +65,7 @@ func UpdateIdentityField(service controllers.IdentityService) *graphql.Field {
 			// overwrite uid
 			identity.UID = uid
 			// update
-			err = controllers.UpdateIdentity(service, &identity)
+			err = identity_controllers.UpdateIdentity(service, &identity)
 			return &identity, err
 		},
 	}

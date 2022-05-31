@@ -1,8 +1,7 @@
-package controllers
+package identity_controllers
 
 import (
 	"errors"
-	"github.com/SbstnErhrdt/identity/models"
 	"github.com/SbstnErhrdt/identity/security"
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
@@ -73,7 +72,7 @@ func Register(service IdentityService, emailAddress, password string, termAndCon
 		return
 	}
 	// create user
-	identity := models.Identity{
+	identity := identity_models.Identity{
 		Email:                      emailAddress,
 		AcceptConditionsAndPrivacy: termAndConditions,
 	}
@@ -92,7 +91,7 @@ func Register(service IdentityService, emailAddress, password string, termAndCon
 	logger.Debug("create identity in the database")
 	tx.Create(&identity)
 	// create confirmation
-	confirmation := models.IdentityRegistrationConfirmation{
+	confirmation := identity_models.IdentityRegistrationConfirmation{
 		Token:                 randomToken,
 		IdentityUID:           identity.UID,
 		ExpiredAt:             time.Now().UTC().Add(time.Hour * 12),
@@ -136,7 +135,7 @@ func RegistrationConfirmation(service IdentityService, token, userAgent, ip stri
 		"process": "ConfirmEmail",
 	})
 	// check if token is in table
-	tokenIdentityResult := models.IdentityRegistrationConfirmation{}
+	tokenIdentityResult := identity_models.IdentityRegistrationConfirmation{}
 	logger.Debug("find registration confirmation")
 	err = service.
 		GetSQLClient().
@@ -171,7 +170,7 @@ func RegistrationConfirmation(service IdentityService, token, userAgent, ip stri
 		return ErrRegistrationConfirmationExpired
 	}
 	// get identity
-	identity := models.Identity{}
+	identity := identity_models.Identity{}
 	logger.Debug("find identity")
 	err = service.
 		GetSQLClient().

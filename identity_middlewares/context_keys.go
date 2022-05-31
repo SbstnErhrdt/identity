@@ -1,4 +1,4 @@
-package middlewares
+package identity_middlewares
 
 // ContextKey defines a key type for context keys
 type ContextKey string

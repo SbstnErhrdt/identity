@@ -1,15 +1,14 @@
-package controllers
+package identity_controllers
 
 import (
 	"errors"
-	"github.com/SbstnErhrdt/identity/models"
 	"github.com/SbstnErhrdt/identity/security"
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 )
 
 // VerifyPassword verifies the user's password given the user object and the password
-func VerifyPassword(service IdentityService, user *models.Identity, password string) bool {
+func VerifyPassword(service IdentityService, user *identity_models.Identity, password string) bool {
 	return user.CheckPassword(service.GetPepper(), password)
 }
 
@@ -87,7 +86,7 @@ func ChangePassword(service IdentityService, identityUID uuid.UUID, oldPassword,
 var ErrCanNotChangePassword = errors.New("can not change password. please try again")
 
 // SetPasswordOfIdentity set the password of a user by its email
-func SetPasswordOfIdentity(service IdentityService, user *models.Identity, newPassword string) (err error) {
+func SetPasswordOfIdentity(service IdentityService, user *identity_models.Identity, newPassword string) (err error) {
 	// init logger
 	logger := log.WithFields(log.Fields{
 		"process": "SetPasswordOfIdentity",

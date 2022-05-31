@@ -1,14 +1,12 @@
 package communication
 
-import "github.com/SbstnErhrdt/identity/models"
-
 // Communication is the interface for communication (email/sms)
 type Communication interface {
-	Registration(identity models.Identity, urlWithToken string) error
-	RegistrationConfirmation(identity models.Identity) error
-	PasswordReset(identity models.Identity, urlWithPasswordResetToken string) error
-	PasswordResetConfirmation(identity models.Identity, urlWithPasswordResetToken string) error
-	IdentityChange(identity models.Identity, newIdentity string, urlWithConfirmationToken string) error
-	IdentityChangeConfirmation(identity models.Identity) error
-	IdentityChangeFinalConfirmation(identity models.Identity) error
+	Registration(identity identity_models.Identity, urlWithToken string) error
+	RegistrationConfirmation(identity identity_models.Identity) error
+	PasswordReset(identity identity_models.Identity, urlWithPasswordResetToken string) error
+	PasswordResetConfirmation(identity identity_models.Identity, urlWithPasswordResetToken string) error
+	IdentityChange(identity identity_models.Identity, newIdentity string, urlWithConfirmationToken string) error
+	IdentityChangeConfirmation(identity identity_models.Identity) error
+	IdentityChangeFinalConfirmation(identity identity_models.Identity) error
 }

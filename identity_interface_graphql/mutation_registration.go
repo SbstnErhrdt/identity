@@ -2,11 +2,10 @@ package identity_interface_graphql
 
 import (
 	"errors"
-	"github.com/SbstnErhrdt/identity/controllers"
 	"github.com/graphql-go/graphql"
 )
 
-func RegistrationField(service controllers.IdentityService) *graphql.Field {
+func RegistrationField(service identity_controllers.IdentityService) *graphql.Field {
 	field := graphql.Field{
 		Name:        "Registration",
 		Description: "Submit identity and password to retrieve a token",
@@ -61,7 +60,7 @@ func RegistrationField(service controllers.IdentityService) *graphql.Field {
 				return
 			}
 			// get token of registration
-			err = controllers.Register(service, identity, password, termsAndConditions, userAgent, ip, origin)
+			err = identity_controllers.Register(service, identity, password, termsAndConditions, userAgent, ip, origin)
 			return err == nil, err
 		},
 	}

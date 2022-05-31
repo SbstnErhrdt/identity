@@ -1,8 +1,7 @@
-package controllers
+package identity_controllers
 
 import (
 	"errors"
-	"github.com/SbstnErhrdt/identity/models"
 	"github.com/SbstnErhrdt/identity/security"
 	log "github.com/sirupsen/logrus"
 	"net/mail"
@@ -29,7 +28,7 @@ func InitResetPassword(service IdentityService, emailAddress, userAgent, ip, ori
 		logger.Error(err)
 		return err
 	}
-	resetPassword := models.IdentityResetPassword{
+	resetPassword := identity_models.IdentityResetPassword{
 		IdentityUID: res.UID,
 		Token:       token,
 		Expire:      time.Now().UTC().Add(time.Hour * 24),
@@ -99,7 +98,7 @@ func ResetPassword(service IdentityService, token, newPassword, newPasswordConfi
 	}
 
 	// get the token from the database
-	resetPassword := models.IdentityResetPassword{}
+	resetPassword := identity_models.IdentityResetPassword{}
 	err = service.GetSQLClient().Where("token = ?", token).First(&resetPassword).Error
 	if err != nil {
 		logger.Error(err)

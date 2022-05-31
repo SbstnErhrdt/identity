@@ -1,4 +1,4 @@
-package models
+package identity_models
 
 type TokenType string
 
