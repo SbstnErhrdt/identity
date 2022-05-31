@@ -1,5 +1,7 @@
 package communication
 
+import "github.com/SbstnErhrdt/identity/identity_models"
+
 // Communication is the interface for communication (email/sms)
 type Communication interface {
 	Registration(identity identity_models.Identity, urlWithToken string) error

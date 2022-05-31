@@ -2,6 +2,7 @@ package identity_controllers
 
 import (
 	"errors"
+	"github.com/SbstnErhrdt/identity/identity_models"
 	"github.com/SbstnErhrdt/identity/security"
 	log "github.com/sirupsen/logrus"
 	"net/mail"

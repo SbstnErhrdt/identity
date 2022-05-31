@@ -2,6 +2,7 @@ package identity_controllers
 
 import (
 	"github.com/SbstnErhrdt/env"
+	"github.com/SbstnErhrdt/identity/identity_models"
 	"github.com/SbstnErhrdt/identity/security"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"

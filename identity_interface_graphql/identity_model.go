@@ -2,6 +2,7 @@ package identity_interface_graphql
 
 import (
 	"errors"
+	"github.com/SbstnErhrdt/identity/identity_models"
 	"github.com/graphql-go/graphql"
 )
 

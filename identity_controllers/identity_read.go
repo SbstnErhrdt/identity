@@ -1,6 +1,7 @@
 package identity_controllers
 
 import (
+	"github.com/SbstnErhrdt/identity/identity_models"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"

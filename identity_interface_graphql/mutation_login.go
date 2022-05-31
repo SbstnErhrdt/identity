@@ -1,6 +1,7 @@
 package identity_interface_graphql
 
 import (
+	"github.com/SbstnErhrdt/identity/identity_controllers"
 	"github.com/graphql-go/graphql"
 	"strings"
 )

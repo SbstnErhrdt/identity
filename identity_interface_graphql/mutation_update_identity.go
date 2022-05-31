@@ -2,6 +2,8 @@ package identity_interface_graphql
 
 import (
 	"encoding/json"
+	"github.com/SbstnErhrdt/identity/identity_controllers"
+	"github.com/SbstnErhrdt/identity/identity_models"
 	"github.com/graphql-go/graphql"
 )
 
