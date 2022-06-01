@@ -124,7 +124,8 @@ func Register(service IdentityService, emailAddress, password string, termAndCon
 			Name:    emailAddress,
 			Address: emailAddress,
 		},
-		"Registration",
+		// todo: make subject dynamic based on mandate or client
+		"Registration Confirmation",
 		content)
 	return
 }
