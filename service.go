@@ -31,6 +31,19 @@ type ResolvePasswordResetEmailTemplate func(origin, emailAddress, token string) 
 // ResolveInvitationEmailTemplate resolves the invitation email template
 type ResolveInvitationEmailTemplate func(mandateUID uuid.UUID, clientUID *uuid.UUID, orgName, firstName, lastName, emailAddress, link string) email.InvitationEmailTemplate
 
+// ClearUserFn clears a user
+type ClearUserFn func(origin string) bool
+
+// AutoClearUserAfterRegistration automatically clears a user
+func AutoClearUserAfterRegistration(origin string) bool {
+	return true
+}
+
+// AutoBlockUserFn automatically clears a user
+func AutoBlockUserFn(origin string) bool {
+	return false
+}
+
 // Service is the identity service
 type Service struct {
 	Issuer                     string
@@ -48,6 +61,7 @@ type Service struct {
 	registrationEmailResolver  ResolveRegistrationEmailTemplate
 	passwordResetEmailResolver ResolvePasswordResetEmailTemplate
 	invitationEmailResolver    ResolveInvitationEmailTemplate
+	clearUserAfterRegistration ClearUserFn
 }
 
 // NewService inits a new identity service
@@ -61,6 +75,7 @@ func NewService(issuer string, senderEmailAddress mail.Address) *Service {
 		// fallback services
 		registrationEmailResolver:  email.DefaultRegistrationEmailResolver,
 		passwordResetEmailResolver: email.DefaultPasswordResetEmailResolver,
+		clearUserAfterRegistration: AutoClearUserAfterRegistration,
 	}
 	if s.Pepper == "PEPPER" {
 		log.Warn("please change the pepper value in the environment variable SECURITY_PEPPER")
@@ -98,6 +113,17 @@ func (s *Service) SetSQLClient(client *gorm.DB) *Service {
 func (s *Service) SetAuthConfirmationEndpoint(authConfirmationEndpoint string) *Service {
 	s.authConfirmationEndpoint = authConfirmationEndpoint
 	return s
+}
+
+// SetClearUserAfterRegistrationResolver sets clear after registration resolver
+func (s *Service) SetClearUserAfterRegistrationResolver(fn ClearUserFn) *Service {
+	s.clearUserAfterRegistration = fn
+	return s
+}
+
+// AutoClearUserAfterRegistration checks if a user is automatically cleared after registration
+func (s *Service) AutoClearUserAfterRegistration(origin string) bool {
+	return s.clearUserAfterRegistration(origin)
 }
 
 // SetRegistrationEmailResolver sets the registration email resolver

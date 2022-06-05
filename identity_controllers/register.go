@@ -86,6 +86,15 @@ func Register(service IdentityService, emailAddress, password string, termAndCon
 		err = ErrGenericRegistration
 		return
 	}
+	// Is the user is automatically cleared after the registration
+	if service.AutoClearUserAfterRegistration(origin) {
+		// user can directly log in after the registration confirmation
+		identity.Cleared = true
+	} else {
+		// user needs to be cleared manually by an administrator
+		identity.Cleared = false
+	}
+
 	// init transaction
 	tx := service.GetSQLClient().Begin()
 	// create user
@@ -185,10 +194,6 @@ func RegistrationConfirmation(service IdentityService, token, userAgent, ip stri
 	// confirm identity
 	// and activate user
 	identity.Active = true
-	// todo clear by administrator+
-	// the idea here is, that the user can be activated by the administrator
-	// or, depending on the initial setting, can be activated directly
-	identity.Cleared = true
 	// save identity
 	logger.Debug("updated identity")
 	err = service.
