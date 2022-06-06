@@ -1,4 +1,4 @@
-package communication
+package identity_communication
 
 import "github.com/SbstnErhrdt/identity/identity_models"
 

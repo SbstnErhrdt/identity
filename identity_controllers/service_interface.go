@@ -1,7 +1,7 @@
 package identity_controllers
 
 import (
-	"github.com/SbstnErhrdt/identity/communication/email"
+	"github.com/SbstnErhrdt/identity/identity_communication/email"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"net/mail"

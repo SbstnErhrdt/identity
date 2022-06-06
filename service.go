@@ -2,7 +2,7 @@ package identity
 
 import (
 	"github.com/SbstnErhrdt/env"
-	"github.com/SbstnErhrdt/identity/communication/email"
+	"github.com/SbstnErhrdt/identity/identity_communication/email"
 	"github.com/SbstnErhrdt/identity/identity_interface_graphql"
 	"github.com/SbstnErhrdt/identity/services"
 	"github.com/google/uuid"
