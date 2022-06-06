@@ -2,13 +2,9 @@ package email
 
 import (
 	"bytes"
-	"embed"
 	log "github.com/sirupsen/logrus"
 	"html/template"
 )
-
-//go:embed templates
-var passwordResetTemplate embed.FS
 
 // PasswordResetTemplate is the template for the password reset email.
 type PasswordResetTemplate struct {
@@ -36,7 +32,7 @@ func (obj *PasswordResetTemplate) Content() (html string, err error) {
 	// init buffer
 	var tpl bytes.Buffer
 	// Note the call to ParseFS instead of Parse
-	t, err := template.ParseFS(passwordResetTemplate, "templates/reset_password.gohtml")
+	t, err := template.ParseFS(Templates, "templates/reset_password.gohtml")
 	if err != nil {
 		log.Error(err)
 	}

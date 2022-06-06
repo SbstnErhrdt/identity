@@ -2,7 +2,6 @@ package email
 
 import (
 	"bytes"
-	"embed"
 	log "github.com/sirupsen/logrus"
 	"html/template"
 )
@@ -31,15 +30,12 @@ var DefaultGlobalTemplate = GlobalTemplate{
 	UnsubscribeLink:     "",
 }
 
-//go:embed templates
-var cssTemplate embed.FS // css template
-
 // Style returns the css of the email
 func (globalTemplate *GlobalTemplate) Style() (result template.HTML) {
 	// init buffer
 	var tpl bytes.Buffer
 	// Note the call to ParseFS instead of Parse
-	t, err := template.ParseFS(cssTemplate, "templates/style.gohtml")
+	t, err := template.ParseFS(Templates, "templates/style.gohtml")
 	if err != nil {
 		log.Error(err)
 	}

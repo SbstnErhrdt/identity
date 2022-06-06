@@ -2,13 +2,9 @@ package email
 
 import (
 	"bytes"
-	"embed"
 	log "github.com/sirupsen/logrus"
 	"html/template"
 )
-
-//go:embed templates
-var registrationTemplate embed.FS
 
 // RegistrationEmailTemplate is the template for the registration email
 type RegistrationEmailTemplate struct {
@@ -36,7 +32,7 @@ func (obj *RegistrationEmailTemplate) Content() (html string, err error) {
 	// init buffer
 	var tpl bytes.Buffer
 	// Note the call to ParseFS instead of Parse
-	t, err := template.ParseFS(registrationTemplate, "templates/registration.gohtml")
+	t, err := template.ParseFS(Templates, "templates/registration.gohtml")
 	if err != nil {
 		log.Error(err)
 	}

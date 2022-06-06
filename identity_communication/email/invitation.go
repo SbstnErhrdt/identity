@@ -2,15 +2,11 @@ package email
 
 import (
 	"bytes"
-	"embed"
 	"fmt"
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"html/template"
 )
-
-//go:embed templates
-var invitationTemplate embed.FS
 
 // InvitationEmailTemplate is the template for the invitation email
 type InvitationEmailTemplate struct {
@@ -42,7 +38,7 @@ func (obj *InvitationEmailTemplate) Content() (html string, err error) {
 	// init buffer
 	var tpl bytes.Buffer
 	// Note the call to ParseFS instead of Parse
-	t, err := template.ParseFS(invitationTemplate, "templates/invitation.gohtml")
+	t, err := template.ParseFS(Templates, "templates/invitation.gohtml")
 	if err != nil {
 		log.Error(err)
 	}
