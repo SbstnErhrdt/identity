@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"errors"
 	log "github.com/sirupsen/logrus"
+	"strings"
 )
 
 // ErrCannotGenerateRandomBytes is the error returned when we cannot generate a random string
@@ -40,5 +41,8 @@ func GenerateRandomString(s int) (string, error) {
 		log.Error(err)
 		return "", ErrCannotGenerateRandomString
 	}
-	return base64.URLEncoding.EncodeToString(b), err
+	// outlook has problems with == in the base64 string
+	// replace = with _ to avoid this
+	token := strings.Replace(base64.URLEncoding.EncodeToString(b), "=", "_", -1)
+	return token, err
 }
