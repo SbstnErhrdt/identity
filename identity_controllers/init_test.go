@@ -56,6 +56,8 @@ type Service struct {
 	invitationEmailResolver    ResolveInvitationEmailTemplate
 }
 
+func (s *Service) AutoClearUserAfterRegistration(origin string) bool { return false }
+
 // NewTestService inits a new identity service
 func NewTestService(issuer string, senderEmailAddress mail.Address) *Service {
 	s := Service{
