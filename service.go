@@ -5,7 +5,6 @@ import (
 	"github.com/SbstnErhrdt/identity/identity_communication/email"
 	"github.com/SbstnErhrdt/identity/identity_interface_graphql"
 	"github.com/SbstnErhrdt/identity/services"
-	"github.com/google/uuid"
 	"github.com/graphql-go/graphql"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
@@ -29,7 +28,7 @@ type ResolveRegistrationEmailTemplate func(origin, emailAddress, token string) e
 type ResolvePasswordResetEmailTemplate func(origin, emailAddress, token string) email.PasswordResetTemplate
 
 // ResolveInvitationEmailTemplate resolves the invitation email template
-type ResolveInvitationEmailTemplate func(mandateUID uuid.UUID, clientUID *uuid.UUID, orgName, firstName, lastName, emailAddress, link string) email.InvitationEmailTemplate
+type ResolveInvitationEmailTemplate func(origin, firstName, lastName, emailAddress, link string) email.InvitationEmailTemplate
 
 // ClearUserFn clears a user
 type ClearUserFn func(origin string) bool
@@ -189,6 +188,6 @@ func (s *Service) ResolvePasswordResetEmailTemplate(origin, emailAddress, confir
 }
 
 // ResolveInvitationEmailTemplate returns the invitation email template
-func (s *Service) ResolveInvitationEmailTemplate(mandateUID uuid.UUID, clientUID *uuid.UUID, orgName, firstName, lastName, emailAddress, link string) email.InvitationEmailTemplate {
-	return s.invitationEmailResolver(mandateUID, clientUID, orgName, firstName, lastName, emailAddress, link)
+func (s *Service) ResolveInvitationEmailTemplate(origin, firstName, lastName, emailAddress, link string) email.InvitationEmailTemplate {
+	return s.invitationEmailResolver(origin, firstName, lastName, emailAddress, link)
 }
