@@ -2,7 +2,6 @@ package identity_controllers
 
 import (
 	"github.com/SbstnErhrdt/identity/identity_communication/email"
-	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"net/mail"
 )
@@ -17,6 +16,6 @@ type IdentityService interface {
 	SendSMS(receiver string, content string) (err error)
 	ResolveRegistrationEmailTemplate(origin, emailAddress, confirmationUrl string) email.RegistrationEmailTemplate
 	ResolvePasswordResetEmailTemplate(origin, emailAddress, confirmationUrl string) email.PasswordResetTemplate
-	ResolveInvitationEmailTemplate(mandateUID uuid.UUID, clientUID *uuid.UUID, orgName, firstName, lastName, emailAddress, link string) email.InvitationEmailTemplate
+	ResolveInvitationEmailTemplate(origin, firstName, lastName, emailAddress, link string) email.InvitationEmailTemplate
 	AutoClearUserAfterRegistration(origin string) bool // checks if a user should be automatically cleared after registration
 }

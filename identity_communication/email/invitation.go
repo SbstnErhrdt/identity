@@ -3,7 +3,6 @@ package email
 import (
 	"bytes"
 	"fmt"
-	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"html/template"
 )
@@ -21,7 +20,7 @@ type InvitationEmailTemplate struct {
 }
 
 // DefaultInvitationEmailResolver is the default resolver for the invitation email
-func DefaultInvitationEmailResolver(mandateUID uuid.UUID, clientUID *uuid.UUID, orgName, firstName, lastName, emailAddress, link string) InvitationEmailTemplate {
+func DefaultInvitationEmailResolver(origin, firstName, lastName, emailAddress, link string) InvitationEmailTemplate {
 	return InvitationEmailTemplate{
 		GlobalTemplate: DefaultGlobalTemplate,
 		EmailOfNewUser: emailAddress,

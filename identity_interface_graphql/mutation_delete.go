@@ -9,13 +9,13 @@ import (
 // DeleteField is the graphql field for deleting an identity
 func DeleteField(service identity_controllers.IdentityService) *graphql.Field {
 	field := graphql.Field{
-		Name:        "DeleteIdentity",
+		Name:        "deleteIdentity",
 		Description: "Delete the current identity",
 		Type:        graphql.Boolean,
 		Args: graphql.FieldConfigArgument{
 			"password": &graphql.ArgumentConfig{
 				Type:        graphql.NewNonNull(graphql.String),
-				Description: "The password",
+				Description: "The current password",
 			},
 		},
 		Resolve: func(p graphql.ResolveParams) (i interface{}, err error) {

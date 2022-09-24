@@ -3,14 +3,13 @@ package identity_controllers
 import (
 	"encoding/csv"
 	"errors"
-	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"io"
 	"os"
 )
 
 // InviteCSV adds all users in a CSV file to the invite list
-func InviteCSV(service IdentityService, mandateUID uuid.UUID, clientUID *uuid.UUID, filePath string, orgName, subject, link string) (err error) {
+func InviteCSV(service IdentityService, origin, filePath, subject, link string) (err error) {
 	logger := log.WithFields(
 		log.Fields{
 			"func":    "InviteCSV",
@@ -58,7 +57,7 @@ func InviteCSV(service IdentityService, mandateUID uuid.UUID, clientUID *uuid.UU
 		// sanitize email
 		emailAddress = SanitizeEmail(emailAddress)
 
-		errInvite := InviteUser(service, mandateUID, clientUID, orgName, subject, firsName, lastName, emailAddress, link)
+		errInvite := InviteUser(service, origin, subject, firsName, lastName, emailAddress, link)
 		if errInvite != nil {
 			logger.WithFields(
 				log.Fields{

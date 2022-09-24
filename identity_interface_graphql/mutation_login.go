@@ -8,7 +8,7 @@ import (
 
 func LoginField(service identity_controllers.IdentityService) *graphql.Field {
 	field := graphql.Field{
-		Name:        "Login",
+		Name:        "login",
 		Description: "Submit identity and password to retrieve a token",
 		Type:        graphql.String,
 		Args: graphql.FieldConfigArgument{

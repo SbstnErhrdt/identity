@@ -20,7 +20,7 @@ type Mutations struct {
 func InitMutations(service identity_controllers.IdentityService) *Mutations {
 	gql := Mutations{
 		Login:                    LoginField(service),
-		Register:                 RegistrationField(service),
+		Register:                 RegisterField(service),
 		RegistrationConfirmation: RegistrationConfirmationField(service),
 		UpdateIdentity:           UpdateIdentityField(service),
 		ChangePassword:           ChangePasswordField(service),
@@ -33,13 +33,13 @@ func InitMutations(service identity_controllers.IdentityService) *Mutations {
 }
 
 func (gql *Mutations) GenerateMutationObjects(root *graphql.Object) {
-	root.AddFieldConfig("login", gql.Login)
-	root.AddFieldConfig("register", gql.Register)
-	root.AddFieldConfig("registrationConfirmation", gql.RegistrationConfirmation)
-	root.AddFieldConfig("updateIdentity", gql.UpdateIdentity)
-	root.AddFieldConfig("changePassword", gql.ChangePassword)
-	root.AddFieldConfig("initResetPassword", gql.InitResetPassword)
-	root.AddFieldConfig("confirmResetPassword", gql.ConfirmResetPassword)
-	root.AddFieldConfig("deleteIdentity", gql.DeleteIdentity)
-	root.AddFieldConfig("anonymizeIdentity", gql.AnonymizeIdentity)
+	root.AddFieldConfig(gql.Login.Name, gql.Login)
+	root.AddFieldConfig(gql.Register.Name, gql.Register)
+	root.AddFieldConfig(gql.RegistrationConfirmation.Name, gql.RegistrationConfirmation)
+	root.AddFieldConfig(gql.UpdateIdentity.Name, gql.UpdateIdentity)
+	root.AddFieldConfig(gql.ChangePassword.Name, gql.ChangePassword)
+	root.AddFieldConfig(gql.InitResetPassword.Name, gql.InitResetPassword)
+	root.AddFieldConfig(gql.ConfirmResetPassword.Name, gql.ConfirmResetPassword)
+	root.AddFieldConfig(gql.DeleteIdentity.Name, gql.DeleteIdentity)
+	root.AddFieldConfig(gql.AnonymizeIdentity.Name, gql.AnonymizeIdentity)
 }

@@ -8,7 +8,7 @@ import (
 // InitResetPasswordField initializes the reset password flow
 func InitResetPasswordField(service identity_controllers.IdentityService) *graphql.Field {
 	field := graphql.Field{
-		Name:        "InitPasswordReset",
+		Name:        "initPasswordReset",
 		Description: "Initialize the reset of the password of the identity",
 		Type:        graphql.Boolean,
 		Args: graphql.FieldConfigArgument{
@@ -47,7 +47,7 @@ func InitResetPasswordField(service identity_controllers.IdentityService) *graph
 // ConfirmResetPasswordField confirms the reset password flow
 func ConfirmResetPasswordField(service identity_controllers.IdentityService) *graphql.Field {
 	field := graphql.Field{
-		Name:        "ConfirmResetPassword",
+		Name:        "confirmResetPassword",
 		Description: "Uses the token and sets an new password",
 		Type:        graphql.Boolean,
 		Args: graphql.FieldConfigArgument{

@@ -9,13 +9,13 @@ import (
 // AnonymizeField is the graphql field to anonymize an identity
 func AnonymizeField(service identity_controllers.IdentityService) *graphql.Field {
 	field := graphql.Field{
-		Name:        "AnonymizeIdentity",
+		Name:        "anonymizeIdentity",
 		Description: "anonymize the current identity",
 		Type:        graphql.Boolean,
 		Args: graphql.FieldConfigArgument{
 			"password": &graphql.ArgumentConfig{
 				Type:        graphql.NewNonNull(graphql.String),
-				Description: "The password",
+				Description: "The current password",
 			},
 		},
 		Resolve: func(p graphql.ResolveParams) (i interface{}, err error) {

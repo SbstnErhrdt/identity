@@ -7,7 +7,7 @@ import (
 
 func RegistrationConfirmationField(service identity_controllers.IdentityService) *graphql.Field {
 	field := graphql.Field{
-		Name:        "RegistrationConfirmation",
+		Name:        "registrationConfirmation",
 		Description: "Confirm the token that was received via email",
 		Type:        graphql.Boolean,
 		Args: graphql.FieldConfigArgument{

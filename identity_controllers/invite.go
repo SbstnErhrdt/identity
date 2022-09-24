@@ -1,18 +1,16 @@
 package identity_controllers
 
 import (
-	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"net/mail"
 )
 
 // InviteUser invites a user to the system
-func InviteUser(service IdentityService, mandateUID uuid.UUID, clientUID *uuid.UUID, orgName, subject, firstName, lastName, emailAddress, link string) (err error) {
+func InviteUser(service IdentityService, origin, subject, firstName, lastName, emailAddress, link string) (err error) {
 	logger := log.WithFields(
 		log.Fields{
 			"method":       "InviteUser",
-			"mandateUID":   mandateUID,
-			"clientUID":    clientUID,
+			"origin":       origin,
 			"firstName":    firstName,
 			"lastName":     lastName,
 			"emailAddress": emailAddress,
@@ -22,7 +20,7 @@ func InviteUser(service IdentityService, mandateUID uuid.UUID, clientUID *uuid.U
 	// Build email template
 	logger.Debug("Build email template")
 	// resolve the email template
-	emailTemplate := service.ResolveInvitationEmailTemplate(mandateUID, clientUID, orgName, firstName, lastName, emailAddress, link)
+	emailTemplate := service.ResolveInvitationEmailTemplate(origin, firstName, lastName, emailAddress, link)
 	// generate the content of the email
 	content, err := emailTemplate.Content()
 	if err != nil {

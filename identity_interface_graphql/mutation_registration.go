@@ -6,9 +6,9 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
-func RegistrationField(service identity_controllers.IdentityService) *graphql.Field {
+func RegisterField(service identity_controllers.IdentityService) *graphql.Field {
 	field := graphql.Field{
-		Name:        "Registration",
+		Name:        "register",
 		Description: "Submit identity and password to retrieve a token",
 		Type:        graphql.Boolean,
 		Args: graphql.FieldConfigArgument{
