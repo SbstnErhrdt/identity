@@ -5,8 +5,22 @@ import (
 	"crypto/sha1"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/pbkdf2"
+	"strconv"
 	"unicode"
 )
+
+// MinPasswordLength is the minimum length of a password.
+const MinPasswordLength = 8
+
+// ErrLength is an error that is returned when the password is not 8 characters long
+var ErrLength = errors.New("password should have more than 8 characters.")
+
+// errLength is an error that is returned when the password is not the length of the MinPasswordLength
+func errLength() error {
+	// adapt the error message based on the length of the password
+	ErrLength = errors.New("password should have more than " + strconv.Itoa(MinPasswordLength) + " characters.")
+	return ErrLength
+}
 
 // HashPassword hashes the users password and also generates a specific salt per user
 func HashPassword(pepper string, password string, salt []byte) (hashedPassword []byte, hashedSalt []byte) {
@@ -23,9 +37,6 @@ func HashPassword(pepper string, password string, salt []byte) (hashedPassword [
 	return
 }
 
-// Err7Chars is an error that is returned when the password is not 7 characters long
-var Err7Chars = errors.New("password should have more than 7 characters.")
-
 // ErrNumeric is an error that is returned when the password does not contain any numeric characters
 var ErrNumeric = errors.New("password should have a minimum of 1 numeric character! e.g. 1,..,9,0.")
 
@@ -40,9 +51,9 @@ var ErrSpecial = errors.New("password should have a minimum of 1 special charact
 
 // CheckPasswordComplexity checks if the user password matches the conditions
 func CheckPasswordComplexity(password string) (err error) {
-	sevenMore, number, upper, lower, special := ValidatePassword(password)
-	if !sevenMore {
-		err = Err7Chars
+	pwLength, number, upper, lower, special := ValidatePassword(password)
+	if !pwLength {
+		err = errLength()
 		return err
 	}
 	if !number {
@@ -67,7 +78,7 @@ func CheckPasswordComplexity(password string) (err error) {
 
 // ValidatePassword validates the user's password
 // seven or more characters, special, ...
-func ValidatePassword(password string) (sevenOrMore, number, upper, lower, special bool) {
+func ValidatePassword(password string) (length, number, upper, lower, special bool) {
 	letters := 0
 	for _, s := range string(password) {
 		switch {
@@ -90,6 +101,6 @@ func ValidatePassword(password string) (sevenOrMore, number, upper, lower, speci
 			//return false, false, false, false
 		}
 	}
-	sevenOrMore = letters >= 7
+	length = letters >= MinPasswordLength
 	return
 }

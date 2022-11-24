@@ -3,7 +3,13 @@ package security
 import (
 	"crypto/rand"
 	"encoding/base64"
+	"errors"
+	log "github.com/sirupsen/logrus"
+	"strings"
 )
+
+// ErrCannotGenerateRandomBytes is the error returned when we cannot generate a random string
+var ErrCannotGenerateRandomBytes = errors.New("cannot generate random bytes")
 
 // GenerateRandomBytes returns securely generated random bytes.
 // It will return an error if the system's secure random
@@ -14,10 +20,15 @@ func GenerateRandomBytes(n int) ([]byte, error) {
 	_, err := rand.Read(b)
 	// Note that err == nil only if we read len(b) bytes.
 	if err != nil {
+		log.Error(err)
+		err = ErrCannotGenerateRandomBytes
 		return nil, err
 	}
 	return b, nil
 }
+
+// ErrCannotGenerateRandomString is the error returned when we cannot generate a random string
+var ErrCannotGenerateRandomString = errors.New("cannot generate random token")
 
 // GenerateRandomString returns a URL-safe, base64 encoded
 // securely generated random string.
@@ -26,5 +37,12 @@ func GenerateRandomBytes(n int) ([]byte, error) {
 // case the caller should not continue.
 func GenerateRandomString(s int) (string, error) {
 	b, err := GenerateRandomBytes(s)
-	return base64.URLEncoding.EncodeToString(b), err
+	if err != nil {
+		log.Error(err)
+		return "", ErrCannotGenerateRandomString
+	}
+	// outlook has problems with == in the base64 string
+	// replace = with _ to avoid this
+	token := strings.Replace(base64.URLEncoding.EncodeToString(b), "=", "_", -1)
+	return token, err
 }

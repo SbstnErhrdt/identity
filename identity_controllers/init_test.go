@@ -1,15 +1,21 @@
-package identity
+package identity_controllers
 
 import (
 	"github.com/SbstnErhrdt/env"
 	"github.com/SbstnErhrdt/identity/identity_communication/email"
-	"github.com/SbstnErhrdt/identity/identity_interface_graphql"
 	"github.com/SbstnErhrdt/identity/services"
 	"github.com/graphql-go/graphql"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"net/mail"
 )
+
+var s *Service
+
+func init() {
+	addr, _ := mail.ParseAddress("no-reply@rise-workshop.com")
+	s = NewTestService("RISE", *addr)
+}
 
 // IdentificationType is the type of the identification
 type IdentificationType string
@@ -30,19 +36,6 @@ type ResolvePasswordResetEmailTemplate func(origin, emailAddress, token string) 
 // ResolveInvitationEmailTemplate resolves the invitation email template
 type ResolveInvitationEmailTemplate func(origin, firstName, lastName, emailAddress, link string) email.InvitationEmailTemplate
 
-// ClearUserFn clears a user
-type ClearUserFn func(origin string) bool
-
-// AutoClearUserAfterRegistration automatically clears a user
-func AutoClearUserAfterRegistration(origin string) bool {
-	return true
-}
-
-// AutoBlockUserFn automatically clears a user
-func AutoBlockUserFn(origin string) bool {
-	return false
-}
-
 // Service is the identity service
 type Service struct {
 	Issuer                     string
@@ -60,11 +53,12 @@ type Service struct {
 	registrationEmailResolver  ResolveRegistrationEmailTemplate
 	passwordResetEmailResolver ResolvePasswordResetEmailTemplate
 	invitationEmailResolver    ResolveInvitationEmailTemplate
-	clearUserAfterRegistration ClearUserFn
 }
 
-// NewService inits a new identity service
-func NewService(issuer string, senderEmailAddress mail.Address) *Service {
+func (s *Service) AutoClearUserAfterRegistration(origin string) bool { return false }
+
+// NewTestService inits a new identity service
+func NewTestService(issuer string, senderEmailAddress mail.Address) *Service {
 	s := Service{
 		Issuer:                    issuer,
 		Pepper:                    env.FallbackEnvVariable("SECURITY_PEPPER", "PEPPER"),
@@ -74,7 +68,7 @@ func NewService(issuer string, senderEmailAddress mail.Address) *Service {
 		// fallback services
 		registrationEmailResolver:  email.DefaultRegistrationEmailResolver,
 		passwordResetEmailResolver: email.DefaultPasswordResetEmailResolver,
-		clearUserAfterRegistration: AutoClearUserAfterRegistration,
+		invitationEmailResolver:    email.DefaultInvitationEmailResolver,
 	}
 	if s.Pepper == "PEPPER" {
 		log.Warn("please change the pepper value in the environment variable SECURITY_PEPPER")
@@ -84,21 +78,11 @@ func NewService(issuer string, senderEmailAddress mail.Address) *Service {
 
 // SetGraphQLQueryInterface sets the graphql query interface
 func (s *Service) SetGraphQLQueryInterface(rootQueryObject *graphql.Object) *Service {
-	s.gqlRootObject = rootQueryObject
-	// init queries
-	q := identity_interface_graphql.InitGraphQlQueries(s)
-	// connect to root query object
-	q.GenerateQueryObjects(s.gqlRootObject)
 	return s
 }
 
 // SetGraphQLMutationInterface sets the graphql mutation interface
 func (s *Service) SetGraphQLMutationInterface(rootMutationObject *graphql.Object) *Service {
-	s.gqlRootMutationObject = rootMutationObject
-	// init mutations
-	q := identity_interface_graphql.InitMutations(s)
-	// connect to root mutation object
-	q.GenerateMutationObjects(rootMutationObject)
 	return s
 }
 
@@ -114,20 +98,15 @@ func (s *Service) SetAuthConfirmationEndpoint(authConfirmationEndpoint string) *
 	return s
 }
 
-// SetClearUserAfterRegistrationResolver sets clear after registration resolver
-func (s *Service) SetClearUserAfterRegistrationResolver(fn ClearUserFn) *Service {
-	s.clearUserAfterRegistration = fn
-	return s
-}
-
-// AutoClearUserAfterRegistration checks if a user is automatically cleared after registration
-func (s *Service) AutoClearUserAfterRegistration(origin string) bool {
-	return s.clearUserAfterRegistration(origin)
-}
-
 // SetRegistrationEmailResolver sets the registration email resolver
 func (s *Service) SetRegistrationEmailResolver(fn ResolveRegistrationEmailTemplate) *Service {
 	s.registrationEmailResolver = fn
+	return s
+}
+
+// SetInvitationEmailResolver sets the registration email resolver
+func (s *Service) SetInvitationEmailResolver(fn ResolveInvitationEmailTemplate) *Service {
+	s.invitationEmailResolver = fn
 	return s
 }
 

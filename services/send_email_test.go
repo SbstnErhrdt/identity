@@ -12,8 +12,8 @@ func TestSend(t *testing.T) {
 		Name:    "test@erhardt.net",
 		Address: "test@erhardt.net",
 	}, mail.Address{
-		Name:    "erhardt.sebastian@gmail.com",
-		Address: "erhardt.sebastian@gmail.com",
+		Name:    "test@erhardt.net",
+		Address: "test@erhardt.net",
 	}, "Hello World Test", "Wow it works")
 	ass.NoError(err)
 }

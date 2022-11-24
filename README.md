@@ -95,12 +95,10 @@ The following short guidelines can be used as a quick reference to protect the f
 * Do not make a change to the account until a valid token is presented, such as locking out the account
 
 
-### Process
-
-1. 
-2. Generate Token
-3. Send Email with confirmation token link
-4. Reset password
+#### Process
+1. Generate Token
+2. Send Email with password change confirmation token link
+3. Reset password
 
 ### Change Email
 

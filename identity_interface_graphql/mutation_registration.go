@@ -2,13 +2,13 @@ package identity_interface_graphql
 
 import (
 	"errors"
-	"github.com/SbstnErhrdt/identity/controllers"
+	"github.com/SbstnErhrdt/identity/identity_controllers"
 	"github.com/graphql-go/graphql"
 )
 
-func RegistrationField(service controllers.IdentityService) *graphql.Field {
+func RegisterField(service identity_controllers.IdentityService) *graphql.Field {
 	field := graphql.Field{
-		Name:        "Registration",
+		Name:        "register",
 		Description: "Submit identity and password to retrieve a token",
 		Type:        graphql.Boolean,
 		Args: graphql.FieldConfigArgument{
@@ -32,21 +32,18 @@ func RegistrationField(service controllers.IdentityService) *graphql.Field {
 		Resolve: func(p graphql.ResolveParams) (i interface{}, err error) {
 			// from context
 			// agent
-			userAgent, ok := p.Context.Value("USER_AGENT").(string)
-			if !ok {
-				err = errors.New("can not extract agent from context")
+			userAgent, err := GetUserAgentFromContext(&p)
+			if err != nil {
 				return
 			}
 			// ip
-			ip, ok := p.Context.Value("USER_IP").(string)
-			if !ok {
-				err = errors.New("can not extract ip from context")
+			ip, err := GetIpFromContext(&p)
+			if err != nil {
 				return
 			}
-			// ip
-			origin, ok := p.Context.Value("ORIGIN").(string)
-			if !ok {
-				err = errors.New("can not extract origin from context")
+			// origin
+			origin, err := GetOriginFromContext(&p)
+			if err != nil {
 				return
 			}
 			// parameters
@@ -64,7 +61,7 @@ func RegistrationField(service controllers.IdentityService) *graphql.Field {
 				return
 			}
 			// get token of registration
-			err = controllers.Register(service, identity, password, termsAndConditions, userAgent, ip, origin)
+			err = identity_controllers.Register(service, identity, password, termsAndConditions, userAgent, ip, origin)
 			return err == nil, err
 		},
 	}

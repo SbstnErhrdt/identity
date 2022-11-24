@@ -1,14 +1,13 @@
 package identity_interface_graphql
 
 import (
-	"errors"
-	"github.com/SbstnErhrdt/identity/controllers"
+	"github.com/SbstnErhrdt/identity/identity_controllers"
 	"github.com/graphql-go/graphql"
 )
 
-func RegistrationConfirmationField(service controllers.IdentityService) *graphql.Field {
+func RegistrationConfirmationField(service identity_controllers.IdentityService) *graphql.Field {
 	field := graphql.Field{
-		Name:        "RegistrationConfirmation",
+		Name:        "registrationConfirmation",
 		Description: "Confirm the token that was received via email",
 		Type:        graphql.Boolean,
 		Args: graphql.FieldConfigArgument{
@@ -20,21 +19,19 @@ func RegistrationConfirmationField(service controllers.IdentityService) *graphql
 		Resolve: func(p graphql.ResolveParams) (i interface{}, err error) {
 			// from context
 			// agent
-			userAgent, ok := p.Context.Value("USER_AGENT").(string)
-			if !ok {
-				err = errors.New("can not extract agent from context")
+			userAgent, err := GetUserAgentFromContext(&p)
+			if err != nil {
 				return
 			}
 			// ip
-			ip, ok := p.Context.Value("USER_IP").(string)
-			if !ok {
-				err = errors.New("can not extract ip from context")
+			ip, err := GetIpFromContext(&p)
+			if err != nil {
 				return
 			}
 			// params
 			token := p.Args["token"].(string)
 			// login
-			err = controllers.RegistrationConfirmation(service, token, userAgent, ip)
+			err = identity_controllers.RegistrationConfirmation(service, token, userAgent, ip)
 			return err == nil, err
 		},
 	}
