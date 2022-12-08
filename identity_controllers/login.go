@@ -91,9 +91,9 @@ func Login(service IdentityService, emailAddress, password, userAgent, ip string
 		return "", err
 	}
 
-	// check if identity is already leared
+	// check if identity is already not cleared
 	logger.Debug("check if identity is cleared")
-	if identity.Cleared {
+	if !identity.Cleared {
 		err = ErrUserCleared
 		logger.Warn(err)
 		return "", err
