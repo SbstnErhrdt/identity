@@ -18,6 +18,9 @@ var ErrLoginFailed = errors.New("login failed; please try again")
 // ErrUserBlocked is returned when the user is blocked
 var ErrUserBlocked = errors.New("this identity can not login. please contact the support")
 
+// ErrUserCleared is returned when the user is not cleared
+var ErrUserCleared = errors.New("this identity can not login at the moment. It must be cleared by the admin first")
+
 // ErrEmailNotVerified is returned when the user email is not verified
 var ErrEmailNotVerified = errors.New("the email address is not confirmed yet")
 
@@ -84,6 +87,14 @@ func Login(service IdentityService, emailAddress, password, userAgent, ip string
 	logger.Debug("check if identity is not blocked")
 	if identity.Blocked {
 		err = ErrUserBlocked
+		logger.Warn(err)
+		return "", err
+	}
+
+	// check if identity is already leared
+	logger.Debug("check if identity is cleared")
+	if identity.Cleared {
+		err = ErrUserCleared
 		logger.Warn(err)
 		return "", err
 	}
