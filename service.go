@@ -9,10 +9,17 @@ import (
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"net/mail"
+	"os"
 )
 
 // IdentificationType is the type of the identification
 type IdentificationType string
+
+func init() {
+	if os.Getenv("SECURITY_PEPPER") == "PEPPER" {
+		log.Warn("please change the pepper value in the environment variable SECURITY_PEPPER")
+	}
+}
 
 const (
 	// EmailIdentificationType is the type of identification that is used to identify a user by email
@@ -75,9 +82,6 @@ func NewService(issuer string, senderEmailAddress mail.Address) *Service {
 		registrationEmailResolver:  email.DefaultRegistrationEmailResolver,
 		passwordResetEmailResolver: email.DefaultPasswordResetEmailResolver,
 		clearUserAfterRegistration: AutoClearUserAfterRegistration,
-	}
-	if s.Pepper == "PEPPER" {
-		log.Warn("please change the pepper value in the environment variable SECURITY_PEPPER")
 	}
 	return &s
 }

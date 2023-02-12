@@ -5,7 +5,6 @@ import (
 	"github.com/SbstnErhrdt/identity/identity_communication/email"
 	"github.com/SbstnErhrdt/identity/services"
 	"github.com/graphql-go/graphql"
-	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"net/mail"
 )
@@ -69,9 +68,6 @@ func NewTestService(issuer string, senderEmailAddress mail.Address) *Service {
 		registrationEmailResolver:  email.DefaultRegistrationEmailResolver,
 		passwordResetEmailResolver: email.DefaultPasswordResetEmailResolver,
 		invitationEmailResolver:    email.DefaultInvitationEmailResolver,
-	}
-	if s.Pepper == "PEPPER" {
-		log.Warn("please change the pepper value in the environment variable SECURITY_PEPPER")
 	}
 	return &s
 }
