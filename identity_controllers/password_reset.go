@@ -12,21 +12,21 @@ import (
 // InitResetPassword inits the password reset process
 func InitResetPassword(service IdentityService, emailAddress, userAgent, ip, origin string) (err error) {
 	// init logger
-	logger := log.WithFields(log.Fields{
+	logger := service.GetLogger().WithFields(log.Fields{
 		"email":   emailAddress,
 		"process": "InitResetPassword",
 	})
 	// get identity
 	res, err := GetIdentityByEmail(service, emailAddress)
 	if err != nil {
-		logger.Error(err)
+		logger.WithError(err).Error("could not get identity")
 		// OWASP: return no error if the user does not exist
 		return nil
 	}
 	// create database entry
 	token, err := security.GenerateRandomString(32)
 	if err != nil {
-		logger.Error(err)
+		logger.WithError(err).Error("could not generate token")
 		return err
 	}
 	resetPassword := identity_models.IdentityResetPassword{
@@ -67,7 +67,7 @@ func InitResetPassword(service IdentityService, emailAddress, userAgent, ip, ori
 }
 
 // ErrTokenExpired is returned when the token is expired
-var ErrTokenExpired = errors.New("security token expired. Please request a new password reset")
+var ErrTokenExpired = errors.New("security token expired. Please initialize a new password reset")
 
 // ErrTokenUsed is returned when the token was used
 var ErrTokenUsed = errors.New("security token already used. Please request a new password reset")

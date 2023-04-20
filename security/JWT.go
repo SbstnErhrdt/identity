@@ -2,7 +2,7 @@ package security
 
 import (
 	"github.com/SbstnErhrdt/env"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"

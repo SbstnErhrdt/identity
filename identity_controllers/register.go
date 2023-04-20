@@ -19,6 +19,9 @@ var ErrAcceptTermsAndConditions = errors.New("please accept the terms and condit
 // ErrGenericRegistration message
 var ErrGenericRegistration = errors.New("there was a problem during the registration process. Please try again")
 
+// ErrRegistrationIsNotAllowed is returned when the system does not allow registration
+var ErrRegistrationIsNotAllowed = errors.New("registration is not allowed. Please contact the administrator")
+
 // Register registers a new user
 func Register(service IdentityService, emailAddress, password string, termAndConditions bool, userAgent, ip, origin string) (err error) {
 	// sanitize input
@@ -28,10 +31,16 @@ func Register(service IdentityService, emailAddress, password string, termAndCon
 		"email":   emailAddress,
 		"process": "Register",
 	})
+	// checks if users can register
+	if !service.AllowRegistration(origin) {
+		err = ErrRegistrationIsNotAllowed
+		logger.WithError(err).Warn("registration is not allowed")
+		return
+	}
 	// check login data
 	if len(emailAddress) == 0 {
 		err = ErrNoEmail
-		logger.Error(err)
+		logger.WithError(err).Error("no email address")
 		return
 	}
 	if len(password) == 0 {
@@ -172,7 +181,7 @@ func RegistrationConfirmation(service IdentityService, token, userAgent, ip stri
 			return
 		}
 		// delete account
-		errAccount := deleteAccount(service, identity)
+		errAccount := softDeleteAccount(service, identity)
 		if errAccount != nil {
 			err = errAccount
 			logger.Error(err)

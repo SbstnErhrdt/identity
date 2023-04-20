@@ -37,12 +37,12 @@ func (globalTemplate *GlobalTemplate) Style() (result template.HTML) {
 	// Note the call to ParseFS instead of Parse
 	t, err := template.ParseFS(Templates, "templates/style.gohtml")
 	if err != nil {
-		log.Error(err)
+		log.WithError(err).Error("could not parse template")
 	}
 	// run template engine
 	err = t.Execute(&tpl, globalTemplate)
 	if err != nil {
-		log.Error(err)
+		log.WithError(err).Error("could not execute template")
 	}
 	result = template.HTML(tpl.String())
 	return

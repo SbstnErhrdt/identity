@@ -7,6 +7,6 @@ import (
 
 func TestInviteUser(t *testing.T) {
 	ass := assert.New(t)
-	err := InviteUser(s, "rise-workshop.com", "Invitation", "Sebastian", "Erhardt", "test@erhardt.net", "https://erhardt.net")
+	err := InviteUser(testService, "erhardt.net", "Invitation", "Sebastian", "Erhardt", "test@erhardt.net", "https://erhardt.net")
 	ass.NoError(err)
 }

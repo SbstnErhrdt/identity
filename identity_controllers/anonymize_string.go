@@ -5,8 +5,8 @@ import (
 	"encoding/hex"
 )
 
-// Hash provides a SHA1 hash of the request body
-func Hash(s string) string {
+// AnonymizeString provides a SHA1 hash of the request body
+func AnonymizeString(s string) string {
 	// The pattern for generating a hash is `sha1.New()`,
 	// `sha1.Write(bytes)`, then `sha1.Sum([]byte{})`.
 	// Here we start with a new hash.

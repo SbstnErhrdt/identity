@@ -9,17 +9,17 @@ import (
 	"gorm.io/gorm"
 )
 
-// ErrLoginFailedInvalidUserOrPassword is returned when the user or password is invalid
-var ErrLoginFailedInvalidUserOrPassword = errors.New("login failed; Invalid user ID or password")
+// ErrExternalLoginFailedInvalidUserOrPassword is returned when the user or password is invalid
+var ErrExternalLoginFailedInvalidUserOrPassword = errors.New("login failed; Invalid user ID or password")
 
-// ErrLoginFailed is returned when the login failed and the reason should not be exposed to the user
-var ErrLoginFailed = errors.New("login failed; please try again")
+// ErrExternalLoginFailed is returned when the login failed and the reason should not be exposed to the user
+var ErrExternalLoginFailed = errors.New("login failed; please try again")
 
-// ErrUserBlocked is returned when the user is blocked
-var ErrUserBlocked = errors.New("this identity can not login. please contact the support")
+// ErrExternalUserBlocked is returned when the user is blocked
+var ErrExternalUserBlocked = errors.New("this identity can not login. Please contact the support")
 
-// ErrUserCleared is returned when the user is not cleared
-var ErrUserCleared = errors.New("this identity can not login at the moment. It must be cleared by the admin first")
+// ErrExternalUserCleared is returned when the user is not cleared
+var ErrExternalUserCleared = errors.New("this identity can not login at the moment. It must be cleared by the admin first")
 
 // ErrEmailNotVerified is returned when the user email is not verified
 var ErrEmailNotVerified = errors.New("the email address is not confirmed yet")
@@ -30,23 +30,28 @@ var ErrIdentityNotFound = errors.New("identity not found")
 // ErrWrongPassword is returned when the password is wrong
 var ErrWrongPassword = errors.New("wrong password")
 
+// ErrExternalUserLoginNotPossible is returned when the user can not log in
+var ErrExternalUserLoginNotPossible = errors.New("login currently not possible. Please try again later")
+
 // Login logs in a user and returns a JWT token
 func Login(service IdentityService, emailAddress, password, userAgent, ip string) (token string, err error) {
 	// sanitize input
 	emailAddress = SanitizeEmail(emailAddress)
 	// init logger
-	logger := log.WithFields(log.Fields{
+	logger := service.GetLogger().WithFields(log.Fields{
 		"identity": emailAddress,
 		"process":  "Login",
 	})
 	// check login data
 	if len(emailAddress) == 0 {
-		logger.Error(ErrNoEmail)
-		return "", ErrNoEmail
+		err = ErrNoEmail
+		logger.WithError(err).Error("no email address")
+		return "", err
 	}
 	if len(password) == 0 {
-		logger.Error(ErrNoPassword)
-		return "", ErrNoPassword
+		err = ErrNoPassword
+		logger.WithError(err).Error("no password")
+		return "", err
 	}
 	// track login attempt
 	logger.Debug("track login attempt")
@@ -57,8 +62,8 @@ func Login(service IdentityService, emailAddress, password, userAgent, ip string
 	}
 	err = service.GetSQLClient().Create(&loginAttempt).Error
 	if err != nil {
-		logger.Error(err)
-		return "", err
+		logger.WithError(err).Error("could not track login attempt")
+		return "", ErrExternalUserLoginNotPossible
 	}
 	// Check if identity exists
 	// init identity object
@@ -72,30 +77,30 @@ func Login(service IdentityService, emailAddress, password, userAgent, ip string
 		Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		err = ErrIdentityNotFound
-		logger.Error(err)
+		logger.WithError(err).Error("could not find identity")
 		// OWASP: generic error message if user does not exist
-		err = ErrLoginFailedInvalidUserOrPassword
+		err = ErrExternalLoginFailedInvalidUserOrPassword
 		return "", err
 	} else if err != nil {
-		logger.Error(err)
+		logger.WithError(err).Error("could not find identity")
 		// OWASP: generic error message
-		err = ErrLoginFailed
+		err = ErrExternalLoginFailed
 		return "", err
 	}
 
 	// check if identity is not blocked
 	logger.Debug("check if identity is not blocked")
 	if identity.Blocked {
-		err = ErrUserBlocked
-		logger.Warn(err)
+		err = ErrExternalUserBlocked
+		logger.WithError(err).Warn("identity is blocked")
 		return "", err
 	}
 
 	// check if identity is already not cleared
 	logger.Debug("check if identity is cleared")
 	if !identity.Cleared {
-		err = ErrUserCleared
-		logger.Warn(err)
+		err = ErrExternalUserCleared
+		logger.WithError(err).Warn("identity is not cleared")
 		return "", err
 	}
 
@@ -103,7 +108,7 @@ func Login(service IdentityService, emailAddress, password, userAgent, ip string
 	logger.Debug("check if identity is activated")
 	if !identity.Active {
 		err = ErrEmailNotVerified
-		logger.Warn(err)
+		logger.WithError(err).Warn("identity is not activated")
 		return "", err
 	}
 
@@ -113,7 +118,7 @@ func Login(service IdentityService, emailAddress, password, userAgent, ip string
 		err = ErrWrongPassword
 		logger.Error(err)
 		// OWASP: return generic error message
-		err = ErrLoginFailedInvalidUserOrPassword
+		err = ErrExternalLoginFailedInvalidUserOrPassword
 		return "", err
 	}
 
@@ -124,7 +129,7 @@ func Login(service IdentityService, emailAddress, password, userAgent, ip string
 	if errToken != nil {
 		logger.Error(errToken)
 		// OWASP: generic error message
-		err = ErrLoginFailed
+		err = ErrExternalLoginFailed
 		return "", errToken
 	}
 
@@ -137,7 +142,7 @@ func Login(service IdentityService, emailAddress, password, userAgent, ip string
 	if errToken != nil {
 		logger.Error(errTokenMet)
 		// OWASP: generic error message
-		err = ErrLoginFailed
+		err = ErrExternalLoginFailed
 		return "", errTokenMet
 	}
 
