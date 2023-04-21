@@ -2,15 +2,21 @@ package identity_controllers
 
 import (
 	"fmt"
+	"github.com/SbstnErhrdt/env"
+	"github.com/SbstnErhrdt/identity/identity_install"
+	"github.com/SbstnErhrdt/identity/identity_models"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 	"net/mail"
 	"os"
 	"time"
 )
 
-const testUserEmail = "test@erhardt.net"
+var testUserEmail string = ""
+var testSenderEmail string = ""
+var testAdminEmail string = ""
 
 // testService is the test service
 var testService *ControllerService
@@ -19,16 +25,28 @@ var testService *ControllerService
 var DbConnection *gorm.DB
 
 func init() {
-	testEmailSender := os.Getenv("TEST_IDENTITY_EMAIL_SENDER")
+
+	env.LoadEnvFiles("../test/.env")
+	env.CheckRequiredEnvironmentVariables(
+		"TEST_SENDER_EMAIL",
+		"TEST_USER_EMAIL",
+		"TEST_ADMIN_EMAIL",
+	)
+
+	testSenderEmail = os.Getenv("TEST_SENDER_EMAIL")
+	testUserEmail = os.Getenv("TEST_USER_EMAIL")
+	testAdminEmail = os.Getenv("TEST_ADMIN_EMAIL")
 
 	testService = NewService("Identity-Test", mail.Address{
 		Name:    "Test-Sender",
-		Address: testEmailSender,
+		Address: testSenderEmail,
 	})
+	testService.SetAdminEmail(testAdminEmail)
 
 	// connect to database
 	ConnectToDbAndRetry()
 	testService.SetSQLClient(DbConnection)
+	install()
 }
 
 const maxRetry = 5
@@ -72,4 +90,29 @@ func connectToDb() (err error) {
 	}
 	DbConnection = db
 	return
+}
+
+func install() {
+	err := identity_install.Install(DbConnection)
+	if err != nil {
+		log.WithError(err).Fatal("failed to install database")
+	}
+}
+
+func EmptyTable(s schema.Tabler) (err error) {
+	return DbConnection.Exec(fmt.Sprintf("DELETE FROM %s", s.TableName())).Error
+}
+
+func EmptyIdentityTable() {
+	err := EmptyTable(&identity_models.Identity{})
+	if err != nil {
+		log.WithError(err).Error("failed to empty identity table")
+	}
+}
+
+func EmptyRegistrationConfirmationTable() {
+	err := EmptyTable(&identity_models.IdentityRegistrationConfirmation{})
+	if err != nil {
+		log.WithError(err).Error("failed to empty identity table")
+	}
 }

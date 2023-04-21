@@ -94,7 +94,9 @@ func NewService(issuer string, senderEmailAddress mail.Address) *ControllerServi
 		// fallback services
 		registrationEmailResolver:  email.DefaultRegistrationEmailResolver,
 		passwordResetEmailResolver: email.DefaultPasswordResetEmailResolver,
+		invitationEmailResolver:    email.DefaultInvitationEmailResolver,
 		clearUserAfterRegistration: AutoClearUserAfterRegistration,
+		allowRegistration:          DefaultAllowRegistration,
 		// default values
 		expirationRegistration:  24 * time.Hour,
 		expirationPasswordReset: 3 * time.Hour,
@@ -214,4 +216,8 @@ func (s *ControllerService) ResolveInvitationEmailTemplate(origin, firstName, la
 // AllowRegistration checks if users can register
 func (s *ControllerService) AllowRegistration(origin string) bool {
 	return s.allowRegistration(origin)
+}
+
+func DefaultAllowRegistration(origin string) bool {
+	return true
 }

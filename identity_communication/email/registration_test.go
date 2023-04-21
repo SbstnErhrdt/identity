@@ -2,16 +2,17 @@ package email
 
 import (
 	"github.com/stretchr/testify/assert"
-	"io/ioutil"
+	"strings"
 	"testing"
 )
 
 func TestDefaultRegistrationEmailResolver(t *testing.T) {
 	ass := assert.New(t)
-	res := DefaultRegistrationEmailResolver("test.local", "test@test.local", "tokenXYZ")
+	email := "test@test.local"
+	token := "tokenXYZ"
+	res := DefaultRegistrationEmailResolver("test.local", email, token)
 	html, err := res.Content()
 	ass.NoError(err)
-	data := []byte(html)
-	err = ioutil.WriteFile("./test_results/registration_confirmation.html", data, 0666)
-	ass.NoError(err)
+	ass.True(strings.Contains(html, email))
+	ass.True(strings.Contains(html, token))
 }

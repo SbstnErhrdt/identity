@@ -1,10 +1,15 @@
 package services
 
 import (
+	"github.com/SbstnErhrdt/env"
 	"github.com/stretchr/testify/assert"
 	"net/mail"
 	"testing"
 )
+
+func init() {
+	env.LoadEnvFiles("../test/.env")
+}
 
 func TestSend(t *testing.T) {
 	ass := assert.New(t)

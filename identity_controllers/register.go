@@ -148,6 +148,8 @@ func Register(service IdentityService, emailAddress, password string, termAndCon
 	return
 }
 
+var ErrExternalNoRegistrationToken = errors.New("no registration token found in the database. Please re-register")
+
 // RegistrationConfirmation confirms a registration
 func RegistrationConfirmation(service IdentityService, token, userAgent, ip string) (err error) {
 	logger := log.WithFields(log.Fields{
@@ -163,6 +165,7 @@ func RegistrationConfirmation(service IdentityService, token, userAgent, ip stri
 		First(&tokenIdentityResult).Error
 	if err != nil {
 		logger.Error(err)
+		err = ErrExternalNoRegistrationToken
 		return
 	}
 	// check if identity was already confirmed
