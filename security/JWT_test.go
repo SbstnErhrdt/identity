@@ -61,7 +61,7 @@ func TestParseToken(t *testing.T) {
 	ass.NotEmpty(tokenUUUID)
 	res, err := ParseToken(tokenString)
 	ass.NoError(err)
-	ass.Equal(testUID, res["sub"])
+	ass.Equal(testUID.String(), res["sub"])
 	ass.Equal("ERHARDT", res["iss"])
 	p := res["payload"].(map[string]interface{})
 	ass.True(p["admin"].(bool))
