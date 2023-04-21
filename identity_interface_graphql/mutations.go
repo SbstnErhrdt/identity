@@ -17,7 +17,7 @@ type Mutations struct {
 	AnonymizeIdentity        *graphql.Field
 }
 
-func InitMutations(service identity_controllers.IdentityService) *Mutations {
+func InitGraphQlMutations(service identity_controllers.IdentityService) *Mutations {
 	gql := Mutations{
 		Login:                    LoginField(service),
 		Register:                 RegisterField(service),

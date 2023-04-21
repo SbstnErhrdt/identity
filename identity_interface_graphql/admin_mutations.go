@@ -17,7 +17,7 @@ type AdminMutations struct {
 	UpdateUser    *graphql.Field
 }
 
-func InitAdminMutations(service identity_controllers.IdentityService) *AdminMutations {
+func InitAdminGraphQlMutations(service identity_controllers.IdentityService) *AdminMutations {
 	gql := AdminMutations{
 		Invite: InviteField(service),
 	}
