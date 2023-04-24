@@ -23,6 +23,8 @@ func ReadAllUsers(service IdentityService, adminUID uuid.UUID, keyword string, o
 	// Order by
 	if len(orderBy) > 0 {
 		query = query.Order(orderBy)
+	} else {
+		query = query.Order("created_at DESC")
 	}
 	// Extract amount
 	err = query.

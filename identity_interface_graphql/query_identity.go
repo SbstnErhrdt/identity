@@ -7,7 +7,7 @@ import (
 
 func CurrentIdentityField(service identity_controllers.IdentityService) *graphql.Field {
 	field := graphql.Field{
-		Name:        "Identity",
+		Name:        "CurrentIdentity",
 		Description: "Retrieve the identity of the current user",
 		Type:        IdentityGraphQlModel,
 		Args:        graphql.FieldConfigArgument{},

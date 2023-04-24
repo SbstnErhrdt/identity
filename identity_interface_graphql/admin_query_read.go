@@ -10,7 +10,7 @@ func Identity(service identity_controllers.IdentityService) *graphql.Field {
 	field := graphql.Field{
 		Name:        "Identity",
 		Description: "Retrieve the identity of a specific user",
-		Type:        IdentitiesPaginationGraphQlModel,
+		Type:        AdminIdentityGraphQlModel,
 		Args: graphql.FieldConfigArgument{
 			"UID": &graphql.ArgumentConfig{
 				Type:         graphql.String,

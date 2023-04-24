@@ -19,7 +19,7 @@ var IdentitiesPaginationGraphQlModel = graphql.NewObject(graphql.ObjectConfig{
 	Description: "An identities result object",
 	Fields: graphql.Fields{
 		"results": &graphql.Field{
-			Type:        graphql.NewList(IdentityGraphQlModel),
+			Type:        graphql.NewList(AdminIdentityGraphQlModel),
 			Description: "list of projects",
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				if obj, ok := p.Source.(*IdentitiesPaginationDTO); ok {
@@ -65,7 +65,7 @@ func IdentitiesSearchField(service identity_controllers.IdentityService) *graphq
 			},
 			"orderBy": &graphql.ArgumentConfig{
 				Type:         graphql.String,
-				DefaultValue: "",
+				DefaultValue: "created_at desc",
 				Description:  "Order by operation of the pagination",
 			},
 		},
