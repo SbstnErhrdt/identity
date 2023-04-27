@@ -36,7 +36,7 @@ func ReadAllUsers(service IdentityService, adminUID uuid.UUID, keyword string, o
 		Find(&results).
 		// get the total count
 		Limit(-1).
-		Offset(0).
+		Offset(-1).
 		// execute the query
 		Count(&amount).Error
 	if err != nil {
