@@ -12,4 +12,5 @@ services:
       POSTGRES_USER: ${SQL_USER:-postgres}
       POSTGRES_PASSWORD: ${SQL_PASSWORD:-postgres}
       POSTGRES_DB: $ {SQL_DATABASE:-postgres}
+      DB_EXTENSION: "uuid-ossp"
     restart: on-failure
