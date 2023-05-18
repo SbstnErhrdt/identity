@@ -29,26 +29,28 @@ func DefaultRegistrationEmailResolver(origin, email, token string) RegistrationE
 
 // Content returns the content of the registration email
 func (obj *RegistrationEmailTemplate) Content() (html string, err error) {
+	logger := log.WithFields(log.Fields{"email_template": "registration template"})
 	// init buffer
 	var tpl bytes.Buffer
 	// Note the call to ParseFS instead of Parse
 	t, err := template.ParseFS(Templates, "templates/registration.gohtml")
 	if err != nil {
-		log.Error(err)
+		logger.WithError(err).Error("could not parse template")
 	}
 	// check if there are
 	if len(obj.HtmlTemplate) > 0 {
 		tNew, errParse := template.New("registration-email").Parse(obj.HtmlTemplate)
 		if errParse == nil {
 			t = tNew
+			logger.WithError(errParse).Error("could not parse provided html template")
 		} else {
-			log.Warn("can not parse provided html template")
+			logger.Warn("can not parse provided html template")
 		}
 	}
 	// run template engine
 	err = t.Execute(&tpl, obj)
 	if err != nil {
-		log.Error(err)
+		logger.WithError(err).Error("could not execute template")
 	}
 	html = tpl.String()
 	return

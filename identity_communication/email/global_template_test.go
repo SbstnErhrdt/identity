@@ -1,11 +1,12 @@
 package email
 
 import (
-	"fmt"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestGlobalTemplate_Style(t *testing.T) {
+	ass := assert.New(t)
 	res := DefaultGlobalTemplate.Style()
-	fmt.Println(res)
+	ass.NotEmpty(res)
 }

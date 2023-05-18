@@ -29,26 +29,28 @@ func DefaultPasswordResetEmailResolver(origin, email, token string) PasswordRese
 
 // Content returns the content of the email
 func (obj *PasswordResetTemplate) Content() (html string, err error) {
+	logger := log.WithFields(log.Fields{"email_template": "password reset template"})
 	// init buffer
 	var tpl bytes.Buffer
 	// Note the call to ParseFS instead of Parse
 	t, err := template.ParseFS(Templates, "templates/reset_password.gohtml")
 	if err != nil {
-		log.Error(err)
+		logger.WithError(err).Error("could not parse template")
 	}
 	// check if there are
 	if len(obj.HtmlTemplate) > 0 {
 		tNew, errParse := template.New("password-reset-email").Parse(obj.HtmlTemplate)
 		if errParse == nil {
 			t = tNew
+			logger.WithError(errParse).Error("could not parse provided html template")
 		} else {
-			log.Warn("can not parse provided html template")
+			logger.Warn("can not parse provided html template")
 		}
 	}
 	// run template engine
 	err = t.Execute(&tpl, obj)
 	if err != nil {
-		log.Error(err)
+		logger.WithError(err).Error("could not execute template")
 	}
 	html = tpl.String()
 	return

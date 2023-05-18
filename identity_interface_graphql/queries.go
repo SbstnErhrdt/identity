@@ -17,5 +17,5 @@ func InitGraphQlQueries(service identity_controllers.IdentityService) *Queries {
 }
 
 func (gql *Queries) GenerateQueryObjects(root *graphql.Object) {
-	root.AddFieldConfig("Identity", gql.CurrentIdentity)
+	root.AddFieldConfig(gql.CurrentIdentity.Name, gql.CurrentIdentity)
 }

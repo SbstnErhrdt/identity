@@ -34,26 +34,29 @@ func DefaultInvitationEmailResolver(origin, firstName, lastName, emailAddress, l
 
 // Content returns the content of the invitation email
 func (obj *InvitationEmailTemplate) Content() (html string, err error) {
+	logger := log.WithFields(log.Fields{"email_template": "invitation template"})
 	// init buffer
 	var tpl bytes.Buffer
 	// Note the call to ParseFS instead of Parse
 	t, err := template.ParseFS(Templates, "templates/invitation.gohtml")
 	if err != nil {
-		log.Error(err)
+		logger.WithError(err).Error("could not parse template")
+		return
 	}
 	// check if there are
 	if len(obj.HtmlTemplate) > 0 {
 		tNew, errParse := template.New("invitation-email").Parse(obj.HtmlTemplate)
 		if errParse == nil {
 			t = tNew
+			logger.WithError(errParse).Error("could not parse provided html template")
 		} else {
-			log.Warn("can not parse provided html template")
+			logger.Warn("can not parse provided html template")
 		}
 	}
 	// run template engine
 	err = t.Execute(&tpl, obj)
 	if err != nil {
-		log.Error(err)
+		logger.WithError(err).Error("could not execute template")
 	}
 	html = tpl.String()
 	return

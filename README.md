@@ -16,6 +16,13 @@ Under development
 
 **⚠️ Experimental - Not ready for production.**
 
+## TODO
+
+* [ ] Resend confirmation email
+* [ ] Add more tests
+* [ ] Add documentation
+* [ ] Add examples
+
 ## Author
 
 Sebastian Erhardt

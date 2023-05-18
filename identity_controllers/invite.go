@@ -7,7 +7,7 @@ import (
 
 // InviteUser invites a user to the system
 func InviteUser(service IdentityService, origin, subject, firstName, lastName, emailAddress, link string) (err error) {
-	logger := log.WithFields(
+	logger := service.GetLogger().WithFields(
 		log.Fields{
 			"method":       "InviteUser",
 			"origin":       origin,
@@ -24,7 +24,7 @@ func InviteUser(service IdentityService, origin, subject, firstName, lastName, e
 	// generate the content of the email
 	content, err := emailTemplate.Content()
 	if err != nil {
-		logger.Error(err)
+		logger.WithError(err).Error("could not generate email content")
 		return
 	}
 	// Send email
@@ -37,5 +37,9 @@ func InviteUser(service IdentityService, origin, subject, firstName, lastName, e
 		},
 		subject,
 		content)
+	if err != nil {
+		logger.WithError(err).Error("could not send email")
+		return
+	}
 	return
 }

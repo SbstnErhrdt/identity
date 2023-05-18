@@ -1,168 +1,118 @@
 package identity_controllers
 
 import (
+	"fmt"
 	"github.com/SbstnErhrdt/env"
-	"github.com/SbstnErhrdt/identity/identity_communication/email"
-	"github.com/SbstnErhrdt/identity/services"
-	"github.com/graphql-go/graphql"
+	"github.com/SbstnErhrdt/identity/identity_install"
+	"github.com/SbstnErhrdt/identity/identity_models"
+	log "github.com/sirupsen/logrus"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 	"net/mail"
+	"os"
+	"time"
 )
 
-var s *Service
+var testUserEmail string = ""
+var testSenderEmail string = ""
+var testAdminEmail string = ""
+
+// testService is the test service
+var testService *ControllerService
+
+// DbConnection is the database connection
+var DbConnection *gorm.DB
 
 func init() {
-	addr, _ := mail.ParseAddress("no-reply@rise-workshop.com")
-	s = NewTestService("RISE", *addr)
+
+	env.LoadEnvFiles("../test/.env")
+	env.CheckRequiredEnvironmentVariables(
+		"TEST_SENDER_EMAIL",
+		"TEST_USER_EMAIL",
+		"TEST_ADMIN_EMAIL",
+	)
+
+	testSenderEmail = os.Getenv("TEST_SENDER_EMAIL")
+	testUserEmail = os.Getenv("TEST_USER_EMAIL")
+	testAdminEmail = os.Getenv("TEST_ADMIN_EMAIL")
+
+	testService = NewService("Identity-Test", mail.Address{
+		Name:    "Test-Sender",
+		Address: testSenderEmail,
+	})
+	testService.SetAdminEmail(testAdminEmail)
+
+	// connect to database
+	ConnectToDbAndRetry()
+	testService.SetSQLClient(DbConnection)
+	install()
 }
 
-// IdentificationType is the type of the identification
-type IdentificationType string
+const maxRetry = 5
 
-const (
-	// EmailIdentificationType is the type of identification that is used to identify a user by email
-	EmailIdentificationType IdentificationType = "email"
-	// PhoneIdentificationType is the type of identification that is used to identify a user by phone number
-	PhoneIdentificationType IdentificationType = "phone"
-)
-
-// ResolveRegistrationEmailTemplate resolves the registration email template
-type ResolveRegistrationEmailTemplate func(origin, emailAddress, token string) email.RegistrationEmailTemplate
-
-// ResolvePasswordResetEmailTemplate resolves the password reset email template
-type ResolvePasswordResetEmailTemplate func(origin, emailAddress, token string) email.PasswordResetTemplate
-
-// ResolveInvitationEmailTemplate resolves the invitation email template
-type ResolveInvitationEmailTemplate func(origin, firstName, lastName, emailAddress, link string) email.InvitationEmailTemplate
-
-// Service is the identity service
-type Service struct {
-	Issuer                     string
-	Pepper                     string
-	Audience                   string
-	PrimaryIdentificationType  IdentificationType
-	sqlClient                  *gorm.DB
-	gqlRootObject              *graphql.Object
-	gqlRootMutationObject      *graphql.Object
-	senderEmailAddress         mail.Address // default email
-	sendEmail                  func(mail.Address, mail.Address, string, string) error
-	sendSMS                    func(string, string) error
-	emailTemplate              email.GlobalTemplate
-	authConfirmationEndpoint   string
-	registrationEmailResolver  ResolveRegistrationEmailTemplate
-	passwordResetEmailResolver ResolvePasswordResetEmailTemplate
-	invitationEmailResolver    ResolveInvitationEmailTemplate
-}
-
-func (s *Service) AutoClearUserAfterRegistration(origin string) bool { return false }
-
-// NewTestService inits a new identity service
-func NewTestService(issuer string, senderEmailAddress mail.Address) *Service {
-	s := Service{
-		Issuer:                    issuer,
-		Pepper:                    env.FallbackEnvVariable("SECURITY_PEPPER", "PEPPER"),
-		senderEmailAddress:        senderEmailAddress,
-		PrimaryIdentificationType: EmailIdentificationType,
-		sendEmail:                 services.SendEmail,
-		// fallback services
-		registrationEmailResolver:  email.DefaultRegistrationEmailResolver,
-		passwordResetEmailResolver: email.DefaultPasswordResetEmailResolver,
-		invitationEmailResolver:    email.DefaultInvitationEmailResolver,
+func ConnectToDbAndRetry() {
+	i := 1
+	for {
+		errConn := connectToDb()
+		if errConn == nil {
+			break
+		} else {
+			log.Printf("failed to connect to database for the %d time, retrying in 5 seconds", i)
+			i++
+			time.Sleep(time.Second * 5)
+		}
+		if i >= maxRetry {
+			panic(errConn)
+		}
 	}
-	return &s
+	var res int
+	DbConnection.Raw("SELECT 1 + 1").Scan(&res)
+	if res != 2 {
+		log.Fatal("database connection failed")
+	}
 }
 
-// SetGraphQLQueryInterface sets the graphql query interface
-func (s *Service) SetGraphQLQueryInterface(rootQueryObject *graphql.Object) *Service {
-	return s
+func connectToDb() (err error) {
+	// gorm connect to postgres using env variables
+	// create connection string with variables
+	var SqlHost = os.Getenv("SQL_HOST")
+	var SqlUser = os.Getenv("SQL_USER")
+	var SqlPassword = os.Getenv("SQL_PASSWORD")
+	var SqlPort = os.Getenv("SQL_PORT")
+	var SqlDatabase = os.Getenv("SQL_DATABASE")
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Europe/Berlin",
+		SqlHost, SqlUser, SqlPassword, SqlDatabase, SqlPort)
+	fmt.Println("Connection string:", dsn)
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		return err
+	}
+	DbConnection = db
+	return
 }
 
-// SetGraphQLMutationInterface sets the graphql mutation interface
-func (s *Service) SetGraphQLMutationInterface(rootMutationObject *graphql.Object) *Service {
-	return s
+func install() {
+	err := identity_install.Install(DbConnection)
+	if err != nil {
+		log.WithError(err).Fatal("failed to install database")
+	}
 }
 
-// SetSQLClient sets the sql client
-func (s *Service) SetSQLClient(client *gorm.DB) *Service {
-	s.sqlClient = client
-	return s
+func EmptyTable(s schema.Tabler) (err error) {
+	return DbConnection.Exec(fmt.Sprintf("DELETE FROM %s", s.TableName())).Error
 }
 
-// SetAuthConfirmationEndpoint sets the auth confirmation endpoint
-func (s *Service) SetAuthConfirmationEndpoint(authConfirmationEndpoint string) *Service {
-	s.authConfirmationEndpoint = authConfirmationEndpoint
-	return s
+func EmptyIdentityTable() {
+	err := EmptyTable(&identity_models.Identity{})
+	if err != nil {
+		log.WithError(err).Error("failed to empty identity table")
+	}
 }
 
-// SetRegistrationEmailResolver sets the registration email resolver
-func (s *Service) SetRegistrationEmailResolver(fn ResolveRegistrationEmailTemplate) *Service {
-	s.registrationEmailResolver = fn
-	return s
-}
-
-// SetInvitationEmailResolver sets the registration email resolver
-func (s *Service) SetInvitationEmailResolver(fn ResolveInvitationEmailTemplate) *Service {
-	s.invitationEmailResolver = fn
-	return s
-}
-
-// SetPepper sets the pepper
-func (s *Service) SetPepper(pepper string) {
-	s.Pepper = pepper
-}
-
-// GetSQLClient returns the sql client
-func (s *Service) GetSQLClient() *gorm.DB {
-	return s.sqlClient
-}
-
-// GetPepper returns the pepper
-func (s *Service) GetPepper() string {
-	return s.Pepper
-}
-
-// GetIssuer returns the issuer
-func (s *Service) GetIssuer() string {
-	return s.Issuer
-}
-
-// GetSenderEmailAddress returns the sender email address
-func (s *Service) GetSenderEmailAddress() mail.Address {
-	return s.senderEmailAddress
-}
-
-// GetAudience returns the audience
-func (s *Service) GetAudience() string {
-	return s.Audience
-}
-
-// SendEmail sends an email
-func (s *Service) SendEmail(senderAddress mail.Address, receiverAddress mail.Address, subject, content string) error {
-	return s.sendEmail(senderAddress, receiverAddress, subject, content)
-}
-
-// SendSMS sends an sms
-func (s *Service) SendSMS(address string, content string) error {
-	// todo
-	panic("implement me")
-}
-
-// GetEmailTemplate returns the email template
-func (s *Service) GetEmailTemplate() email.GlobalTemplate {
-	return s.emailTemplate
-}
-
-// ResolveRegistrationEmailTemplate returns the registration email template
-func (s *Service) ResolveRegistrationEmailTemplate(origin, emailAddress, confirmationUrl string) email.RegistrationEmailTemplate {
-	return s.registrationEmailResolver(origin, emailAddress, confirmationUrl)
-}
-
-// ResolvePasswordResetEmailTemplate returns the password reset email template
-func (s *Service) ResolvePasswordResetEmailTemplate(origin, emailAddress, confirmationUrl string) email.PasswordResetTemplate {
-	return s.passwordResetEmailResolver(origin, emailAddress, confirmationUrl)
-}
-
-// ResolveInvitationEmailTemplate returns the invitation email template
-func (s *Service) ResolveInvitationEmailTemplate(origin, firstName, lastName, emailAddress, link string) email.InvitationEmailTemplate {
-	return s.invitationEmailResolver(origin, firstName, lastName, emailAddress, link)
+func EmptyRegistrationConfirmationTable() {
+	err := EmptyTable(&identity_models.IdentityRegistrationConfirmation{})
+	if err != nil {
+		log.WithError(err).Error("failed to empty identity table")
+	}
 }

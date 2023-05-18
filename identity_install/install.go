@@ -1,18 +1,16 @@
 package identity_install
 
 import (
-	"github.com/SbstnErhrdt/go-gorm-all-sql/pkg/sql"
 	"github.com/SbstnErhrdt/identity/identity_models"
+	log "github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 )
 
 // Install will create the database schema
-func Install() {
-	client, err := sql.ConnectToDatabase()
-	if err != nil {
-		panic(err)
-	}
+func Install(db *gorm.DB) (err error) {
+	log.Info("creating identity database schema")
 	// databases
-	err = client.Migrator().AutoMigrate(
+	err = db.Migrator().AutoMigrate(
 		identity_models.Identity{},
 		identity_models.IdentityLogin{},
 		identity_models.IdentityTokenMeta{},
@@ -21,6 +19,7 @@ func Install() {
 		identity_models.IdentityResetPassword{},
 	)
 	if err != nil {
-		panic(err)
+		log.WithError(err).Error("failed to create / migrate database")
 	}
+	return
 }

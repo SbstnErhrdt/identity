@@ -6,10 +6,10 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
-// IdentityGraphQlModel is the identity model for the GraphQL interface
-var IdentityGraphQlModel = graphql.NewObject(graphql.ObjectConfig{
-	Name:        "Identity",
-	Description: "The identity",
+// AdminIdentityGraphQlModel is the identity model for the GraphQL admin interface
+var AdminIdentityGraphQlModel = graphql.NewObject(graphql.ObjectConfig{
+	Name:        "AdminIdentity",
+	Description: "The administration identity",
 	Fields: graphql.Fields{
 		"UID": &graphql.Field{
 			Type:        graphql.String,
@@ -21,12 +21,72 @@ var IdentityGraphQlModel = graphql.NewObject(graphql.ObjectConfig{
 				return nil, errors.New("can not cast UID object")
 			},
 		},
+		"acceptConditionsAndPrivacy": &graphql.Field{
+			Type:        graphql.Boolean,
+			Description: "accept conditions and privacy",
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				if obj, ok := p.Source.(*identity_models.Identity); ok {
+					return obj.AcceptConditionsAndPrivacy, nil
+				}
+				return nil, errors.New("can not cast UID object")
+			},
+		},
+		"active": &graphql.Field{
+			Type:        graphql.Boolean,
+			Description: "has activated the account through email",
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				if obj, ok := p.Source.(*identity_models.Identity); ok {
+					return obj.Active, nil
+				}
+				return nil, errors.New("can not cast UID object")
+			},
+		},
+		"cleared": &graphql.Field{
+			Type:        graphql.Boolean,
+			Description: "has been cleared by an admin or automatically depending on the settings",
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				if obj, ok := p.Source.(*identity_models.Identity); ok {
+					return obj.Cleared, nil
+				}
+				return nil, errors.New("can not cast UID object")
+			},
+		},
+		"blocked": &graphql.Field{
+			Type:        graphql.Boolean,
+			Description: "has been blocked by an admin",
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				if obj, ok := p.Source.(*identity_models.Identity); ok {
+					return obj.Cleared, nil
+				}
+				return nil, errors.New("can not cast UID object")
+			},
+		},
 		"createdAt": &graphql.Field{
 			Type:        graphql.DateTime,
 			Description: "the creation date of the identity",
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				if obj, ok := p.Source.(*identity_models.Identity); ok {
 					return obj.CreatedAt, nil
+				}
+				return nil, errors.New("can not cast UID object")
+			},
+		},
+		"deletedAt": &graphql.Field{
+			Type:        graphql.DateTime,
+			Description: "the deletion date of the identity",
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				if obj, ok := p.Source.(*identity_models.Identity); ok {
+					return obj.DeletedAt, nil
+				}
+				return nil, errors.New("can not cast UID object")
+			},
+		},
+		"updatedAt": &graphql.Field{
+			Type:        graphql.DateTime,
+			Description: "the update date of the identity",
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				if obj, ok := p.Source.(*identity_models.Identity); ok {
+					return obj.UpdatedAt, nil
 				}
 				return nil, errors.New("can not cast UID object")
 			},

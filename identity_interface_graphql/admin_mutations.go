@@ -6,10 +6,18 @@ import (
 )
 
 type AdminMutations struct {
-	Invite *graphql.Field
+	Invite        *graphql.Field
+	BlockUser     *graphql.Field
+	UnBlockUser   *graphql.Field
+	ActivateUser  *graphql.Field
+	ResetEmail    *graphql.Field
+	ResetPassword *graphql.Field
+	SearchUsers   *graphql.Field
+	ReadUser      *graphql.Field
+	UpdateUser    *graphql.Field
 }
 
-func InitAdminMutations(service identity_controllers.IdentityService) *AdminMutations {
+func InitAdminGraphQlMutations(service identity_controllers.IdentityService) *AdminMutations {
 	gql := AdminMutations{
 		Invite: InviteField(service),
 	}
