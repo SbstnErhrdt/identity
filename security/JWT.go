@@ -9,6 +9,12 @@ import (
 	"time"
 )
 
+// ErrTokenNotValid is returned when the token is not valid
+var ErrTokenNotValid = errors.New("token not valid")
+
+// ErrNoTokenPresent is returned when no token is present
+var ErrNoTokenPresent = errors.New("no token present")
+
 // ParseToken takes a string and extracts the token
 func ParseToken(tokenString string) (claims map[string]interface{}, err error) {
 	claims = map[string]interface{}{}
@@ -31,13 +37,13 @@ func ParseToken(tokenString string) (claims map[string]interface{}, err error) {
 	})
 	// check token
 	if token == nil {
-		err = errors.New("no token present")
-		log.Error(err)
+		err = ErrNoTokenPresent
+		log.WithError(err).Error("no token present")
 		return
 	} else {
 		if !token.Valid {
-			err = errors.New("token not valid")
-			log.Error(err)
+			err = ErrTokenNotValid
+			log.WithError(err).Error("no valid token")
 			return
 		} else {
 			claims = token.Claims.(jwt.MapClaims)
