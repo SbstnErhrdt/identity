@@ -124,7 +124,7 @@ func Login(service IdentityService, emailAddress, password, userAgent, ip string
 
 	// generate token
 	log.Debug("generate token")
-	audience := env.FallbackEnvVariable("SECURITY_JWT_AUDIENCE", "API")
+	audience := env.FallbackEnvVariable("SECURITY_JWT_AUDIENCE", "APP")
 	token, tokenUID, errToken := security.GenerateJWTToken(identity.UID, audience, map[string]interface{}{})
 	if errToken != nil {
 		logger.Error(errToken)

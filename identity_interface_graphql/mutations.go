@@ -15,6 +15,8 @@ type Mutations struct {
 	ConfirmResetPassword     *graphql.Field
 	DeleteIdentity           *graphql.Field
 	AnonymizeIdentity        *graphql.Field
+	CreateApiToken           *graphql.Field
+	DeleteApiToken           *graphql.Field
 }
 
 func InitGraphQlMutations(service identity_controllers.IdentityService) *Mutations {
@@ -28,6 +30,8 @@ func InitGraphQlMutations(service identity_controllers.IdentityService) *Mutatio
 		ConfirmResetPassword:     ConfirmResetPasswordField(service),
 		DeleteIdentity:           DeleteField(service),
 		AnonymizeIdentity:        AnonymizeField(service),
+		CreateApiToken:           CreateApiTokenField(service),
+		DeleteApiToken:           DeleteApiTokenField(service),
 	}
 	return &gql
 }
