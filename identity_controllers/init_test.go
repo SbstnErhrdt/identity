@@ -81,9 +81,10 @@ func connectToDb() (err error) {
 	pw := os.Getenv("SQL_PASSWORD")
 	port := os.Getenv("SQL_PORT")
 	dbName := os.Getenv("SQL_DATABASE")
-	dsn := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s", host, port, user, dbName, pw)
+	dsn := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s TimeZone=UTC", host, port, user, dbName, pw)
 	fmt.Println("Connection string:", dsn)
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	dialect := postgres.Open(dsn)
+	db, err := gorm.Open(dialect, &gorm.Config{})
 	if err != nil {
 		return err
 	}

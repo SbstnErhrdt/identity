@@ -2,8 +2,8 @@
 version: '3'
 
 services:
-  db:
-    image: postgres:14.8
+  test-postgres-db:
+    image: postgres:14.1-alpine
     ports:
       - "0.0.0.0:5555:5432"
     expose:
