@@ -76,15 +76,15 @@ func ConnectToDbAndRetry() {
 func connectToDb() (err error) {
 	// gorm connect to postgres using env variables
 	// create connection string with variables
-	var SqlHost = os.Getenv("SQL_HOST")
-	var SqlUser = os.Getenv("SQL_USER")
-	var SqlPassword = os.Getenv("SQL_PASSWORD")
-	var SqlPort = os.Getenv("SQL_PORT")
-	var SqlDatabase = os.Getenv("SQL_DATABASE")
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Europe/Berlin",
-		SqlHost, SqlUser, SqlPassword, SqlDatabase, SqlPort)
+	host := os.Getenv("SQL_HOST")
+	user := os.Getenv("SQL_USER")
+	pw := os.Getenv("SQL_PASSWORD")
+	port := os.Getenv("SQL_PORT")
+	dbName := os.Getenv("SQL_DATABASE")
+	dsn := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s TimeZone=UTC", host, port, user, dbName, pw)
 	fmt.Println("Connection string:", dsn)
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	dialect := postgres.Open(dsn)
+	db, err := gorm.Open(dialect, &gorm.Config{})
 	if err != nil {
 		return err
 	}

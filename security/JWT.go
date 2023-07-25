@@ -73,6 +73,27 @@ func GenerateJWTToken(subjectUID uuid.UUID, audience string, payload map[string]
 	return
 }
 
+// GenerateJWTTokenWithExpirationData generate token for as user and a payload with expiration date
+func GenerateJWTTokenWithExpirationData(subjectUID uuid.UUID, audience string, payload map[string]interface{}, utcExpirationDate time.Time) (tokenString string, tokenUID uuid.UUID, err error) {
+	tokenUID = uuid.New()
+	// Create a new token object, specifying signing method and the claims
+	// you would like it to contain.
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"sub":     subjectUID.String(),
+		"iss":     env.FallbackEnvVariable("SECURITY_JWT_ISSUER", "ERHARDT"),
+		"aud":     audience,
+		"exp":     utcExpirationDate.UTC().Unix(),
+		"iat":     time.Now().UTC().Unix(),
+		"nbf":     time.Now().UTC().Unix(),
+		"jti":     tokenUID.String(),
+		"payload": payload,
+	})
+	// build string
+	tokenString, err = token.SignedString([]byte(env.FallbackEnvVariable("SECURITY_JWT_SECRET", "SECRET")))
+	// Sign and get the complete encoded token as a string using the secret
+	return
+}
+
 // GeneratePasswordResetToken generate a password reset token with an expiration date
 func GeneratePasswordResetToken(email string, expirationDate time.Time) (string, error) {
 	// Create a new token object, specifying signing method and the claims

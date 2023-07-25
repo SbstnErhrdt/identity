@@ -7,11 +7,11 @@ import (
 )
 
 type Base struct {
-	UID        uuid.UUID  `json:"UID" gorm:"type:varchar(36); primary_key; default:uuid_generate_v4()"`
-	CreatedAt  time.Time  `json:"created_at" sql:"index"`
-	UpdatedAt  time.Time  `json:"update_at"`
-	DeletedAt  *time.Time `json:"deleted_at" sql:"index"`
-	ArchivedAt *time.Time `json:"archived_at" sql:"index"`
+	UID        uuid.UUID      `json:"UID" gorm:"type:varchar(36); primary_key; default:uuid_generate_v4()"`
+	CreatedAt  time.Time      `json:"created_at" sql:"index"`
+	UpdatedAt  time.Time      `json:"update_at"`
+	DeletedAt  gorm.DeletedAt `json:"deleted_at" sql:"index"`
+	ArchivedAt *time.Time     `json:"archived_at" sql:"index"`
 }
 
 // BeforeCreate intercepts before the in the database
