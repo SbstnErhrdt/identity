@@ -46,4 +46,6 @@ func (gql *Mutations) GenerateMutationObjects(root *graphql.Object) {
 	root.AddFieldConfig(gql.ConfirmResetPassword.Name, gql.ConfirmResetPassword)
 	root.AddFieldConfig(gql.DeleteIdentity.Name, gql.DeleteIdentity)
 	root.AddFieldConfig(gql.AnonymizeIdentity.Name, gql.AnonymizeIdentity)
+	root.AddFieldConfig(gql.CreateApiToken.Name, gql.CreateApiToken)
+	root.AddFieldConfig(gql.DeleteApiToken.Name, gql.DeleteApiToken)
 }

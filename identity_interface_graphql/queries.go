@@ -23,4 +23,5 @@ func InitGraphQlQueries(service identity_controllers.IdentityService) *Queries {
 // GenerateQueryObjects generates the query objects
 func (gql *Queries) GenerateQueryObjects(root *graphql.Object) {
 	root.AddFieldConfig(gql.CurrentIdentity.Name, gql.CurrentIdentity)
+	root.AddFieldConfig(gql.ApiTokens.Name, gql.ApiTokens)
 }
