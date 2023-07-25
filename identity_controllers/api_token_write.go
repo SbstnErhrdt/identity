@@ -18,7 +18,7 @@ var ErrTokenExpirationDateInPast = errors.New("token expiration date is in the p
 // CreateApiToken creates a new api token for an identity
 func CreateApiToken(service IdentityService, identityUID uuid.UUID, tokenName string, utcTokenExpirationDate time.Time) (token identity_models.IdentityApiToken, err error) {
 	// init logger
-	logger := log.WithFields(log.Fields{
+	logger := service.GetLogger().WithFields(log.Fields{
 		"identityUID": identityUID.String(),
 		"process":     "CreateApiToken",
 	})
@@ -59,6 +59,12 @@ func CreateApiToken(service IdentityService, identityUID uuid.UUID, tokenName st
 
 // DeleteApiToken deletes an api token from the database
 func DeleteApiToken(service IdentityService, identityUID uuid.UUID, tokenUID uuid.UUID) (err error) {
+	// init logger
+	logger := service.GetLogger().WithFields(log.Fields{
+		"identityUID": identityUID.String(),
+		"tokenUID":    tokenUID.String(),
+		"process":     "DeleteApiToken",
+	})
 	// delete token
 	err = service.GetSQLClient().
 		Where("identity_uid = ?", identityUID.String()).
@@ -66,7 +72,7 @@ func DeleteApiToken(service IdentityService, identityUID uuid.UUID, tokenUID uui
 		Where("deleted_at is NULL").
 		Delete(&identity_models.IdentityApiToken{}).Error
 	if err != nil {
-		service.GetLogger().
+		logger.
 			WithError(err).
 			WithField("identity_uid", identityUID).
 			Error("could delete api tokens with uid")
