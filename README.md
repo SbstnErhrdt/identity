@@ -131,3 +131,7 @@ https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html
       maximum length is 64 characters due to limitations in certain hashing algorithms, as discussed in the Password
       Storage Cheat Sheet. It is important to set a maximum password length to prevent long password Denial of Service
       attacks.
+
+## API Token
+
+1. Users can generate API tokens with a longer lifetime
