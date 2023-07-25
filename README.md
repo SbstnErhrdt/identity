@@ -135,3 +135,4 @@ https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html
 ## API Token
 
 1. Users can generate API tokens with a longer lifetime
+2. Users can delete API tokens
