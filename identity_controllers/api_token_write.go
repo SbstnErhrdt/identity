@@ -16,7 +16,7 @@ var ErrTokenNameEmpty = errors.New("token name is empty")
 var ErrTokenExpirationDateInPast = errors.New("token expiration date is in the past")
 
 // CreateApiToken creates a new api token for an identity
-func CreateApiToken(service IdentityService, identityUID uuid.UUID, tokenName string, utcTokenExpirationDate time.Time) (token identity_models.IdentityApiToken, err error) {
+func CreateApiToken(service IdentityService, identityUID uuid.UUID, tokenName string, utcTokenExpirationDate time.Time) (token *identity_models.IdentityApiToken, err error) {
 	// init logger
 	logger := service.GetLogger().WithFields(log.Fields{
 		"identityUID": identityUID.String(),
@@ -37,9 +37,11 @@ func CreateApiToken(service IdentityService, identityUID uuid.UUID, tokenName st
 	// set expiration date to utc
 	utcTokenExpirationDate = utcTokenExpirationDate.UTC()
 	// generate token
-	tokenString, tokenUID, err := security.GenerateJWTTokenWithExpirationData(identityUID, tokenName, map[string]interface{}{}, utcTokenExpirationDate)
+	tokenString, tokenUID, err := security.GenerateJWTTokenWithExpirationData(identityUID, "API", map[string]interface{}{
+		"tokenName": tokenName,
+	}, utcTokenExpirationDate)
 	// create token db record
-	token = identity_models.IdentityApiToken{
+	t := identity_models.IdentityApiToken{
 		IdentityUID:    identityUID,
 		TokenUID:       tokenUID,
 		Name:           tokenName,
@@ -48,13 +50,13 @@ func CreateApiToken(service IdentityService, identityUID uuid.UUID, tokenName st
 	}
 	// create user
 	logger.Debug("create api token in the database")
-	err = service.GetSQLClient().Create(&token).Error
+	err = service.GetSQLClient().Create(&t).Error
 	if err != nil {
 		logger.Error(err)
 		return
 	}
 
-	return token, nil
+	return &t, nil
 }
 
 // DeleteApiToken deletes an api token from the database

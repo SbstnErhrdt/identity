@@ -10,9 +10,9 @@ func GetApiTokensByIdentity(service IdentityService, identityUID uuid.UUID) (res
 	// Load identity from database
 	results = []*identity_models.IdentityApiToken{}
 	err = service.GetSQLClient().
-		Limit(1).
 		Where("identity_uid = ?", identityUID.String()).
 		Where("deleted_at is NULL").
+		Order("created_at desc").
 		Find(&results).Error
 	if err != nil {
 		service.GetLogger().WithError(err).WithField("identity_uid", identityUID).Error("could not find tokens with uid")
