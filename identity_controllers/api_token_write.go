@@ -2,6 +2,7 @@ package identity_controllers
 
 import (
 	"errors"
+	"github.com/SbstnErhrdt/env"
 	"github.com/SbstnErhrdt/identity/identity_models"
 	"github.com/SbstnErhrdt/identity/security"
 	"github.com/google/uuid"
@@ -36,8 +37,9 @@ func CreateApiToken(service IdentityService, identityUID uuid.UUID, tokenName st
 	}
 	// set expiration date to utc
 	utcTokenExpirationDate = utcTokenExpirationDate.UTC()
+	audience := env.FallbackEnvVariable("SECURITY_JWT_API_AUDIENCE", "API")
 	// generate token
-	tokenString, tokenUID, err := security.GenerateJWTTokenWithExpirationData(identityUID, "API", map[string]interface{}{
+	tokenString, tokenUID, err := security.GenerateJWTTokenWithExpirationData(identityUID, audience, map[string]interface{}{
 		"tokenName": tokenName,
 	}, utcTokenExpirationDate)
 	// create token db record

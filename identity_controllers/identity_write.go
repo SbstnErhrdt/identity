@@ -46,7 +46,7 @@ func GenerateJWT(service IdentityService, user *identity_models.Identity) (resul
 	payload := map[string]interface{}{}
 	payload["userUID"] = user.UID
 	// Generate the token
-	audience := env.FallbackEnvVariable("SECURITY_JWT_AUDIENCE", "API")
+	audience := env.FallbackEnvVariable("SECURITY_JWT_AUDIENCE", "APP")
 	result, _, err = security.GenerateJWTToken(user.UID, audience, payload)
 	if err != nil {
 		log.Error(err)
