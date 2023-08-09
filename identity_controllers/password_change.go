@@ -5,7 +5,6 @@ import (
 	"github.com/SbstnErhrdt/identity/identity_models"
 	"github.com/SbstnErhrdt/identity/security"
 	"github.com/google/uuid"
-	log "github.com/sirupsen/logrus"
 )
 
 // VerifyPassword verifies the user's password given the user object and the password
@@ -25,22 +24,22 @@ var ErrOldPasswordIsSame = errors.New("the old password is the same as the new p
 // ChangePassword changes the user's password given the user object and the new password
 func ChangePassword(service IdentityService, identityUID uuid.UUID, oldPassword, newPassword, newPasswordConfirmation string) (err error) {
 	// init logger
-	logger := log.WithFields(log.Fields{
-		"process":     "ChangePassword",
-		"identityUID": identityUID,
-	})
+	logger := service.GetLogger().With(
+		"process", "ChangePassword",
+		"identityUID", identityUID,
+	)
 
 	// get the user
 	identity, err := GetIdentityByUID(service, identityUID)
 	if err != nil {
-		logger.Error(err)
+		logger.With("err", err).Error("could not get identity")
 		return err
 	}
 
 	// check if the old password is correct
 	if !VerifyPassword(service, identity, oldPassword) {
 		err = ErrInvalidPassword
-		logger.Error(err)
+		logger.With("err", err).Error("could not get verify password")
 		return
 	}
 
@@ -48,35 +47,35 @@ func ChangePassword(service IdentityService, identityUID uuid.UUID, oldPassword,
 	logger.Debug("CheckPasswordComplexity")
 	err = security.CheckPasswordComplexity(newPassword)
 	if err != nil {
-		logger.Error(err)
+		logger.With("err", err).Error("could not check password complexity")
 		return
 	}
 
 	// check if the new password is the same as the confirmed password
 	if newPassword != newPasswordConfirmation {
 		err = ErrConfirmPassword
-		logger.Error(err)
+		logger.With("err", err).Error("could not confirm password")
 		return
 	}
 
 	// check if the old password is the same as the new password
 	if oldPassword == newPassword {
 		err = ErrOldPasswordIsSame
-		logger.Error(err)
+		logger.With("err", err).Error("could not confirm password")
 		return
 	}
 
 	// set the new password
 	err = identity.SetNewPassword(service.GetPepper(), newPassword)
 	if err != nil {
-		logger.Error(err)
+		logger.With("err", err).Error("could not set new password")
 		return err
 	}
 
 	// save the user
 	err = service.GetSQLClient().Save(&identity).Error
 	if err != nil {
-		logger.Error(err)
+		logger.With("err", err).Error("could not save identity")
 		return err
 	}
 
@@ -89,27 +88,27 @@ var ErrCanNotChangePassword = errors.New("can not change password. please try ag
 // SetPasswordOfIdentity set the password of a user by its email
 func SetPasswordOfIdentity(service IdentityService, user *identity_models.Identity, newPassword string) (err error) {
 	// init logger
-	logger := log.WithFields(log.Fields{
-		"process": "SetPasswordOfIdentity",
-	})
+	logger := service.GetLogger().With(
+		"process", "SetPasswordOfIdentity",
+	)
 	// check password complexity
 	logger.Debug("CheckPasswordComplexity")
 	err = security.CheckPasswordComplexity(newPassword)
 	if err != nil {
-		logger.Error(err)
+		logger.With("err", err).Error("could not check password complexity")
 		return
 	}
 	// set password
 	err = user.SetNewPassword(service.GetPepper(), newPassword)
 	if err != nil {
-		log.Error(err)
+		logger.With("err", err).Error("can not set password")
 		// overwrite error with generic error message
 		err = ErrCanNotChangePassword
 		return
 	}
 	err = service.GetSQLClient().Save(user).Error
 	if err != nil {
-		log.Error(err)
+		logger.With("err", err).Error("can not save user")
 		// overwrite err
 		err = ErrCanNotChangePassword
 		return

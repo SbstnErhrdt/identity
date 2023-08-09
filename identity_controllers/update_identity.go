@@ -3,16 +3,15 @@ package identity_controllers
 import (
 	"github.com/SbstnErhrdt/identity/identity_models"
 	"github.com/google/uuid"
-	log "github.com/sirupsen/logrus"
 	"time"
 )
 
 // UpdateIdentity updates the identity
 func UpdateIdentity(service IdentityService, newIdentity *identity_models.Identity) (err error) {
-	logger := service.GetLogger().WithFields(log.Fields{
-		"method": "UpdateIdentity",
-		"uid":    newIdentity.UID,
-	})
+	logger := service.GetLogger().With(
+		"method", "UpdateIdentity",
+		"uid", newIdentity.UID,
+	)
 	// check if necessary fields are set
 	if newIdentity.UID.String() == "" || newIdentity.UID == uuid.Nil {
 		return ErrNoIdentityIdentification
@@ -20,7 +19,7 @@ func UpdateIdentity(service IdentityService, newIdentity *identity_models.Identi
 	// Get latest version from db
 	dbObj, dbErr := GetIdentityByUID(service, newIdentity.UID)
 	if dbErr != nil {
-		logger.WithError(dbErr).Error("could not get identity")
+		logger.With("err", dbErr).Error("could not get identity")
 		err = ErrNoIdentity
 		return
 	}
@@ -37,7 +36,7 @@ func UpdateIdentity(service IdentityService, newIdentity *identity_models.Identi
 	// create new entry
 	err = service.GetSQLClient().Save(dbObj).Error
 	if err != nil {
-		logger.WithError(err).Error("could not update identity")
+		logger.With("err", err).Error("could not update identity")
 		return
 	}
 	newIdentity = dbObj

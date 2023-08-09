@@ -3,7 +3,6 @@ package identity_controllers
 import (
 	"github.com/SbstnErhrdt/identity/identity_models"
 	"github.com/google/uuid"
-	log "github.com/sirupsen/logrus"
 )
 
 // ReadAllUsers reads all users
@@ -40,7 +39,7 @@ func ReadAllUsers(service IdentityService, adminUID uuid.UUID, keyword string, o
 		// execute the query
 		Count(&amount).Error
 	if err != nil {
-		log.WithError(err).Error("could not read all users")
+		service.GetLogger().With("err", err).Error("could not read all users")
 	}
 	return
 }

@@ -3,7 +3,6 @@ package identity_controllers
 import (
 	"github.com/SbstnErhrdt/identity/identity_models"
 	"github.com/google/uuid"
-	log "github.com/sirupsen/logrus"
 	"time"
 )
 
@@ -21,7 +20,7 @@ func anonymizeFirstNameLastNameAndSave(service IdentityService, identity *identi
 	// create new entry
 	err = service.GetSQLClient().Save(identity).Error
 	if err != nil {
-		service.GetLogger().WithError(err).Error("could not anonymizeFirstNameLastNameAndSave identity")
+		service.GetLogger().With("err", err).Error("could not anonymizeFirstNameLastNameAndSave identity")
 	}
 	return
 }
@@ -32,20 +31,20 @@ func anonymizeFirstNameLastNameAndSave(service IdentityService, identity *identi
 // - anonymizes the identity
 // - saves the identity
 func AnonymizeIdentity(service IdentityService, uid uuid.UUID, password string) (err error) {
-	logger := service.GetLogger().WithFields(log.Fields{
-		"method": "AnonymizeIdentity",
-		"uid":    uid,
-	})
+	logger := service.GetLogger().With(
+		"method", "AnonymizeIdentity",
+		"uid", uid,
+	)
 	// get the user
 	identity, err := GetIdentityByUID(service, uid)
 	if err != nil {
-		logger.WithError(err).Error("could not get identity")
+		logger.With("err", err).Error("could not get identity")
 		return
 	}
 	// check if the password is correct
 	if !VerifyPassword(service, identity, password) {
 		err = ErrInvalidPassword
-		logger.WithError(err).Error("could not verify password")
+		logger.With("err", err).Error("could not verify password")
 		return
 	}
 	return anonymizeFirstNameLastNameAndSave(service, identity)

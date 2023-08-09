@@ -5,7 +5,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
+	"log/slog"
 	"time"
 )
 
@@ -29,7 +29,7 @@ func ParseToken(tokenString string) (claims map[string]interface{}, err error) {
 		// Don't forget to validate the alg is what you expect:
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			err = errors.New("unexpected signing method: " + token.Header["alg"].(string))
-			log.Error(err)
+			slog.With("err", err).Error("unexpected signing method")
 			return claims, err
 		}
 		// hmacSampleSecret is a []byte containing your secret, e.g. []byte("my_secret_key")
@@ -38,12 +38,12 @@ func ParseToken(tokenString string) (claims map[string]interface{}, err error) {
 	// check token
 	if token == nil {
 		err = ErrNoTokenPresent
-		log.WithError(err).Error("no token present")
+		slog.With("err", err).Error("no token present")
 		return
 	} else {
 		if !token.Valid {
 			err = ErrTokenNotValid
-			log.WithError(err).Error("no valid token")
+			slog.With("err", err).Error("no valid token")
 			return
 		} else {
 			claims = token.Claims.(jwt.MapClaims)

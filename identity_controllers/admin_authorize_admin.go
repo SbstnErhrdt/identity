@@ -4,7 +4,6 @@ import (
 	"errors"
 	"github.com/SbstnErhrdt/identity/identity_models"
 	"github.com/google/uuid"
-	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
 
@@ -16,11 +15,11 @@ var ErrExternalIsAdmin = errors.New("error while checking if user is admin. Plea
 
 // IsAdmin checks if the user is an admin
 func IsAdmin(service IdentityService, identityUID uuid.UUID) (err error) {
-	logger := service.GetLogger().WithFields(logrus.Fields{
-		"package":     "identity_admin_controllers",
-		"func":        "IsAdmin",
-		"identityUID": identityUID,
-	})
+	logger := service.GetLogger().With(
+		"package", "identity_admin_controllers",
+		"func", "IsAdmin",
+		"identityUID", identityUID,
+	)
 	// build query
 	err = service.GetSQLClient().
 		Where("deleted_at IS NULL").
@@ -32,7 +31,7 @@ func IsAdmin(service IdentityService, identityUID uuid.UUID) (err error) {
 		logger.Info("user no admin")
 		return
 	} else if err != nil {
-		logger.WithError(err).Error("could not check if user is admin")
+		logger.With("err", err).Error("could not check if user is admin")
 		err = ErrExternalIsAdmin
 		return
 	}

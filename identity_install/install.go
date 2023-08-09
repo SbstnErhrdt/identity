@@ -2,17 +2,17 @@ package identity_install
 
 import (
 	"github.com/SbstnErhrdt/identity/identity_models"
-	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
+	"log/slog"
 )
 
 // Install will create the database schema
 func Install(db *gorm.DB) (err error) {
-	log.Info("creating identity database schema")
+	slog.Info("creating identity database schema")
 	// databases
 	err = db.Exec(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp";`).Error
 	if err != nil {
-		log.WithError(err).Error("failed to create extension")
+		slog.With("err", err).Error("failed to create extension")
 		return err
 	}
 
@@ -26,7 +26,7 @@ func Install(db *gorm.DB) (err error) {
 		identity_models.IdentityApiToken{},
 	)
 	if err != nil {
-		log.WithError(err).Error("failed to create / migrate database")
+		slog.With("err", err).Error("failed to create / migrate database")
 		return err
 	}
 	return

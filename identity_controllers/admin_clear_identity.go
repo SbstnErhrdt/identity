@@ -7,7 +7,7 @@ func Clear(service IdentityService, user *identity_models.Identity) (err error) 
 	user.Cleared = true
 	err = service.GetSQLClient().Save(user).Error
 	if err != nil {
-		service.GetLogger().WithError(err).Error("could not clear identity")
+		service.GetLogger().With("err", err).Error("could not clear identity")
 	}
 	return
 }

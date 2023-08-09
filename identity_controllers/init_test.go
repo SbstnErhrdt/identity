@@ -5,10 +5,10 @@ import (
 	"github.com/SbstnErhrdt/env"
 	"github.com/SbstnErhrdt/identity/identity_install"
 	"github.com/SbstnErhrdt/identity/identity_models"
-	log "github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
+	"log/slog"
 	"net/mail"
 	"os"
 	"time"
@@ -58,7 +58,7 @@ func ConnectToDbAndRetry() {
 		if errConn == nil {
 			break
 		} else {
-			log.Printf("failed to connect to database for the %d time, retrying in 5 seconds", i)
+			slog.With("count", i).Warn("failed to connect to database, retrying in 5 seconds")
 			i++
 			time.Sleep(time.Second * 5)
 		}
@@ -69,7 +69,8 @@ func ConnectToDbAndRetry() {
 	var res int
 	DbConnection.Raw("SELECT 1 + 1").Scan(&res)
 	if res != 2 {
-		log.Fatal("database connection failed")
+		slog.Error("database connection failed")
+		panic("database connection failed")
 	}
 }
 
@@ -95,7 +96,7 @@ func connectToDb() (err error) {
 func install() {
 	err := identity_install.Install(DbConnection)
 	if err != nil {
-		log.WithError(err).Fatal("failed to install database")
+		slog.With("err", err).Error("failed to install database")
 	}
 }
 
@@ -106,13 +107,13 @@ func EmptyTable(s schema.Tabler) (err error) {
 func EmptyIdentityTable() {
 	err := EmptyTable(&identity_models.Identity{})
 	if err != nil {
-		log.WithError(err).Error("failed to empty identity table")
+		slog.With("err", err).Error("failed to empty identity table")
 	}
 }
 
 func EmptyRegistrationConfirmationTable() {
 	err := EmptyTable(&identity_models.IdentityRegistrationConfirmation{})
 	if err != nil {
-		log.WithError(err).Error("failed to empty identity table")
+		slog.With("err", err).Error("failed to empty identity table")
 	}
 }

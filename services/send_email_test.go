@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	env.LoadEnvFiles("../test/test.env")
+	env.LoadEnvFiles("../test/.env")
 }
 
 func TestSend(t *testing.T) {

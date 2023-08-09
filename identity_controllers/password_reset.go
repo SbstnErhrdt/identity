@@ -4,7 +4,6 @@ import (
 	"errors"
 	"github.com/SbstnErhrdt/identity/identity_models"
 	"github.com/SbstnErhrdt/identity/security"
-	log "github.com/sirupsen/logrus"
 	"net/mail"
 	"time"
 )
@@ -12,21 +11,21 @@ import (
 // InitResetPassword inits the password reset process
 func InitResetPassword(service IdentityService, emailAddress, userAgent, ip, origin string) (err error) {
 	// init logger
-	logger := service.GetLogger().WithFields(log.Fields{
-		"email":   emailAddress,
-		"process": "InitResetPassword",
-	})
+	logger := service.GetLogger().With(
+		"email", emailAddress,
+		"process", "InitResetPassword",
+	)
 	// get identity
 	res, err := GetIdentityByEmail(service, emailAddress)
 	if err != nil {
-		logger.WithError(err).Error("could not get identity")
+		logger.With("err", err).Error("could not get identity")
 		// OWASP: return no error if the user does not exist
 		return nil
 	}
 	// create database entry
 	token, err := security.GenerateRandomString(32)
 	if err != nil {
-		logger.WithError(err).Error("could not generate token")
+		logger.With("err", err).Error("could not generate token")
 		return err
 	}
 	resetPassword := identity_models.IdentityResetPassword{
@@ -39,7 +38,7 @@ func InitResetPassword(service IdentityService, emailAddress, userAgent, ip, ori
 	// save in database
 	err = service.GetSQLClient().Create(&resetPassword).Error
 	if err != nil {
-		logger.Error(err)
+		logger.With("err", err).Error("cannot save reset password in database")
 		return err
 	}
 	// send email
@@ -50,7 +49,7 @@ func InitResetPassword(service IdentityService, emailAddress, userAgent, ip, ori
 	// generate the content of the email
 	content, err := emailTemplate.Content()
 	if err != nil {
-		logger.Error(err)
+		logger.With("err", err).Error("cannot generate email content")
 		return
 	}
 	// Send email
@@ -78,23 +77,23 @@ var ErrTokenNotFound = errors.New("security token not found. Please request a ne
 // ResetPassword resets the password
 func ResetPassword(service IdentityService, token, newPassword, newPasswordConfirmation, userAgent, ip, origin string) (err error) {
 	// init logger
-	logger := log.WithFields(log.Fields{
-		"token":   token,
-		"process": "InitResetPassword",
-	})
+	logger := service.GetLogger().With(
+		"token", token,
+		"process", "InitResetPassword",
+	)
 
 	// check password complexity
 	logger.Debug("CheckPasswordComplexity")
 	err = security.CheckPasswordComplexity(newPassword)
 	if err != nil {
-		logger.Error(err)
+		logger.With("err", err).Error("cannot check password complexity")
 		return
 	}
 
 	// check if the new password is the same as the confirmed password
 	if newPassword != newPasswordConfirmation {
 		err = ErrConfirmPassword
-		logger.Error(err)
+		logger.With("err", err).Error("can not confirm password")
 		return
 	}
 
@@ -102,7 +101,7 @@ func ResetPassword(service IdentityService, token, newPassword, newPasswordConfi
 	resetPassword := identity_models.IdentityResetPassword{}
 	err = service.GetSQLClient().Where("token = ?", token).First(&resetPassword).Error
 	if err != nil {
-		logger.Error(err)
+		logger.With("err", err).Error("cam not get reset password from database")
 		err = ErrTokenNotFound
 		return err
 	}
@@ -110,13 +109,13 @@ func ResetPassword(service IdentityService, token, newPassword, newPasswordConfi
 	// check if expiration date is in the past
 	if resetPassword.Expire.Before(time.Now().UTC()) {
 		err = ErrTokenExpired
-		logger.Error(err)
+		logger.With("err", err).Error("can not reset password")
 		return
 	}
 	// check if the token was used
 	if resetPassword.ConfirmationTime != nil {
 		err = ErrTokenUsed
-		logger.Error(err)
+		logger.With("err", err).Error("can not reset password")
 		return
 	}
 
@@ -124,20 +123,20 @@ func ResetPassword(service IdentityService, token, newPassword, newPasswordConfi
 	logger.Debug("CheckPasswordComplexity")
 	err = security.CheckPasswordComplexity(newPassword)
 	if err != nil {
-		logger.Error(err)
+		logger.With("err", err).Error("cannot check password complexity")
 		return
 	}
 
 	// get identity
 	identity, err := GetIdentityByUID(service, resetPassword.IdentityUID)
 	if err != nil {
-		logger.Error(err)
+		logger.With("err", err).Error("cannot get identity from database")
 		return
 	}
 	// change password
 	err = SetPasswordOfIdentity(service, identity, newPassword)
 	if err != nil {
-		logger.Error(err)
+		logger.With("err", err).Error("cannot set password of identity")
 		return
 	}
 	// update identity reset token
@@ -150,7 +149,7 @@ func ResetPassword(service IdentityService, token, newPassword, newPasswordConfi
 	// update in database
 	err = service.GetSQLClient().Save(&resetPassword).Error
 	if err != nil {
-		logger.Error(err)
+		logger.With("err", err).Error("cannot update reset password in database")
 		// ignore error
 		err = nil
 	}

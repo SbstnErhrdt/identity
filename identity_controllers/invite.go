@@ -1,20 +1,17 @@
 package identity_controllers
 
 import (
-	log "github.com/sirupsen/logrus"
 	"net/mail"
 )
 
 // InviteUser invites a user to the system
 func InviteUser(service IdentityService, origin, subject, firstName, lastName, emailAddress, link string) (err error) {
-	logger := service.GetLogger().WithFields(
-		log.Fields{
-			"method":       "InviteUser",
-			"origin":       origin,
-			"firstName":    firstName,
-			"lastName":     lastName,
-			"emailAddress": emailAddress,
-		},
+	logger := service.GetLogger().With(
+		"method", "InviteUser",
+		"origin", origin,
+		"firstName", firstName,
+		"lastName", lastName,
+		"emailAddress", emailAddress,
 	)
 	// send email
 	// Build email template
@@ -24,7 +21,7 @@ func InviteUser(service IdentityService, origin, subject, firstName, lastName, e
 	// generate the content of the email
 	content, err := emailTemplate.Content()
 	if err != nil {
-		logger.WithError(err).Error("could not generate email content")
+		logger.With("err", err).Error("could not generate email content")
 		return
 	}
 	// Send email
@@ -38,7 +35,7 @@ func InviteUser(service IdentityService, origin, subject, firstName, lastName, e
 		subject,
 		content)
 	if err != nil {
-		logger.WithError(err).Error("could not send email")
+		logger.With("err", err).Error("could not send email")
 		return
 	}
 	return

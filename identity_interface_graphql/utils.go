@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/google/uuid"
 	"github.com/graphql-go/graphql"
-	log "github.com/sirupsen/logrus"
+	"log/slog"
 )
 
 const (
@@ -26,7 +26,7 @@ func GetUserUIDFromContext(p *graphql.ResolveParams) (uid uuid.UUID, err error) 
 	uid, ok := p.Context.Value(UserUidContextKey).(uuid.UUID)
 	if !ok {
 		err = ErrUserIdFromContext
-		log.Error(err)
+		slog.With("err", err).Error("can not get USER_UID from context")
 		return
 	}
 	return
@@ -40,7 +40,7 @@ func GetUserAgentFromContext(p *graphql.ResolveParams) (userAgent string, err er
 	userAgent, ok := p.Context.Value(UserAgentContextKey).(string)
 	if !ok {
 		err = ErrAgentFromContext
-		log.Error(err)
+		slog.With("err", err).Error("can not get agent from context")
 		return
 	}
 	return
@@ -54,7 +54,7 @@ func GetIpFromContext(p *graphql.ResolveParams) (ip string, err error) {
 	ip, ok := p.Context.Value(UserIpContextKey).(string)
 	if !ok {
 		err = ErrIpFromContext
-		log.Error(err)
+		slog.With("err", err).Error("can not get ip from context")
 		return
 	}
 	return
@@ -68,6 +68,7 @@ func GetOriginFromContext(p *graphql.ResolveParams) (origin string, err error) {
 	origin, ok := p.Context.Value(OriginContextKey).(string)
 	if !ok {
 		err = ErrOriginFromContext
+		slog.With("err", err).Error("can not get origin from context")
 		return
 	}
 	return
@@ -81,6 +82,7 @@ func ParseUIDFromArgs(p *graphql.ResolveParams, key string) (uid uuid.UUID, err 
 	uidString, ok := p.Args[key].(string)
 	if !ok {
 		err = ErrInvalidUid
+		slog.With("err", err).Error("can not get uid from context")
 		return
 	}
 	uid, err = uuid.Parse(uidString)

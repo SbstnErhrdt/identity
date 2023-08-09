@@ -19,7 +19,10 @@ func GetApiTokensByIdentity(service IdentityService, identityUID uuid.UUID) (res
 		Order("created_at desc").
 		Find(&results).Error
 	if err != nil {
-		service.GetLogger().WithError(err).WithField("identity_uid", identityUID).Error("could not find tokens with uid")
+		service.GetLogger().
+			With("err", err).
+			With("identity_uid", identityUID).
+			Error("could not find tokens with uid")
 		return nil, ErrExternalNoTokensFound
 	}
 	return results, nil

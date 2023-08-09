@@ -3,19 +3,16 @@ package identity_controllers
 import (
 	"encoding/csv"
 	"errors"
-	log "github.com/sirupsen/logrus"
 	"io"
 	"os"
 )
 
 // InviteCSV adds all users in a CSV file to the invite list
 func InviteCSV(service IdentityService, origin, filePath, subject, link string) (err error) {
-	logger := log.WithFields(
-		log.Fields{
-			"func":    "InviteCSV",
-			"service": "identity",
-			"file":    filePath,
-		},
+	logger := service.GetLogger().With(
+		"func", "InviteCSV",
+		"service", "identity",
+		"file", filePath,
 	)
 	// Load a csv file.
 	f, err := os.Open(filePath)
@@ -59,16 +56,14 @@ func InviteCSV(service IdentityService, origin, filePath, subject, link string) 
 
 		errInvite := InviteUser(service, origin, subject, firsName, lastName, emailAddress, link)
 		if errInvite != nil {
-			logger.WithFields(
-				log.Fields{
-					"firstName": firsName,
-					"lastName":  lastName,
-					"email":     emailAddress,
-				},
-			).WithError(errInvite).Info("could not invite")
+			logger.With(
+				"firstName", firsName,
+				"lastName", lastName,
+				"email", emailAddress,
+			).With("err", errInvite).Info("could not invite")
 		}
 		rowCounter++
 	}
-	logger.WithField("amount", rowCounter).Info("email send")
+	logger.With("amount", rowCounter).Info("email send")
 	return
 }

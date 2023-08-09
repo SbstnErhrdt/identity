@@ -5,7 +5,7 @@ import (
 	"github.com/SbstnErhrdt/identity/identity_models"
 	"github.com/SbstnErhrdt/identity/security"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
+	"log/slog"
 )
 
 // ErrNoEmail is returned when no email is provided
@@ -49,7 +49,7 @@ func GenerateJWT(service IdentityService, user *identity_models.Identity) (resul
 	audience := env.FallbackEnvVariable("SECURITY_JWT_AUDIENCE", "APP")
 	result, _, err = security.GenerateJWTToken(user.UID, audience, payload)
 	if err != nil {
-		log.Error(err)
+		slog.With("err", err).Error("")
 	}
 	return
 }

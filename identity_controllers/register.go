@@ -5,7 +5,6 @@ import (
 	"github.com/SbstnErhrdt/identity/identity_models"
 	"github.com/SbstnErhrdt/identity/security"
 	"github.com/google/uuid"
-	log "github.com/sirupsen/logrus"
 	"net/mail"
 	"time"
 )
@@ -27,25 +26,25 @@ func Register(service IdentityService, emailAddress, password string, termAndCon
 	// sanitize input
 	emailAddress = SanitizeEmail(emailAddress)
 	// init logger
-	logger := log.WithFields(log.Fields{
-		"email":   emailAddress,
-		"process": "Register",
-	})
+	logger := service.GetLogger().With(
+		"email", emailAddress,
+		"process", "Register",
+	)
 	// checks if users can register
 	if !service.AllowRegistration(origin) {
 		err = ErrRegistrationIsNotAllowed
-		logger.WithError(err).Warn("registration is not allowed")
+		logger.With("err", err).Warn("registration is not allowed")
 		return
 	}
 	// check login data
 	if len(emailAddress) == 0 {
 		err = ErrNoEmail
-		logger.WithError(err).Error("no email address")
+		logger.With("err", err).Error("no email address")
 		return
 	}
 	if len(password) == 0 {
 		err = ErrNoPassword
-		logger.Error(err)
+		logger.With("err", err).Error("no password")
 		return
 	}
 	// check terms and conditions
@@ -58,12 +57,12 @@ func Register(service IdentityService, emailAddress, password string, termAndCon
 	isFree, err := CheckIfEmailIsFree(service, emailAddress)
 	if !isFree {
 		err = ErrEmailAlreadyExists
-		logger.Warn(err)
+		logger.With("err", err).Warn("email already exists")
 		// OWASP recommends not to return an in case the account already exists
 		return nil
 	}
 	if err != nil {
-		logger.Error(err)
+		logger.With("err", err).Error("cannot check if email is free")
 		// OWASP recommends not to return an in case the account already exists
 		return nil
 	}
@@ -71,14 +70,14 @@ func Register(service IdentityService, emailAddress, password string, termAndCon
 	logger.Debug("CheckPasswordComplexity")
 	err = security.CheckPasswordComplexity(password)
 	if err != nil {
-		logger.Error(err)
+		logger.With("err", err).Error("password does not meet the complexity requirements")
 		return
 	}
 	// generate random registration token
 	logger.Debug("GenerateRandomString")
 	randomToken, err := security.GenerateRandomString(64)
 	if err != nil {
-		logger.Error(err)
+		logger.With("err", err).Error("could not generate random string")
 		return
 	}
 	// create user
@@ -91,7 +90,7 @@ func Register(service IdentityService, emailAddress, password string, termAndCon
 	logger.Debug("SetNewPassword")
 	err = identity.SetNewPassword(service.GetPepper(), password)
 	if err != nil {
-		logger.Error(err)
+		logger.With("err", err).Error("could not set new password")
 		err = ErrGenericRegistration
 		return
 	}
@@ -121,7 +120,7 @@ func Register(service IdentityService, emailAddress, password string, termAndCon
 	tx.Create(&confirmation)
 	err = tx.Commit().Error
 	if err != nil {
-		logger.Error(err)
+		logger.With("err", err).Error("")
 		return
 	}
 	// Build email template
@@ -131,7 +130,7 @@ func Register(service IdentityService, emailAddress, password string, termAndCon
 	// generate the content of the email
 	content, err := emailTemplate.Content()
 	if err != nil {
-		logger.Error(err)
+		logger.With("err", err).Error("")
 		return
 	}
 	// Send email
@@ -152,10 +151,10 @@ var ErrExternalNoRegistrationToken = errors.New("no registration token found in 
 
 // RegistrationConfirmation confirms a registration
 func RegistrationConfirmation(service IdentityService, token, userAgent, ip string) (err error) {
-	logger := log.WithFields(log.Fields{
-		"token":   token,
-		"process": "ConfirmEmail",
-	})
+	logger := service.GetLogger().With(
+		"token", token,
+		"process", "ConfirmEmail",
+	)
 	// check if token is in table
 	tokenIdentityResult := identity_models.IdentityRegistrationConfirmation{}
 	logger.Debug("find registration confirmation")
@@ -164,7 +163,7 @@ func RegistrationConfirmation(service IdentityService, token, userAgent, ip stri
 		Where("token = ?", token).
 		First(&tokenIdentityResult).Error
 	if err != nil {
-		logger.Error(err)
+		logger.With("err", err).Error("")
 		err = ErrExternalNoRegistrationToken
 		return
 	}
@@ -180,14 +179,14 @@ func RegistrationConfirmation(service IdentityService, token, userAgent, ip stri
 		identity, errIdentity := GetIdentityByUID(service, tokenIdentityResult.IdentityUID)
 		if errIdentity != nil {
 			err = errIdentity
-			logger.Error(err)
+			logger.With("err", err).Error("")
 			return
 		}
 		// delete account
 		errAccount := softDeleteAccount(service, identity)
 		if errAccount != nil {
 			err = errAccount
-			logger.Error(err)
+			logger.With("err", err).Error("")
 			return
 		}
 		return ErrRegistrationConfirmationExpired
@@ -200,7 +199,7 @@ func RegistrationConfirmation(service IdentityService, token, userAgent, ip stri
 		Where("uid = ?", tokenIdentityResult.IdentityUID).
 		First(&identity).Error
 	if err != nil {
-		logger.Error(err)
+		logger.With("err", err).Error("")
 		return
 	}
 	// confirm identity
@@ -212,7 +211,7 @@ func RegistrationConfirmation(service IdentityService, token, userAgent, ip stri
 		GetSQLClient().
 		Save(&identity).Error
 	if err != nil {
-		logger.Error(err)
+		logger.With("err", err).Error("")
 		return
 	}
 	// update tokenIdentityResult
@@ -225,7 +224,7 @@ func RegistrationConfirmation(service IdentityService, token, userAgent, ip stri
 		GetSQLClient().
 		Save(&tokenIdentityResult).Error
 	if err != nil {
-		logger.Error(err)
+		logger.With("err", err).Error("")
 		return
 	}
 	return

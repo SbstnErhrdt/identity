@@ -16,7 +16,7 @@ func GetIdentityByEmail(service IdentityService, email string) (result *identity
 		Where("deleted_at is NULL"). // only users that are not deleted
 		First(&identity).Error
 	if err != nil {
-		service.GetLogger().WithError(err).WithField("email", email).Error("could not find user with email")
+		service.GetLogger().With("err", err).With("email", email).Error("could not find user with email")
 		return nil, ErrNoUserFound
 	}
 	return &identity, nil
@@ -32,7 +32,7 @@ func GetIdentityByUID(service IdentityService, uid uuid.UUID) (result *identity_
 		Where("deleted_at is NULL"). // only users that are not deleted
 		First(&identity).Error
 	if err != nil {
-		service.GetLogger().WithError(err).WithField("uid", uid).Error("could not find user with uid")
+		service.GetLogger().With("err", err).With("uid", uid).Error("could not find user with uid")
 		return nil, ErrNoUserFound
 	}
 	return &identity, nil

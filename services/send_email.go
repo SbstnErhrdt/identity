@@ -5,7 +5,7 @@ import (
 	"crypto/tls"
 	"fmt"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
+	"log/slog"
 	"net"
 	"net/mail"
 	"net/smtp"
@@ -18,11 +18,11 @@ var IdentityEmailTimeout = 10 * time.Second
 
 // SendEmail sends an email with a timout
 func SendEmail(senderAddress mail.Address, receiverAddress mail.Address, subject, content string) (err error) {
-	logger := log.WithFields(map[string]interface{}{
-		"sender":   senderAddress.String(),
-		"receiver": receiverAddress.String(),
-		"subject":  subject,
-	})
+	logger := slog.With(
+		"sender", senderAddress.String(),
+		"receiver", receiverAddress.String(),
+		"subject", subject,
+	)
 	// init context with timeout
 	ctx := context.Background()
 	ctx, cancel := context.WithTimeout(ctx, IdentityEmailTimeout)
@@ -45,10 +45,10 @@ func SendEmail(senderAddress mail.Address, receiverAddress mail.Address, subject
 	select {
 	case <-ctx.Done():
 		err = errors.Wrap(ctx.Err(), "can not send email because of a timeout")
-		logger.WithError(err).Error("identity send email timeout")
+		logger.With("err", err).Error("identity send email timeout")
 		return
 	case err = <-errEmailChan:
-		logger.WithError(err).Error("identity send email error")
+		logger.With("err", err).Error("identity send email error")
 		return err
 	case <-sendEmailChan:
 		logger.Info("identity email send successfully")
@@ -85,7 +85,7 @@ func sendEmail(senderAddress mail.Address, receiverAddress mail.Address, subject
 
 	host, _, err := net.SplitHostPort(servername)
 	if err != nil {
-		log.Error(err)
+		slog.With("err", err).Error("can not split host port")
 		return err
 	}
 
@@ -102,30 +102,30 @@ func sendEmail(senderAddress mail.Address, receiverAddress mail.Address, subject
 	// from the very beginning (no starttls)
 	conn, err := tls.Dial("tcp", servername, tlsConfig)
 	if err != nil {
-		log.Error(err)
+		slog.With("err", err).Error("can not dial")
 		return err
 	}
 
 	c, err := smtp.NewClient(conn, host)
 	if err != nil {
-		log.Error(err)
+		slog.With("err", err).Error("can not create new client")
 		return err
 	}
 
 	// Auth
 	if err = c.Auth(auth); err != nil {
-		log.Error(err)
+		slog.With("err", err).Error("can not auth")
 		return err
 	}
 
 	// To && From
 	if err = c.Mail(senderAddress.Address); err != nil {
-		log.Error(err)
+		slog.With("err", err).Error("can not set sender")
 		return err
 	}
 
 	if err = c.Rcpt(receiverAddress.Address); err != nil {
-		log.Error(err)
+		slog.With("err", err).Error("can net set receiver")
 		return err
 	}
 
@@ -134,28 +134,28 @@ func sendEmail(senderAddress mail.Address, receiverAddress mail.Address, subject
 	// Data
 	w, err := c.Data()
 	if err != nil {
-		log.Error(err)
+		slog.With("err", err).Error("cam not get data")
 		return err
 	}
 
 	_, err = w.Write([]byte(message))
 	if err != nil {
-		log.Error(err)
+		slog.With("err", err).Error("can not write message")
 		return err
 	}
 
 	err = w.Close()
 	if err != nil {
-		log.Error(err)
+		slog.With("err", err).Error("can not close file")
 		return err
 	}
 
 	err = c.Quit()
 	if err != nil {
-		log.Error(err)
+		slog.With("err", err).Error("can not quit")
 		return err
 	}
 
-	log.Println("email send successfully")
+	slog.Info("email send successfully")
 	return
 }

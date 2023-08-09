@@ -4,7 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
-	log "github.com/sirupsen/logrus"
+	"log/slog"
 	"strings"
 )
 
@@ -20,7 +20,7 @@ func GenerateRandomBytes(n int) ([]byte, error) {
 	_, err := rand.Read(b)
 	// Note that err == nil only if we read len(b) bytes.
 	if err != nil {
-		log.Error(err)
+		slog.With("err", err).Error("cannot generate random bytes")
 		err = ErrCannotGenerateRandomBytes
 		return nil, err
 	}
@@ -38,7 +38,7 @@ var ErrCannotGenerateRandomString = errors.New("cannot generate random token")
 func GenerateRandomString(s int) (string, error) {
 	b, err := GenerateRandomBytes(s)
 	if err != nil {
-		log.Error(err)
+		slog.With("err", err).Error("cannot generate random string")
 		return "", ErrCannotGenerateRandomString
 	}
 	// outlook has problems with == in the base64 string

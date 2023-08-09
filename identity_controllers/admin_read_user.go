@@ -3,7 +3,6 @@ package identity_controllers
 import (
 	"github.com/SbstnErhrdt/identity/identity_models"
 	"github.com/google/uuid"
-	log "github.com/sirupsen/logrus"
 )
 
 // ReadIdentity reads a specific user
@@ -21,7 +20,7 @@ func ReadIdentity(service IdentityService, adminUID, identityUID uuid.UUID) (res
 		First(&result).
 		Error
 	if err != nil {
-		log.WithError(err).Error("could not read users")
+		service.GetLogger().With("err", err).Error("could not read users")
 	}
 	return
 }

@@ -7,7 +7,7 @@ func Block(service IdentityService, user *identity_models.Identity) (err error) 
 	user.Blocked = true
 	err = service.GetSQLClient().Save(user).Error
 	if err != nil {
-		service.GetLogger().WithError(err).Error("could not block identity")
+		service.GetLogger().With("err", err).Error("could not block identity")
 	}
 	return
 }

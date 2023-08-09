@@ -4,8 +4,8 @@ import (
 	"github.com/SbstnErhrdt/env"
 	"github.com/SbstnErhrdt/identity/identity_communication/email"
 	"github.com/SbstnErhrdt/identity/services"
-	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
+	"log/slog"
 	"net/mail"
 	"os"
 	"time"
@@ -16,7 +16,7 @@ type IdentificationType string
 
 func init() {
 	if os.Getenv("SECURITY_PEPPER") == "PEPPER" {
-		log.Warn("please change the pepper value in the environment variable SECURITY_PEPPER")
+		slog.Warn("please change the pepper value in the environment variable SECURITY_PEPPER")
 	}
 }
 
@@ -57,7 +57,7 @@ func AutoBlockUserFn(origin string) bool {
 
 // ControllerService is the identity service
 type ControllerService struct {
-	logger                     *log.Logger
+	logger                     *slog.Logger
 	adminEmail                 string
 	Issuer                     string
 	Pepper                     string
@@ -78,14 +78,14 @@ type ControllerService struct {
 	expirationPasswordReset    time.Duration
 }
 
-func (s *ControllerService) GetLogger() *log.Logger {
+func (s *ControllerService) GetLogger() *slog.Logger {
 	return s.logger
 }
 
 // NewService inits a new identity service
 func NewService(issuer string, senderEmailAddress mail.Address) *ControllerService {
 	s := ControllerService{
-		logger:                    log.StandardLogger(),
+		logger:                    slog.Default(),
 		Issuer:                    issuer,
 		Pepper:                    env.FallbackEnvVariable("SECURITY_PEPPER", "PEPPER"),
 		senderEmailAddress:        senderEmailAddress,
@@ -105,7 +105,7 @@ func NewService(issuer string, senderEmailAddress mail.Address) *ControllerServi
 }
 
 // SetLogger sets the logger
-func (s *ControllerService) SetLogger(logger *log.Logger) *ControllerService {
+func (s *ControllerService) SetLogger(logger *slog.Logger) *ControllerService {
 	s.logger = logger
 	return s
 }

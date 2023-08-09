@@ -4,7 +4,6 @@ import (
 	"errors"
 	"github.com/SbstnErhrdt/identity/identity_models"
 	"github.com/google/uuid"
-	log "github.com/sirupsen/logrus"
 	"time"
 )
 
@@ -18,40 +17,40 @@ var ErrExternalDelete = errors.New("user could not be deleted. Please try again 
 // - anonymizes the email and phone
 // - deletes the account
 func DeleteIdentity(service IdentityService, uid uuid.UUID, password string) (err error) {
-	logger := service.GetLogger().WithFields(log.Fields{
-		"method": "DeleteIdentity",
-		"uid":    uid,
-	})
+	logger := service.GetLogger().With(
+		"method", "DeleteIdentity",
+		"uid", uid,
+	)
 	// get the user
 	identity, err := GetIdentityByUID(service, uid)
 	if err != nil {
-		logger.WithError(err).Error("could not get identity")
+		logger.With("err", err).Error("could not get identity")
 		return
 	}
 	// check if the password is correct
 	if !VerifyPassword(service, identity, password) {
 		err = ErrInvalidPassword
-		logger.WithError(err).Error("could not verify password")
+		logger.With("err", err).Error("could not verify password")
 		return
 	}
 	// anonymize firstname and last name
 	err = anonymizeFirstNameLastNameAndSave(service, identity)
 	if err != nil {
-		logger.WithError(err).Error("could not anonymize firstname and last name")
+		logger.With("err", err).Error("could not anonymize firstname and last name")
 		err = ErrExternalDelete
 		return
 	}
 	// anonymize the email and phone
 	err = anonymizeEmailPhone(service, identity)
 	if err != nil {
-		logger.Error(err)
+		logger.With("err", err).Error("")
 		err = ErrExternalDelete
 		return
 	}
 	// delete the account
 	err = softDeleteAccount(service, identity)
 	if err != nil {
-		logger.WithError(err).Error("could not delete account")
+		logger.With("err", err).Error("could not delete account")
 		err = ErrExternalDelete
 		return
 	}
@@ -64,7 +63,7 @@ func softDeleteAccount(service IdentityService, identity *identity_models.Identi
 	// delete identity
 	err = service.GetSQLClient().Delete(&identity).Error
 	if err != nil {
-		service.GetLogger().WithError(err).Error("could not delete identity")
+		service.GetLogger().With("err", err).Error("could not delete identity")
 	}
 	return
 }

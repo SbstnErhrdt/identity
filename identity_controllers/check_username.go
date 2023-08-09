@@ -38,7 +38,7 @@ func CheckUserLogin(service IdentityService, email string, password string) (res
 	email = SanitizeEmail(email)
 	user, err := GetIdentityByEmail(service, email)
 	if err != nil {
-		service.GetLogger().WithError(err).WithField("email", email).Error("could not find user with email")
+		service.GetLogger().With("err", err).With("email", email).Error("could not find user with email")
 	}
 	// Verify the password
 	if VerifyPassword(service, user, password) {

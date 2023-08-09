@@ -2,8 +2,8 @@ package email
 
 import (
 	"bytes"
-	log "github.com/sirupsen/logrus"
 	"html/template"
+	"log/slog"
 )
 
 // RegistrationEmailTemplate is the template for the registration email
@@ -29,20 +29,20 @@ func DefaultRegistrationEmailResolver(origin, email, token string) RegistrationE
 
 // Content returns the content of the registration email
 func (obj *RegistrationEmailTemplate) Content() (html string, err error) {
-	logger := log.WithFields(log.Fields{"email_template": "registration template"})
+	logger := slog.With("email_template", "registration template")
 	// init buffer
 	var tpl bytes.Buffer
 	// Note the call to ParseFS instead of Parse
 	t, err := template.ParseFS(Templates, "templates/registration.gohtml")
 	if err != nil {
-		logger.WithError(err).Error("could not parse template")
+		logger.With("err", err).Error("could not parse template")
 	}
 	// check if there are
 	if len(obj.HtmlTemplate) > 0 {
 		tNew, errParse := template.New("registration-email").Parse(obj.HtmlTemplate)
 		if errParse == nil {
 			t = tNew
-			logger.WithError(errParse).Error("could not parse provided html template")
+			logger.With("err", errParse).Error("could not parse provided html template")
 		} else {
 			logger.Warn("can not parse provided html template")
 		}
@@ -50,7 +50,7 @@ func (obj *RegistrationEmailTemplate) Content() (html string, err error) {
 	// run template engine
 	err = t.Execute(&tpl, obj)
 	if err != nil {
-		logger.WithError(err).Error("could not execute template")
+		logger.With("err", err).Error("could not execute template")
 	}
 	html = tpl.String()
 	return

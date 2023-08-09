@@ -2,14 +2,14 @@ package identity_controllers
 
 import (
 	"github.com/SbstnErhrdt/identity/identity_communication/email"
-	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
+	"log/slog"
 	"net/mail"
 	"time"
 )
 
 type IdentityService interface {
-	GetLogger() *logrus.Logger
+	GetLogger() *slog.Logger
 	// SQL
 	GetSQLClient() *gorm.DB
 	// Security

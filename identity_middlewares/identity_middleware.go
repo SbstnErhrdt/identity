@@ -2,7 +2,7 @@ package identity_middlewares
 
 import (
 	"github.com/gin-gonic/gin"
-	log "github.com/sirupsen/logrus"
+	"log/slog"
 	"net/http"
 )
 
@@ -21,9 +21,9 @@ func ReadUserIP(r *http.Request) string {
 // UserAgentAndIpMiddleware extracts the ip and the client
 // from the request and adds it to the context
 func UserAgentAndIpMiddleware() gin.HandlerFunc {
-	logger := log.WithFields(log.Fields{
-		"middleware": "application",
-	})
+	logger := slog.With(
+		"middleware", "application",
+	)
 	return func(c *gin.Context) {
 		// Extract ConfirmationIP
 		logger.Debug("set ip")

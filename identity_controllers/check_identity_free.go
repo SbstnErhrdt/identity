@@ -18,7 +18,7 @@ func CheckIfEmailIsFree(service IdentityService, email string) (isFree bool, err
 		// username is free
 		return true, nil
 	} else if err != nil {
-		service.GetLogger().WithField("email", email).WithError(err).Warn("could not check if email is free")
+		service.GetLogger().With("email", email).With("err", err).Warn("could not check if email is free")
 		return false, ErrEmailIsAlreadyRegistered
 	}
 	return false, nil

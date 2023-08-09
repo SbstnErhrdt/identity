@@ -5,7 +5,6 @@ import (
 	"github.com/SbstnErhrdt/env"
 	"github.com/SbstnErhrdt/identity/identity_models"
 	"github.com/SbstnErhrdt/identity/security"
-	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
 
@@ -38,19 +37,19 @@ func Login(service IdentityService, emailAddress, password, userAgent, ip string
 	// sanitize input
 	emailAddress = SanitizeEmail(emailAddress)
 	// init logger
-	logger := service.GetLogger().WithFields(log.Fields{
-		"identity": emailAddress,
-		"process":  "Login",
-	})
+	logger := service.GetLogger().With(
+		"identity", emailAddress,
+		"process", "Login",
+	)
 	// check login data
 	if len(emailAddress) == 0 {
 		err = ErrNoEmail
-		logger.WithError(err).Error("no email address")
+		logger.With("err", err).Error("no email address")
 		return "", err
 	}
 	if len(password) == 0 {
 		err = ErrNoPassword
-		logger.WithError(err).Error("no password")
+		logger.With("err", err).Error("no password")
 		return "", err
 	}
 	// track login attempt
@@ -62,7 +61,7 @@ func Login(service IdentityService, emailAddress, password, userAgent, ip string
 	}
 	err = service.GetSQLClient().Create(&loginAttempt).Error
 	if err != nil {
-		logger.WithError(err).Error("could not track login attempt")
+		logger.With("err", err).Error("could not track login attempt")
 		return "", ErrExternalUserLoginNotPossible
 	}
 	// Check if identity exists
@@ -77,12 +76,12 @@ func Login(service IdentityService, emailAddress, password, userAgent, ip string
 		Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		err = ErrIdentityNotFound
-		logger.WithError(err).Error("could not find identity")
+		logger.With("err", err).Error("could not find identity")
 		// OWASP: generic error message if user does not exist
 		err = ErrExternalLoginFailedInvalidUserOrPassword
 		return "", err
 	} else if err != nil {
-		logger.WithError(err).Error("could not find identity")
+		logger.With("err", err).Error("could not find identity")
 		// OWASP: generic error message
 		err = ErrExternalLoginFailed
 		return "", err
@@ -92,7 +91,7 @@ func Login(service IdentityService, emailAddress, password, userAgent, ip string
 	logger.Debug("check if identity is not blocked")
 	if identity.Blocked {
 		err = ErrExternalUserBlocked
-		logger.WithError(err).Warn("identity is blocked")
+		logger.With("err", err).Warn("identity is blocked")
 		return "", err
 	}
 
@@ -100,7 +99,7 @@ func Login(service IdentityService, emailAddress, password, userAgent, ip string
 	logger.Debug("check if identity is cleared")
 	if !identity.Cleared {
 		err = ErrExternalUserCleared
-		logger.WithError(err).Warn("identity is not cleared")
+		logger.With("err", err).Warn("identity is not cleared")
 		return "", err
 	}
 
@@ -108,7 +107,7 @@ func Login(service IdentityService, emailAddress, password, userAgent, ip string
 	logger.Debug("check if identity is activated")
 	if !identity.Active {
 		err = ErrEmailNotVerified
-		logger.WithError(err).Warn("identity is not activated")
+		logger.With("err", err).Warn("identity is not activated")
 		return "", err
 	}
 
@@ -116,21 +115,21 @@ func Login(service IdentityService, emailAddress, password, userAgent, ip string
 	logger.Debug("verify password")
 	if !(VerifyPassword(service, identity, password)) {
 		err = ErrWrongPassword
-		logger.Error(err)
+		logger.With("err", err).Error("wrong password")
 		// OWASP: return generic error message
 		err = ErrExternalLoginFailedInvalidUserOrPassword
 		return "", err
 	}
 
 	// generate token
-	log.Debug("generate token")
+	logger.Debug("generate token")
 	audience := env.FallbackEnvVariable("SECURITY_JWT_AUDIENCE", "APP")
 	token, tokenUID, errToken := security.GenerateJWTToken(identity.UID, audience, map[string]interface{}{})
 	if errToken != nil {
-		logger.Error(errToken)
+		logger.With("err", errToken).Error("could not generate token")
 		// OWASP: generic error message
 		err = ErrExternalLoginFailed
-		return "", errToken
+		return "", err
 	}
 
 	// save token id in token table
@@ -140,10 +139,10 @@ func Login(service IdentityService, emailAddress, password, userAgent, ip string
 	}
 	errTokenMet := service.GetSQLClient().Create(&tokenMeta).Error
 	if errToken != nil {
-		logger.Error(errTokenMet)
+		logger.With("err", errTokenMet).Error("could not generate token meta entry")
 		// OWASP: generic error message
 		err = ErrExternalLoginFailed
-		return "", errTokenMet
+		return "", err
 	}
 
 	// update login attempt
