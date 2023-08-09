@@ -15,6 +15,10 @@ func InitAdminGraphQlQueries(service identity_controllers.IdentityService) *Admi
 		SearchUsers: IdentitiesSearchField(service),
 		User:        Identity(service),
 	}
+
+	// Extend the graphql model
+	AdminIdentityGraphQlModel.AddFieldConfig("apiTokens", ApiTokensField(service))
+
 	return &gql
 }
 
