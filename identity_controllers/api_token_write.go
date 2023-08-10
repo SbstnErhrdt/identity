@@ -12,6 +12,9 @@ import (
 // ErrTokenNameEmpty is thrown when the token name is empty
 var ErrTokenNameEmpty = errors.New("token name is empty")
 
+// ErrCouldNotCreateToken is thrown when the token could not be created
+var ErrCouldNotCreateToken = errors.New("could not create token")
+
 // ErrTokenExpirationDateInPast is thrown when the token expiration date is in the past
 var ErrTokenExpirationDateInPast = errors.New("token expiration date is in the past")
 
@@ -42,7 +45,7 @@ func CreateApiToken(service IdentityService, identityUID uuid.UUID, tokenName st
 		"tokenName": tokenName,
 	}, utcTokenExpirationDate)
 	// create token db record
-	t := identity_models.IdentityApiToken{
+	apiToken := identity_models.IdentityApiToken{
 		IdentityUID:    identityUID,
 		TokenUID:       tokenUID,
 		Name:           tokenName,
@@ -51,13 +54,26 @@ func CreateApiToken(service IdentityService, identityUID uuid.UUID, tokenName st
 	}
 	// create user
 	logger.Debug("create api token in the database")
-	err = service.GetSQLClient().Create(&t).Error
+	err = service.GetSQLClient().Create(&apiToken).Error
 	if err != nil {
 		logger.With("err", err).Error("could not create api token in the database")
 		return
 	}
 
-	return &t, nil
+	// save token id in token table
+	tokenMeta := identity_models.IdentityTokenMeta{
+		TokenUID:  tokenUID,
+		TokenType: identity_models.ApiToken,
+	}
+	errTokenMeta := service.GetSQLClient().Create(&tokenMeta).Error
+	if errTokenMeta != nil {
+		logger.With("err", errTokenMeta).Error("could not generate token meta entry")
+		// OWASP: generic error message
+		err = ErrCouldNotCreateToken
+		return nil, err
+	}
+
+	return &apiToken, nil
 }
 
 // DeleteApiToken deletes an api token from the database

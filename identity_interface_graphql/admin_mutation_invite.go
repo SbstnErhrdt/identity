@@ -6,11 +6,11 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
-// InviteField is the graphql field to invite a new user
-func InviteField(service identity_controllers.IdentityService) *graphql.Field {
+// AdminInviteField is the graphql field to invite a new user
+func AdminInviteField(service identity_controllers.IdentityService) *graphql.Field {
 	field := graphql.Field{
-		Name:        "Invite",
-		Description: "invite a new user",
+		Name:        "adminInvite",
+		Description: "invites a new user",
 		Type:        graphql.Boolean,
 		Args: graphql.FieldConfigArgument{
 			"email": &graphql.ArgumentConfig{
@@ -37,6 +37,10 @@ func InviteField(service identity_controllers.IdentityService) *graphql.Field {
 			},
 		},
 		Resolve: func(p graphql.ResolveParams) (i interface{}, err error) {
+			err = CheckAdmin(service, &p)
+			if err != nil {
+				return nil, err
+			}
 			// from context
 			// origin
 			origin, err := GetOriginFromContext(&p)

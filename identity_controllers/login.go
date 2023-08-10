@@ -115,7 +115,7 @@ func Login(service IdentityService, emailAddress, password, userAgent, ip string
 	logger.Debug("verify password")
 	if !(VerifyPassword(service, identity, password)) {
 		err = ErrWrongPassword
-		logger.With("err", err).Error("wrong password")
+		logger.With("err", err).With("securityIncident", 1).Error("wrong password")
 		// OWASP: return generic error message
 		err = ErrExternalLoginFailedInvalidUserOrPassword
 		return "", err
@@ -137,9 +137,9 @@ func Login(service IdentityService, emailAddress, password, userAgent, ip string
 		TokenUID:  tokenUID,
 		TokenType: identity_models.LoginToken,
 	}
-	errTokenMet := service.GetSQLClient().Create(&tokenMeta).Error
-	if errToken != nil {
-		logger.With("err", errTokenMet).Error("could not generate token meta entry")
+	errTokenMeta := service.GetSQLClient().Create(&tokenMeta).Error
+	if errTokenMeta != nil {
+		logger.With("err", errTokenMeta).Error("could not generate token meta entry")
 		// OWASP: generic error message
 		err = ErrExternalLoginFailed
 		return "", err
@@ -147,7 +147,7 @@ func Login(service IdentityService, emailAddress, password, userAgent, ip string
 
 	// update login attempt
 	logger.Debug("update login attempt")
-	loginAttempt.IdentityUID = identity.UID
+	loginAttempt.IdentityUID = &identity.UID
 	service.GetSQLClient().Save(&loginAttempt)
 	// return the token
 	return token, nil

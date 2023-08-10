@@ -19,18 +19,17 @@ func Identity(service identity_controllers.IdentityService) *graphql.Field {
 			},
 		},
 		Resolve: func(p graphql.ResolveParams) (i interface{}, err error) {
+			err = CheckAdmin(service, &p)
+			if err != nil {
+				return nil, err
+			}
 			// params
 			identityUID, err := ParseUIDFromArgs(&p, "UID")
 			if err != nil {
 				return nil, err
 			}
-			// from context
-			userUID, err := GetUserUIDFromContext(&p)
-			if err != nil {
-				return nil, err
-			}
 			// get identity
-			res, err := identity_controllers.ReadIdentity(service, userUID, identityUID)
+			res, err := identity_controllers.ReadIdentity(service, identityUID)
 			if err != nil {
 				return nil, err
 			}

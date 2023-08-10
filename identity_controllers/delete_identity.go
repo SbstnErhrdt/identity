@@ -33,6 +33,14 @@ func DeleteIdentity(service IdentityService, uid uuid.UUID, password string) (er
 		logger.With("err", err).Error("could not verify password")
 		return
 	}
+	return deleteIdentity(service, identity)
+}
+
+func deleteIdentity(service IdentityService, identity *identity_models.Identity) (err error) {
+	logger := service.GetLogger().With(
+		"method", "deleteIdentity",
+		"uid", identity.UID,
+	)
 	// anonymize firstname and last name
 	err = anonymizeFirstNameLastNameAndSave(service, identity)
 	if err != nil {

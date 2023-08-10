@@ -11,3 +11,13 @@ func Block(service IdentityService, user *identity_models.Identity) (err error) 
 	}
 	return
 }
+
+// UnBlock unblocks a user
+func UnBlock(service IdentityService, user *identity_models.Identity) (err error) {
+	user.Blocked = false
+	err = service.GetSQLClient().Save(user).Error
+	if err != nil {
+		service.GetLogger().With("err", err).Error("could not unblock identity")
+	}
+	return
+}

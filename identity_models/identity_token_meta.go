@@ -6,7 +6,7 @@ type IdentityTokenMeta struct {
 	// Metadata
 	Base
 	// Attributes
-	TokenUID  uuid.UUID `json:"tokenUID"`
+	TokenUID  uuid.UUID `gorm:"type:varchar(36);index" json:"tokenUID"`
 	TokenType TokenType `json:"tokenType"`
 }
 

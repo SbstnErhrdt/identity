@@ -6,14 +6,16 @@ import (
 )
 
 type AdminQueries struct {
-	SearchUsers *graphql.Field
-	User        *graphql.Field
+	SearchIdentities *graphql.Field
+	Identity         *graphql.Field
+	LoginAttempts    *graphql.Field
 }
 
 func InitAdminGraphQlQueries(service identity_controllers.IdentityService) *AdminQueries {
 	gql := AdminQueries{
-		SearchUsers: IdentitiesSearchField(service),
-		User:        Identity(service),
+		SearchIdentities: IdentitiesSearchField(service),
+		Identity:         Identity(service),
+		LoginAttempts:    Logins(service),
 	}
 
 	// Extend the graphql model
@@ -23,6 +25,7 @@ func InitAdminGraphQlQueries(service identity_controllers.IdentityService) *Admi
 }
 
 func (gql *AdminQueries) GenerateQueryObjects(root *graphql.Object) {
-	root.AddFieldConfig(gql.SearchUsers.Name, gql.SearchUsers)
-	root.AddFieldConfig(gql.User.Name, gql.User)
+	root.AddFieldConfig(gql.SearchIdentities.Name, gql.SearchIdentities)
+	root.AddFieldConfig(gql.Identity.Name, gql.Identity)
+	root.AddFieldConfig(gql.LoginAttempts.Name, gql.LoginAttempts)
 }

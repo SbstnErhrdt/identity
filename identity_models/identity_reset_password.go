@@ -9,7 +9,7 @@ type IdentityResetPassword struct {
 	// Metadata
 	Base
 	// Relations
-	IdentityUID uuid.UUID `json:"identityUID"`
+	IdentityUID uuid.UUID `gorm:"type:varchar(36);index" json:"identityUID"`
 	// Attributes
 	Email                 string     `json:"email"`
 	UserAgent             string     `json:"userAgent"`

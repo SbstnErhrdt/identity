@@ -6,24 +6,32 @@ import (
 )
 
 type AdminMutations struct {
-	Invite        *graphql.Field
-	BlockUser     *graphql.Field
-	UnBlockUser   *graphql.Field
-	ActivateUser  *graphql.Field
-	ResetEmail    *graphql.Field
-	ResetPassword *graphql.Field
-	SearchUsers   *graphql.Field
-	ReadUser      *graphql.Field
-	UpdateUser    *graphql.Field
+	AdminInvite          *graphql.Field
+	AdminBlockIdentity   *graphql.Field
+	AdminUnBlockIdentity *graphql.Field
+	AdminClearIdentity   *graphql.Field
+	AdminDeleteIdentity  *graphql.Field
+	// TODO: implement
+	AdminResetEmail     *graphql.Field
+	AdminUpdateIdentity *graphql.Field
+	AdminResetPassword  *graphql.Field
 }
 
 func InitAdminGraphQlMutations(service identity_controllers.IdentityService) *AdminMutations {
 	gql := AdminMutations{
-		Invite: InviteField(service),
+		AdminInvite:          AdminInviteField(service),
+		AdminBlockIdentity:   AdminBlockIdentity(service),
+		AdminUnBlockIdentity: AdminUnBlockIdentity(service),
+		AdminClearIdentity:   AdminClearIdentity(service),
+		AdminDeleteIdentity:  AdminDeleteIdentity(service),
 	}
 	return &gql
 }
 
 func (gql *AdminMutations) GenerateMutationObjects(root *graphql.Object) {
-	root.AddFieldConfig(gql.Invite.Name, gql.Invite)
+	root.AddFieldConfig(gql.AdminInvite.Name, gql.AdminInvite)
+	root.AddFieldConfig(gql.AdminBlockIdentity.Name, gql.AdminBlockIdentity)
+	root.AddFieldConfig(gql.AdminUnBlockIdentity.Name, gql.AdminUnBlockIdentity)
+	root.AddFieldConfig(gql.AdminClearIdentity.Name, gql.AdminClearIdentity)
+	root.AddFieldConfig(gql.AdminDeleteIdentity.Name, gql.AdminDeleteIdentity)
 }

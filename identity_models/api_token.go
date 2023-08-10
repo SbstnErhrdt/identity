@@ -9,8 +9,8 @@ type IdentityApiToken struct {
 	// Metadata
 	Base
 	// Attributes
-	IdentityUID    uuid.UUID `json:"identityUID" gorm:"primaryKey;"`
-	TokenUID       uuid.UUID `json:"tokenUID" gorm:"primaryKey;"`
+	IdentityUID    uuid.UUID `json:"identityUID" gorm:"type:varchar(36); primaryKey;"`
+	TokenUID       uuid.UUID `json:"tokenUID" gorm:"type:varchar(36); primaryKey;"`
 	Name           string    `json:"name"`
 	Token          string    `json:"token"`
 	ExpirationDate time.Time `json:"expirationDate"`

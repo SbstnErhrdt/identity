@@ -7,12 +7,12 @@ import (
 type IdentityLogin struct {
 	Base
 	// Relations
-	IdentityUID uuid.UUID
+	IdentityUID *uuid.UUID `gorm:"type:varchar(36);index" json:"identityUID"`
 	// Attributes
-	Email     string
-	UserAgent string
-	IP        string
-	Origin    string
+	Email     string `json:"email"`
+	UserAgent string `json:"userAgent"`
+	IP        string `json:"ip"`
+	Origin    string `json:"origin"`
 }
 
 func (obj *IdentityLogin) TableName() string {

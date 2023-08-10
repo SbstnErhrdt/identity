@@ -8,15 +8,15 @@ import (
 type IdentityEmailChange struct {
 	Base
 	// Relations
-	IdentityUID uuid.UUID
+	IdentityUID uuid.UUID `gorm:"type:varchar(36);index" json:"identityUID"`
 	// Attributes
-	ExpiredAt             time.Time
-	ConfirmedOldAt        *time.Time
-	ConfirmedNewAt        *time.Time
-	ConfirmationOldClient string
-	ConfirmationOldIP     string
-	ConfirmationNewClient string
-	ConfirmationNewIP     string
+	ExpiredAt             time.Time  `gorm:"index" json:"expiredAt"`
+	ConfirmedOldAt        *time.Time `json:"confirmedOldAt"`
+	ConfirmedNewAt        *time.Time `json:"confirmedNewAt"`
+	ConfirmationOldClient string     `json:"confirmationOldClient"`
+	ConfirmationOldIP     string     `json:"confirmationOldIP"`
+	ConfirmationNewClient string     `json:"confirmationNewClient"`
+	ConfirmationNewIP     string     `json:"confirmationNewIP"`
 }
 
 func (obj *IdentityEmailChange) TableName() string {
