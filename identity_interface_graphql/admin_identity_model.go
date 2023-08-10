@@ -28,7 +28,7 @@ var AdminIdentityGraphQlModel = graphql.NewObject(graphql.ObjectConfig{
 				if obj, ok := p.Source.(*identity_models.Identity); ok {
 					return obj.AcceptConditionsAndPrivacy, nil
 				}
-				return nil, errors.New("can not cast UID object")
+				return nil, errors.New("can not cast accept terms and conditions value")
 			},
 		},
 		"active": &graphql.Field{
@@ -38,7 +38,7 @@ var AdminIdentityGraphQlModel = graphql.NewObject(graphql.ObjectConfig{
 				if obj, ok := p.Source.(*identity_models.Identity); ok {
 					return obj.Active, nil
 				}
-				return nil, errors.New("can not cast UID object")
+				return nil, errors.New("can not cast active value")
 			},
 		},
 		"cleared": &graphql.Field{
@@ -48,7 +48,7 @@ var AdminIdentityGraphQlModel = graphql.NewObject(graphql.ObjectConfig{
 				if obj, ok := p.Source.(*identity_models.Identity); ok {
 					return obj.Cleared, nil
 				}
-				return nil, errors.New("can not cast UID object")
+				return nil, errors.New("can not cast cleared value")
 			},
 		},
 		"blocked": &graphql.Field{
@@ -56,9 +56,9 @@ var AdminIdentityGraphQlModel = graphql.NewObject(graphql.ObjectConfig{
 			Description: "has been blocked by an admin",
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				if obj, ok := p.Source.(*identity_models.Identity); ok {
-					return obj.Cleared, nil
+					return obj.Blocked, nil
 				}
-				return nil, errors.New("can not cast UID object")
+				return nil, errors.New("can not cast blocked value")
 			},
 		},
 		"createdAt": &graphql.Field{
@@ -68,7 +68,7 @@ var AdminIdentityGraphQlModel = graphql.NewObject(graphql.ObjectConfig{
 				if obj, ok := p.Source.(*identity_models.Identity); ok {
 					return obj.CreatedAt, nil
 				}
-				return nil, errors.New("can not cast UID object")
+				return nil, errors.New("can not cast created at timestamp")
 			},
 		},
 		"deletedAt": &graphql.Field{
@@ -78,7 +78,7 @@ var AdminIdentityGraphQlModel = graphql.NewObject(graphql.ObjectConfig{
 				if obj, ok := p.Source.(*identity_models.Identity); ok {
 					return obj.DeletedAt, nil
 				}
-				return nil, errors.New("can not cast UID object")
+				return nil, errors.New("can not cast deleted at timestamp")
 			},
 		},
 		"updatedAt": &graphql.Field{
@@ -88,7 +88,7 @@ var AdminIdentityGraphQlModel = graphql.NewObject(graphql.ObjectConfig{
 				if obj, ok := p.Source.(*identity_models.Identity); ok {
 					return obj.UpdatedAt, nil
 				}
-				return nil, errors.New("can not cast UID object")
+				return nil, errors.New("can not cast updated at timestamp")
 			},
 		},
 		"salutation": &graphql.Field{
@@ -98,7 +98,7 @@ var AdminIdentityGraphQlModel = graphql.NewObject(graphql.ObjectConfig{
 				if obj, ok := p.Source.(*identity_models.Identity); ok {
 					return obj.Salutation, nil
 				}
-				return nil, errors.New("can not cast email object")
+				return nil, errors.New("can not cast salutation value")
 			},
 		},
 		"firstName": &graphql.Field{
@@ -108,7 +108,7 @@ var AdminIdentityGraphQlModel = graphql.NewObject(graphql.ObjectConfig{
 				if obj, ok := p.Source.(*identity_models.Identity); ok {
 					return obj.FirstName, nil
 				}
-				return nil, errors.New("can not cast email object")
+				return nil, errors.New("can not cast first name value")
 			},
 		},
 		"lastName": &graphql.Field{
@@ -118,7 +118,7 @@ var AdminIdentityGraphQlModel = graphql.NewObject(graphql.ObjectConfig{
 				if obj, ok := p.Source.(*identity_models.Identity); ok {
 					return obj.LastName, nil
 				}
-				return nil, errors.New("can not cast email object")
+				return nil, errors.New("can not cast last name value")
 			},
 		},
 		"email": &graphql.Field{
@@ -138,7 +138,7 @@ var AdminIdentityGraphQlModel = graphql.NewObject(graphql.ObjectConfig{
 				if obj, ok := p.Source.(*identity_models.Identity); ok {
 					return obj.BackupEmail, nil
 				}
-				return nil, errors.New("can not cast backupEmail object")
+				return nil, errors.New("can not cast backup email object")
 			},
 		},
 		"phone": &graphql.Field{
@@ -158,7 +158,7 @@ var AdminIdentityGraphQlModel = graphql.NewObject(graphql.ObjectConfig{
 				if obj, ok := p.Source.(*identity_models.Identity); ok {
 					return obj.BackupPhone, nil
 				}
-				return nil, errors.New("can not cast backupPhone object")
+				return nil, errors.New("can not cast backup phone object")
 			},
 		},
 	},
