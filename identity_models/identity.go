@@ -20,7 +20,7 @@ type Identity struct {
 	Salt                       []byte `json:"-" xml:"-"`
 	Password                   []byte `json:"-" xml:"-"`
 	AcceptConditionsAndPrivacy bool   `json:"acceptConditionsAndPrivacy" xml:"-"`
-	Active                     bool   `json:"active" xml:"-"`
+	Active                     bool   `json:"activated" xml:"-"`
 	Cleared                    bool   `gorm:"default:0" json:"cleared" xml:"-"`
 	Blocked                    bool   `gorm:"default:0" json:"blocked" xml:"-"`
 }

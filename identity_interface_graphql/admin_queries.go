@@ -6,21 +6,19 @@ import (
 )
 
 type AdminQueries struct {
-	SearchIdentities *graphql.Field
-	Identity         *graphql.Field
-	LoginAttempts    *graphql.Field
+	SearchIdentities  *graphql.Field
+	Identity          *graphql.Field
+	LoginAttempts     *graphql.Field
+	IdentityApiTokens *graphql.Field
 }
 
 func InitAdminGraphQlQueries(service identity_controllers.IdentityService) *AdminQueries {
 	gql := AdminQueries{
-		SearchIdentities: IdentitiesSearchField(service),
-		Identity:         Identity(service),
-		LoginAttempts:    Logins(service),
+		SearchIdentities:  IdentitiesSearchField(service),
+		Identity:          IdentityField(service),
+		LoginAttempts:     LoginAttemptsField(service),
+		IdentityApiTokens: IdentityApiTokensField(service),
 	}
-
-	// Extend the graphql model
-	AdminIdentityGraphQlModel.AddFieldConfig("apiTokens", ApiTokensField(service))
-
 	return &gql
 }
 
@@ -28,4 +26,5 @@ func (gql *AdminQueries) GenerateQueryObjects(root *graphql.Object) {
 	root.AddFieldConfig(gql.SearchIdentities.Name, gql.SearchIdentities)
 	root.AddFieldConfig(gql.Identity.Name, gql.Identity)
 	root.AddFieldConfig(gql.LoginAttempts.Name, gql.LoginAttempts)
+	root.AddFieldConfig(gql.IdentityApiTokens.Name, gql.IdentityApiTokens)
 }

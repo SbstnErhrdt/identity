@@ -15,7 +15,7 @@ type LoginAttemptsPaginationDTO struct {
 
 // LoginAttemptsPaginationGraphQlModel is the graphql model for the login attempts pagination
 var LoginAttemptsPaginationGraphQlModel = graphql.NewObject(graphql.ObjectConfig{
-	Name:        "Logins",
+	Name:        "LoginAttemptsField",
 	Description: "Login attempts pagination",
 	Fields: graphql.Fields{
 		"results": &graphql.Field{
@@ -41,8 +41,8 @@ var LoginAttemptsPaginationGraphQlModel = graphql.NewObject(graphql.ObjectConfig
 	},
 })
 
-// Logins is the graphql field for searching the logins
-func Logins(service identity_controllers.IdentityService) *graphql.Field {
+// LoginAttemptsField is the graphql field for searching the logins
+func LoginAttemptsField(service identity_controllers.IdentityService) *graphql.Field {
 	field := graphql.Field{
 		Name:        "LoginAttempts",
 		Description: "Retrieve all login attempts of the system",

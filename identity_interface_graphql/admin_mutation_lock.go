@@ -5,11 +5,11 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
-// AdminClearIdentity is a GraphQL mutation to clear a user
-func AdminClearIdentity(service identity_controllers.IdentityService) *graphql.Field {
+// AdminLockIdentity is a GraphQL mutation to lock an identity
+func AdminLockIdentity(service identity_controllers.IdentityService) *graphql.Field {
 	field := graphql.Field{
-		Name:        "adminClearIdentity",
-		Description: "clears an identity so that does not need to confirm his email anymore",
+		Name:        "adminLockIdentity",
+		Description: "locks an identity so that the user needs to wait for an admin to unlock it",
 		Type:        graphql.Boolean,
 		Args: graphql.FieldConfigArgument{
 			"UID": &graphql.ArgumentConfig{
@@ -33,7 +33,7 @@ func AdminClearIdentity(service identity_controllers.IdentityService) *graphql.F
 				return nil, err
 			}
 			// invite new user
-			err = identity_controllers.Clear(service, identity)
+			err = identity_controllers.Lock(service, identity)
 			return err == nil, err
 		},
 	}

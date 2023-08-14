@@ -5,8 +5,8 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
-// Identity is the graphql field for the identity
-func Identity(service identity_controllers.IdentityService) *graphql.Field {
+// IdentityField is the graphql field for the identity
+func IdentityField(service identity_controllers.IdentityService) *graphql.Field {
 	field := graphql.Field{
 		Name:        "Identity",
 		Description: "Retrieve the identity of a specific user",

@@ -15,9 +15,10 @@ type Service struct {
 }
 
 func NewIdentityService(controllerService identity_controllers.IdentityService) *Service {
-	return &Service{
+	s := &Service{
 		IdentityService: controllerService,
 	}
+	return s
 }
 
 // SetGraphQLQueryInterface sets the graphql query interface
