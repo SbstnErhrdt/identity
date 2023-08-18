@@ -11,7 +11,7 @@ func InvitationConfirmationField(service identity_controllers.IdentityService) *
 	field := graphql.Field{
 		Name:        "invitationConfirmation",
 		Description: "confirms an invitation",
-		Type:        graphql.Boolean,
+		Type:        graphql.String,
 		Args: graphql.FieldConfigArgument{
 			"token": &graphql.ArgumentConfig{
 				Type:        graphql.NewNonNull(graphql.String),
@@ -70,8 +70,8 @@ func InvitationConfirmationField(service identity_controllers.IdentityService) *
 				return
 			}
 			// confirm invitation
-			err = identity_controllers.InvitationConfirmation(service, token, password, passwordConfirmation, userAgent, ip, origin, termsAndConditions)
-			return err == nil, err
+			token, err = identity_controllers.InvitationConfirmation(service, token, password, passwordConfirmation, userAgent, ip, origin, termsAndConditions)
+			return token, err
 		},
 	}
 	return &field

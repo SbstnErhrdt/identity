@@ -152,20 +152,6 @@ func AdminCreateIdentityAndInviteField(service identity_controllers.IdentityServ
 				return nil, errors.New("last subject is required")
 			}
 			content := p.Args["content"].(string)
-			// build link
-			// check if first rune is /
-			link := p.Args["link"].(string)
-			if len(link) == 0 {
-				link = "https://" + origin + "/identity/register"
-			}
-			if link[0] == '/' {
-				// combine origin with link
-				// remove last rune if it is /
-				if origin[len(origin)-1] == '/' {
-					origin = origin[:len(origin)-1]
-				}
-				link = "https://" + origin + "/" + link
-			}
 			// invite new user
 			_, err = identity_controllers.AdminCreateIdentityAndInvite(service, origin, subject, content, firstName, lastName, email)
 			return err == nil, err

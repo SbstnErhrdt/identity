@@ -50,7 +50,7 @@ func InviteUser(service IdentityService, origin, subject, firstName, lastName, e
 // - reset password
 // - confirm registration
 // - accept terms and conditions
-func InvitationConfirmation(service IdentityService, token, newPassword, newPasswordConfirmation, userAgent, ip, origin string, acceptTermsAndConditions bool) (err error) {
+func InvitationConfirmation(service IdentityService, token, newPassword, newPasswordConfirmation, userAgent, ip, origin string, acceptTermsAndConditions bool) (userToken string, err error) {
 	logger := service.GetLogger().With(
 		"method", "InvitationConfirmation",
 		"token", token,
@@ -82,6 +82,32 @@ func InvitationConfirmation(service IdentityService, token, newPassword, newPass
 	err = AcceptTerms(service, token)
 	if err != nil {
 		logger.With("err", err).Error("could not accept terms and conditions")
+		return
+	}
+
+	// check if token is in table
+	tokenIdentityResult := identity_models.IdentityRegistrationConfirmation{}
+	logger.Debug("find registration confirmation")
+	err = service.
+		GetSQLClient().
+		Where("token = ?", token).
+		First(&tokenIdentityResult).Error
+	if err != nil {
+		logger.With("err", err).Error("could not find registration confirmation")
+		err = ErrTokenNotFound
+		return
+	}
+
+	// get the identity
+	dbIdentity, err := GetIdentityByUID(service, tokenIdentityResult.IdentityUID)
+	if err != nil {
+		logger.With("err", err).Error("could not get identity")
+		return
+	}
+
+	userToken, err = Login(service, dbIdentity.Email, newPassword, userAgent, ip)
+	if err != nil {
+		logger.With("err", err).Error("could not login")
 		return
 	}
 
