@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// LoginField is the graphql field to log in a user
 func LoginField(service identity_controllers.IdentityService) *graphql.Field {
 	field := graphql.Field{
 		Name:        "login",

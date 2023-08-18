@@ -34,7 +34,12 @@ type ResolveRegistrationEmailTemplate func(origin, emailAddress, token string) e
 type ResolvePasswordResetEmailTemplate func(origin, emailAddress, token string) email.PasswordResetTemplate
 
 // ResolveInvitationEmailTemplate resolves the invitation email template
-type ResolveInvitationEmailTemplate func(origin, firstName, lastName, emailAddress, link string) email.InvitationEmailTemplate
+// sends a link to the user to register
+type ResolveInvitationEmailTemplate func(origin, firstName, lastName, emailAddress, content, link string) email.InvitationEmailTemplate
+
+// ResolveCreationInvitationEmailTemplate resolves the creation invitation email template
+// sends a link to the newly created identity to select a password and confirm the email address and the terms of service
+type ResolveCreationInvitationEmailTemplate func(origin, firstName, lastName, emailAddress, content, token string) email.CreationInvitationEmailTemplate
 
 // ClearUserFn clears a user
 type ClearUserFn func(origin string) bool
@@ -57,25 +62,26 @@ func AutoBlockUserFn(origin string) bool {
 
 // ControllerService is the identity service
 type ControllerService struct {
-	logger                     *slog.Logger
-	adminEmail                 string
-	Issuer                     string
-	Pepper                     string
-	Audience                   string
-	PrimaryIdentificationType  IdentificationType
-	sqlClient                  *gorm.DB
-	senderEmailAddress         mail.Address // default email
-	sendEmail                  SendMailFn
-	sendSMS                    func(string, string) error
-	emailTemplate              email.GlobalTemplate
-	authConfirmationEndpoint   string
-	registrationEmailResolver  ResolveRegistrationEmailTemplate
-	passwordResetEmailResolver ResolvePasswordResetEmailTemplate
-	invitationEmailResolver    ResolveInvitationEmailTemplate
-	clearUserAfterRegistration ClearUserFn
-	allowRegistration          AllowRegistrationFn
-	expirationRegistration     time.Duration
-	expirationPasswordReset    time.Duration
+	logger                          *slog.Logger
+	adminEmail                      string
+	Issuer                          string
+	Pepper                          string
+	Audience                        string
+	PrimaryIdentificationType       IdentificationType
+	sqlClient                       *gorm.DB
+	senderEmailAddress              mail.Address // default email
+	sendEmail                       SendMailFn
+	sendSMS                         func(string, string) error
+	emailTemplate                   email.GlobalTemplate
+	authConfirmationEndpoint        string
+	registrationEmailResolver       ResolveRegistrationEmailTemplate
+	passwordResetEmailResolver      ResolvePasswordResetEmailTemplate
+	invitationEmailResolver         ResolveInvitationEmailTemplate
+	creationInvitationEmailResolver ResolveCreationInvitationEmailTemplate
+	clearUserAfterRegistration      ClearUserFn
+	allowRegistration               AllowRegistrationFn
+	expirationRegistration          time.Duration
+	expirationPasswordReset         time.Duration
 }
 
 func (s *ControllerService) GetLogger() *slog.Logger {
@@ -92,11 +98,12 @@ func NewService(issuer string, senderEmailAddress mail.Address) *ControllerServi
 		PrimaryIdentificationType: EmailIdentificationType,
 		sendEmail:                 services.SendEmail,
 		// fallback services
-		registrationEmailResolver:  email.DefaultRegistrationEmailResolver,
-		passwordResetEmailResolver: email.DefaultPasswordResetEmailResolver,
-		invitationEmailResolver:    email.DefaultInvitationEmailResolver,
-		clearUserAfterRegistration: AutoClearUserAfterRegistration,
-		allowRegistration:          DefaultAllowRegistration,
+		registrationEmailResolver:       email.DefaultRegistrationEmailResolver,
+		passwordResetEmailResolver:      email.DefaultPasswordResetEmailResolver,
+		invitationEmailResolver:         email.DefaultInvitationEmailResolver,
+		creationInvitationEmailResolver: email.DefaultCreationInvitationEmailResolver,
+		clearUserAfterRegistration:      AutoClearUserAfterRegistration,
+		allowRegistration:               DefaultAllowRegistration,
 		// default values
 		expirationRegistration:  24 * time.Hour,
 		expirationPasswordReset: 3 * time.Hour,
@@ -209,8 +216,12 @@ func (s *ControllerService) ResolvePasswordResetEmailTemplate(origin, emailAddre
 }
 
 // ResolveInvitationEmailTemplate returns the invitation email template
-func (s *ControllerService) ResolveInvitationEmailTemplate(origin, firstName, lastName, emailAddress, link string) email.InvitationEmailTemplate {
-	return s.invitationEmailResolver(origin, firstName, lastName, emailAddress, link)
+func (s *ControllerService) ResolveInvitationEmailTemplate(origin, firstName, lastName, emailAddress, content, link string) email.InvitationEmailTemplate {
+	return s.invitationEmailResolver(origin, firstName, lastName, emailAddress, content, link)
+}
+
+func (s *ControllerService) ResolveCreationInvitationEmailTemplate(origin, firstName, lastName, emailAddress, content, token string) email.CreationInvitationEmailTemplate {
+	return s.creationInvitationEmailResolver(origin, firstName, lastName, emailAddress, content, token)
 }
 
 // AllowRegistration checks if users can register

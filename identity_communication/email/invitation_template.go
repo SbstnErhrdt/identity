@@ -20,14 +20,23 @@ type InvitationEmailTemplate struct {
 }
 
 // DefaultInvitationEmailResolver is the default resolver for the invitation email
-func DefaultInvitationEmailResolver(origin, firstName, lastName, emailAddress, link string) InvitationEmailTemplate {
+func DefaultInvitationEmailResolver(origin, firstName, lastName, emailAddress, content, link string) InvitationEmailTemplate {
+
+	if len(content) == 0 {
+		if len(firstName) == 0 && len(lastName) == 0 {
+			content = fmt.Sprintf("Hello %s %s, you have been invited to join. Please click on the button to register.", firstName, lastName)
+		} else {
+			content = fmt.Sprintf("Hello, you have been invited to join. Please click on the button to register.")
+		}
+	}
+
 	return InvitationEmailTemplate{
 		GlobalTemplate: DefaultGlobalTemplate,
 		EmailOfNewUser: emailAddress,
 		FirstName:      firstName,
 		LastName:       lastName,
-		ContentText:    fmt.Sprintf("Hello %s %s, you have been invited to join", firstName, lastName),
-		ButtonText:     "Go to website",
+		ContentText:    content,
+		ButtonText:     "Register",
 		ButtonUrl:      link,
 	}
 }

@@ -24,7 +24,8 @@ type IdentityService interface {
 	SendSMS(receiver string, content string) (err error)
 	ResolveRegistrationEmailTemplate(origin, emailAddress, confirmationUrl string) email.RegistrationEmailTemplate
 	ResolvePasswordResetEmailTemplate(origin, emailAddress, confirmationUrl string) email.PasswordResetTemplate
-	ResolveInvitationEmailTemplate(origin, firstName, lastName, emailAddress, link string) email.InvitationEmailTemplate
+	ResolveInvitationEmailTemplate(origin, firstName, lastName, emailAddress, content, link string) email.InvitationEmailTemplate
+	ResolveCreationInvitationEmailTemplate(origin, firstName, lastName, emailAddress, content, link string) email.CreationInvitationEmailTemplate
 	// Registration
 	AutoClearUserAfterRegistration(origin string) bool // checks if a user should be automatically cleared after registration
 	AllowRegistration(origin string) bool              // checks if a user should be automatically cleared after registration

@@ -5,6 +5,7 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
+// Mutations is a struct that holds all the mutations
 type Mutations struct {
 	Login                    *graphql.Field
 	Register                 *graphql.Field
@@ -17,6 +18,7 @@ type Mutations struct {
 	AnonymizeIdentity        *graphql.Field
 	CreateApiToken           *graphql.Field
 	DeleteApiToken           *graphql.Field
+	InvitationConfirmation   *graphql.Field
 }
 
 func InitGraphQlMutations(service identity_controllers.IdentityService) *Mutations {
@@ -32,6 +34,7 @@ func InitGraphQlMutations(service identity_controllers.IdentityService) *Mutatio
 		AnonymizeIdentity:        AnonymizeField(service),
 		CreateApiToken:           CreateApiTokenField(service),
 		DeleteApiToken:           DeleteApiTokenField(service),
+		InvitationConfirmation:   InvitationConfirmationField(service),
 	}
 	return &gql
 }
@@ -48,4 +51,5 @@ func (gql *Mutations) GenerateMutationObjects(root *graphql.Object) {
 	root.AddFieldConfig(gql.AnonymizeIdentity.Name, gql.AnonymizeIdentity)
 	root.AddFieldConfig(gql.CreateApiToken.Name, gql.CreateApiToken)
 	root.AddFieldConfig(gql.DeleteApiToken.Name, gql.DeleteApiToken)
+	root.AddFieldConfig(gql.InvitationConfirmation.Name, gql.InvitationConfirmation)
 }

@@ -8,7 +8,7 @@ import (
 )
 
 // InviteCSV adds all users in a CSV file to the invite list
-func InviteCSV(service IdentityService, origin, filePath, subject, link string) (err error) {
+func InviteCSV(service IdentityService, origin, filePath, subject, content, link string) (err error) {
 	logger := service.GetLogger().With(
 		"func", "InviteCSV",
 		"service", "identity",
@@ -54,7 +54,7 @@ func InviteCSV(service IdentityService, origin, filePath, subject, link string) 
 		// sanitize email
 		emailAddress = SanitizeEmail(emailAddress)
 
-		errInvite := InviteUser(service, origin, subject, firsName, lastName, emailAddress, link)
+		errInvite := InviteUser(service, origin, subject, firsName, lastName, emailAddress, content, link)
 		if errInvite != nil {
 			logger.With(
 				"firstName", firsName,
