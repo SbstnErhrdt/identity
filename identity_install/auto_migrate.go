@@ -6,16 +6,15 @@ import (
 	"log/slog"
 )
 
-// Install will create the database schema
-func Install(db *gorm.DB) (err error) {
-	slog.Info("creating identity database schema")
+// AutoMigrate will auto migrate the database schema
+func AutoMigrate(db *gorm.DB) (err error) {
+	slog.Info("auto migrate database schema")
 	// databases
 	err = db.Exec(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp";`).Error
 	if err != nil {
 		slog.With("err", err).Error("failed to create extension")
 		return err
 	}
-
 	err = db.Migrator().AutoMigrate(
 		identity_models.IdentityAdmin{},
 		identity_models.IdentityApiToken{},
