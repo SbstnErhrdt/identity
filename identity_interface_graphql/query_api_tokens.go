@@ -2,7 +2,6 @@ package identity_interface_graphql
 
 import (
 	"github.com/SbstnErhrdt/identity/identity_controllers"
-	"github.com/SbstnErhrdt/identity/identity_models"
 	"github.com/graphql-go/graphql"
 )
 
@@ -14,10 +13,6 @@ func ApiTokensField(service identity_controllers.IdentityService) *graphql.Field
 		Type:        graphql.NewList(ApiTokenGraphQlModel),
 		Args:        graphql.FieldConfigArgument{},
 		Resolve: func(p graphql.ResolveParams) (i interface{}, err error) {
-			// if source is identity
-			if obj, ok := p.Source.(*identity_models.Identity); ok {
-				return identity_controllers.GetApiTokensByIdentity(service, obj.UID)
-			}
 			// from context
 			userUID, err := GetUserUIDFromContext(&p)
 			if err != nil {
