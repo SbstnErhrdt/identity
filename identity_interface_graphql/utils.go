@@ -75,7 +75,7 @@ func GetOriginFromContext(p *graphql.ResolveParams) (origin string, err error) {
 }
 
 // ErrInvalidUid is returned when the uid is invalid
-var ErrInvalidUid = errors.New("can not parse uid")
+var ErrInvalidUid = errors.New("can not parse uid from arguments")
 
 // ParseUIDFromArgs parses the uid from the context
 func ParseUIDFromArgs(p *graphql.ResolveParams, key string) (uid uuid.UUID, err error) {

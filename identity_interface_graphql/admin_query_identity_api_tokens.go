@@ -8,7 +8,7 @@ import (
 // IdentityApiTokensField is the graphql field for the api tokens of an identity
 func IdentityApiTokensField(service identity_controllers.IdentityService) *graphql.Field {
 	field := graphql.Field{
-		Name:        "ApiTokens",
+		Name:        "AdminApiTokens",
 		Description: "Retrieve the api tokens of the current user",
 		Type:        graphql.NewList(ApiTokenGraphQlModel),
 		Args: graphql.FieldConfigArgument{
