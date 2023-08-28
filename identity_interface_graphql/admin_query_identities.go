@@ -20,7 +20,7 @@ var IdentitiesPaginationGraphQlModel = graphql.NewObject(graphql.ObjectConfig{
 	Fields: graphql.Fields{
 		"results": &graphql.Field{
 			Type:        graphql.NewList(AdminIdentityGraphQlModel),
-			Description: "list of projects",
+			Description: "list of identities",
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				if obj, ok := p.Source.(*IdentitiesPaginationDTO); ok {
 					return obj.Results, nil
@@ -30,7 +30,7 @@ var IdentitiesPaginationGraphQlModel = graphql.NewObject(graphql.ObjectConfig{
 		},
 		"amount": &graphql.Field{
 			Type:        graphql.Int,
-			Description: "The total amount of projects",
+			Description: "The total amount of identities",
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				if obj, ok := p.Source.(*IdentitiesPaginationDTO); ok {
 					return obj.Amount, nil
