@@ -8,7 +8,7 @@ import (
 type IdentityRegistrationConfirmation struct {
 	Base
 	// Relations
-	IdentityUID uuid.UUID `gorm:"type:varchar(36);index" json:"identityUID"`
+	IdentityUID uuid.UUID `gorm:"type:uuid;index" json:"identityUID"`
 	// Attributes
 	Token                 string     `json:"token" gorm:"unique;index"`
 	RegistrationUserAgent string     `json:"registrationUserAgent"`

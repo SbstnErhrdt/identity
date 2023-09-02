@@ -7,7 +7,7 @@ import (
 type IdentityLogin struct {
 	Base
 	// Relations
-	IdentityUID *uuid.UUID `gorm:"type:varchar(36);index" json:"identityUID"`
+	IdentityUID *uuid.UUID `gorm:"type:uuid;index" json:"identityUID"`
 	// Attributes
 	Email     string `json:"email"`
 	UserAgent string `json:"userAgent"`

@@ -8,7 +8,7 @@ import (
 type IdentityEmailChange struct {
 	Base
 	// Relations
-	IdentityUID uuid.UUID `gorm:"type:varchar(36);index" json:"identityUID"`
+	IdentityUID uuid.UUID `gorm:"type:uuid;index" json:"identityUID"`
 	// Attributes
 	ExpiredAt             time.Time  `gorm:"index" json:"expiredAt"`
 	ConfirmedOldAt        *time.Time `json:"confirmedOldAt"`

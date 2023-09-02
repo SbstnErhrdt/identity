@@ -8,7 +8,7 @@ type IdentityAdmin struct {
 	// Metadata
 	Base
 	// Attributes
-	IdentityUID uuid.UUID `gorm:"type:varchar(36); primary_key" json:"identityUID"`
+	IdentityUID uuid.UUID `gorm:"type:uuid; primary_key" json:"identityUID"`
 }
 
 func (obj *IdentityAdmin) TableName() string {
