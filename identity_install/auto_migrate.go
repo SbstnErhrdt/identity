@@ -24,6 +24,7 @@ func AutoMigrate(db *gorm.DB) (err error) {
 		identity_models.IdentityResetPassword{},
 		identity_models.IdentityRegistrationConfirmation{},
 		identity_models.IdentityTokenMeta{},
+		identity_models.IdentityRelation{},
 	)
 	if err != nil {
 		slog.With("err", err).Error("failed to create / migrate database")

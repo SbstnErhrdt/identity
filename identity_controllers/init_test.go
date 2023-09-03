@@ -21,8 +21,8 @@ var testAdminEmail string = ""
 // testService is the test service
 var testService *ControllerService
 
-// DbConnection is the database connection
-var DbConnection *gorm.DB
+// TestDbConnection is the database connection
+var TestDbConnection *gorm.DB
 
 func init() {
 
@@ -45,7 +45,7 @@ func init() {
 
 	// connect to database
 	ConnectToDbAndRetry()
-	testService.SetSQLClient(DbConnection)
+	testService.SetSQLClient(TestDbConnection)
 	install()
 }
 
@@ -67,7 +67,7 @@ func ConnectToDbAndRetry() {
 		}
 	}
 	var res int
-	DbConnection.Raw("SELECT 1 + 1").Scan(&res)
+	TestDbConnection.Raw("SELECT 1 + 1").Scan(&res)
 	if res != 2 {
 		slog.Error("database connection failed")
 		panic("database connection failed")
@@ -89,19 +89,19 @@ func connectToDb() (err error) {
 	if err != nil {
 		return err
 	}
-	DbConnection = db
+	TestDbConnection = db
 	return
 }
 
 func install() {
-	err := identity_install.Install(DbConnection)
+	err := identity_install.Install(TestDbConnection)
 	if err != nil {
 		slog.With("err", err).Error("failed to install database")
 	}
 }
 
 func EmptyTable(s schema.Tabler) (err error) {
-	return DbConnection.Exec(fmt.Sprintf("DELETE FROM %s", s.TableName())).Error
+	return TestDbConnection.Exec(fmt.Sprintf("DELETE FROM %s", s.TableName())).Error
 }
 
 func EmptyIdentityTable() {

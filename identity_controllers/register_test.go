@@ -16,7 +16,7 @@ func TestRegister(t *testing.T) {
 	err := registerTestUser()
 	ass.NoError(err)
 	dbIdentity := identity_models.Identity{}
-	err = DbConnection.First(&dbIdentity).Error
+	err = TestDbConnection.First(&dbIdentity).Error
 	ass.NoError(err)
 	ass.Equal(testUserEmail, dbIdentity.Email)
 	// teardown
@@ -48,7 +48,7 @@ func TestRegistrationConfirmation(t *testing.T) {
 
 	// get the registration confirmation
 	initialConfDbEntry := identity_models.IdentityRegistrationConfirmation{}
-	err = DbConnection.First(&initialConfDbEntry).Error
+	err = TestDbConnection.First(&initialConfDbEntry).Error
 	ass.NoError(err)
 	ass.Empty(initialConfDbEntry.ConfirmedAt)
 
@@ -62,13 +62,13 @@ func TestRegistrationConfirmation(t *testing.T) {
 
 	// get the registration confirmation again
 	confDbEntry := identity_models.IdentityRegistrationConfirmation{}
-	err = DbConnection.First(&confDbEntry).Error
+	err = TestDbConnection.First(&confDbEntry).Error
 	ass.NoError(err)
 	ass.NotEmpty(confDbEntry.ConfirmedAt)
 
 	// check if user is confirmed
 	dbUser := identity_models.Identity{}
-	err = DbConnection.First(&dbUser).Error
+	err = TestDbConnection.First(&dbUser).Error
 	ass.True(dbUser.Cleared)
 
 	// teardown

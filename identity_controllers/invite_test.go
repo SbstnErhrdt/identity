@@ -68,12 +68,13 @@ func TestInvitationConfirmation(t *testing.T) {
 	agent := "confirm invite test agent"
 
 	t.Log("confirm invitation")
-	err = InvitationConfirmation(testService, dbRegToken.Token, testPw, testPw, agent, "127.0.0.1", "test.local", true)
+	token, err := InvitationConfirmation(testService, dbRegToken.Token, testPw, testPw, agent, "127.0.0.1", "test.local", true)
 	ass.NoError(err)
 	if err != nil {
 		t.Error(err)
 		return
 	}
+	ass.NotEmpty(token, "invitation confirmation token is empty")
 
 	updatedDbIdentity := identity_models.Identity{}
 

@@ -31,12 +31,12 @@ func TestLogin(t *testing.T) {
 
 	// check if user is confirmed
 	dbUser := identity_models.Identity{}
-	err = DbConnection.First(&dbUser).Error
+	err = TestDbConnection.First(&dbUser).Error
 
 	dbUser.Cleared = true
 	dbUser.Blocked = false
 	dbUser.Active = true
-	err = DbConnection.Save(&dbUser).Error
+	err = TestDbConnection.Save(&dbUser).Error
 	ass.NoError(err)
 
 	// login user with now password
