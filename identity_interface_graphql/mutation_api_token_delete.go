@@ -21,7 +21,7 @@ func DeleteApiTokenField(service identity_controllers.IdentityService) *graphql.
 		},
 		Resolve: func(p graphql.ResolveParams) (i interface{}, err error) {
 			// get identity uid from context
-			identityUID, err := GetUserUIDFromContext(&p)
+			identityUID, err := GetIdentityUIDFromContext(&p)
 			if err != nil {
 				return nil, err
 			}

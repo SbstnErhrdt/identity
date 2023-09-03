@@ -22,7 +22,7 @@ func DeleteField(service identity_controllers.IdentityService) *graphql.Field {
 			// from context
 			// agent
 			// extract uid
-			uid, err := GetUserUIDFromContext(&p)
+			uid, err := GetIdentityUIDFromContext(&p)
 			if err != nil {
 				return nil, err
 			}

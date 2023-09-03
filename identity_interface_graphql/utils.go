@@ -2,31 +2,21 @@ package identity_interface_graphql
 
 import (
 	"errors"
+	"github.com/SbstnErhrdt/identity/identity_config"
 	"github.com/google/uuid"
 	"github.com/graphql-go/graphql"
 	"log/slog"
 )
 
-const (
-	// UserAgentContextKey is the key for the user agent in the context
-	UserAgentContextKey = "USER_AGENT"
-	// UserUidContextKey is the key for the user id in the context
-	UserUidContextKey = "USER_UID"
-	// UserIpContextKey is the key for the user ip in the context
-	UserIpContextKey = "USER_IP"
-	// OriginContextKey is the key for origin in the context
-	OriginContextKey = "ORIGIN"
-)
-
 // ErrUserIdFromContext is returned when the user id is not found in the context
-var ErrUserIdFromContext = errors.New("can not get USER_UID from context")
+var ErrUserIdFromContext = errors.New("can not get IDENTITY_UID from context")
 
-// GetUserUIDFromContext returns the user id from the context
-func GetUserUIDFromContext(p *graphql.ResolveParams) (uid uuid.UUID, err error) {
-	uid, ok := p.Context.Value(UserUidContextKey).(uuid.UUID)
+// GetIdentityUIDFromContext returns the user id from the context
+func GetIdentityUIDFromContext(p *graphql.ResolveParams) (uid uuid.UUID, err error) {
+	uid, ok := p.Context.Value(identity_config.IdentityUIDContextKey).(uuid.UUID)
 	if !ok {
 		err = ErrUserIdFromContext
-		slog.With("err", err).Error("can not get USER_UID from context")
+		slog.With("err", err).Error("can not get IDENTITY_UID from context")
 		return
 	}
 	return
@@ -37,7 +27,7 @@ var ErrAgentFromContext = errors.New("can not extract user agent from context")
 
 // GetUserAgentFromContext returns the user agent from the context
 func GetUserAgentFromContext(p *graphql.ResolveParams) (userAgent string, err error) {
-	userAgent, ok := p.Context.Value(UserAgentContextKey).(string)
+	userAgent, ok := p.Context.Value(identity_config.UserAgentContextKey).(string)
 	if !ok {
 		err = ErrAgentFromContext
 		slog.With("err", err).Error("can not get agent from context")
@@ -51,7 +41,7 @@ var ErrIpFromContext = errors.New("can not extract ip from context")
 
 // GetIpFromContext returns the user ip from the context
 func GetIpFromContext(p *graphql.ResolveParams) (ip string, err error) {
-	ip, ok := p.Context.Value(UserIpContextKey).(string)
+	ip, ok := p.Context.Value(identity_config.UserIpContextKey).(string)
 	if !ok {
 		err = ErrIpFromContext
 		slog.With("err", err).Error("can not get ip from context")
@@ -65,7 +55,7 @@ var ErrOriginFromContext = errors.New("can not extract origin from context")
 
 // GetOriginFromContext returns the origin from the context
 func GetOriginFromContext(p *graphql.ResolveParams) (origin string, err error) {
-	origin, ok := p.Context.Value(OriginContextKey).(string)
+	origin, ok := p.Context.Value(identity_config.OriginContextKey).(string)
 	if !ok {
 		err = ErrOriginFromContext
 		slog.With("err", err).Error("can not get origin from context")

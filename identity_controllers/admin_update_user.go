@@ -6,6 +6,6 @@ import (
 )
 
 // UpdateUser updates a specific user
-func UpdateUser(service IdentityService, userUID uuid.UUID) (result *identity_models.Identity, err error) {
+func UpdateUser(service IdentityService, identityUID uuid.UUID) (result *identity_models.Identity, err error) {
 	return
 }

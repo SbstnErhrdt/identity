@@ -19,11 +19,11 @@ func IdentityApiTokensField(service identity_controllers.IdentityService) *graph
 		},
 		Resolve: func(p graphql.ResolveParams) (i interface{}, err error) {
 			// params
-			userUID, err := ParseUIDFromArgs(&p, "UID")
+			identityUID, err := ParseUIDFromArgs(&p, "UID")
 			if err != nil {
 				return nil, err
 			}
-			res, err := identity_controllers.GetApiTokensByIdentity(service, userUID)
+			res, err := identity_controllers.GetApiTokensByIdentity(service, identityUID)
 			return res, err
 		},
 	}

@@ -60,7 +60,7 @@ func UpdateIdentityField(service identity_controllers.IdentityService) *graphql.
 				return nil, err
 			}
 			// extract uid
-			uid, err := GetUserUIDFromContext(&p)
+			uid, err := GetIdentityUIDFromContext(&p)
 			if err != nil {
 				return nil, err
 			}

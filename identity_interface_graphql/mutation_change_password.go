@@ -41,7 +41,7 @@ func ChangePasswordField(service identity_controllers.IdentityService) *graphql.
 				return nil, errors.New("password is required")
 			}
 			// extract uid
-			uid, err := GetUserUIDFromContext(&p)
+			uid, err := GetIdentityUIDFromContext(&p)
 			// update
 			err = identity_controllers.ChangePassword(service, uid, oldPassword, newPassword, newPasswordConfirmation)
 			return err == nil, err

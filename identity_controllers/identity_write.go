@@ -44,7 +44,7 @@ func ConfirmNewEmail(service IdentityService, token string) {
 func GenerateJWT(service IdentityService, user *identity_models.Identity) (result string, err error) {
 	// Init the token structure
 	payload := map[string]interface{}{}
-	payload["userUID"] = user.UID
+	payload["identityUID"] = user.UID
 	// Generate the token
 	audience := env.FallbackEnvVariable("SECURITY_JWT_AUDIENCE", "APP")
 	result, _, err = security.GenerateJWTToken(user.UID, audience, payload)

@@ -22,7 +22,7 @@ func ReadUserIP(r *http.Request) string {
 // from the request and adds it to the context
 func UserAgentAndIpMiddleware() gin.HandlerFunc {
 	logger := slog.With(
-		"middleware", "application",
+		"middleware", "identity_user_agent_and_ip",
 	)
 	return func(c *gin.Context) {
 		// Extract ConfirmationIP

@@ -14,11 +14,11 @@ func ApiTokensField(service identity_controllers.IdentityService) *graphql.Field
 		Args:        graphql.FieldConfigArgument{},
 		Resolve: func(p graphql.ResolveParams) (i interface{}, err error) {
 			// from context
-			userUID, err := GetUserUIDFromContext(&p)
+			identityUID, err := GetIdentityUIDFromContext(&p)
 			if err != nil {
 				return nil, err
 			}
-			res, err := identity_controllers.GetApiTokensByIdentity(service, userUID)
+			res, err := identity_controllers.GetApiTokensByIdentity(service, identityUID)
 			return res, err
 		},
 	}
