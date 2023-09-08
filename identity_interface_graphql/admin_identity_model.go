@@ -9,7 +9,7 @@ import (
 // AdminIdentityGraphQlModel is the identity model for the GraphQL admin interface
 var AdminIdentityGraphQlModel = graphql.NewObject(graphql.ObjectConfig{
 	Name:        "AdminIdentity",
-	Description: "The administration identity",
+	Description: "the administration identity",
 	Fields: graphql.Fields{
 		"UID": &graphql.Field{
 			Type:        graphql.String,

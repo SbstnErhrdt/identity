@@ -15,11 +15,11 @@ func LoginField(service identity_controllers.IdentityService) *graphql.Field {
 		Args: graphql.FieldConfigArgument{
 			"identity": &graphql.ArgumentConfig{
 				Type:        graphql.NewNonNull(graphql.String),
-				Description: "The identity",
+				Description: "the identity",
 			},
 			"password": &graphql.ArgumentConfig{
 				Type:        graphql.NewNonNull(graphql.String),
-				Description: "The password",
+				Description: "the password",
 			},
 		},
 		Resolve: func(p graphql.ResolveParams) (i interface{}, err error) {

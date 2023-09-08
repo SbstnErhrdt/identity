@@ -12,10 +12,10 @@ var ErrEmailIsAlreadyRegistered = errors.New("email is already registered")
 var ErrNoUserFound = errors.New("no user has been found with this email")
 
 // ErrUsernameLongerThan is returned when the username is shorter than 3 characters
-var ErrUsernameLongerThan = errors.New("The username must be longer than 3 chars")
+var ErrUsernameLongerThan = errors.New("the username must be longer than 3 chars")
 
 // ErrInvalidUsername is returned when the username is invalid
-var ErrInvalidUsername = errors.New("The username must be alphanumeric and longer than 3 chars")
+var ErrInvalidUsername = errors.New("the username must be alphanumeric and longer than 3 chars")
 
 var regexUsername = regexp.MustCompile("^([0-9_A-Za-zÄÖÜäöüß]){3,60}$")
 

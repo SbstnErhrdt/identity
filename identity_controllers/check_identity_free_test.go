@@ -11,7 +11,7 @@ func TestCheckIfEmailIsFree(t *testing.T) {
 	// test
 	ass := assert.New(t)
 	result, err := CheckIfEmailIsFree(testService, testUserEmail)
-	ass.NoError(err, "There is an error")
+	ass.NoError(err, "there is an error")
 	ass.True(result, "email should be free")
 
 	// register user
@@ -28,7 +28,7 @@ func TestCheckIfEmailIsFree(t *testing.T) {
 
 	// check again
 	result, err = CheckIfEmailIsFree(testService, testUserEmail)
-	ass.NoError(err, "There is an error")
+	ass.NoError(err, "there is an error")
 	ass.False(result, "email should be not free anymore")
 
 	// tear down

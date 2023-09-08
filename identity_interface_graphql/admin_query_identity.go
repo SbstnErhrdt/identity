@@ -15,7 +15,7 @@ func IdentityField(service identity_controllers.IdentityService) *graphql.Field 
 			"UID": &graphql.ArgumentConfig{
 				Type:         graphql.String,
 				DefaultValue: "",
-				Description:  "The uid of the identity",
+				Description:  "the uid of the identity",
 			},
 		},
 		Resolve: func(p graphql.ResolveParams) (i interface{}, err error) {

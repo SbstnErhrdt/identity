@@ -14,7 +14,7 @@ func AdminActivateIdentity(service identity_controllers.IdentityService) *graphq
 		Args: graphql.FieldConfigArgument{
 			"UID": &graphql.ArgumentConfig{
 				Type:        graphql.NewNonNull(graphql.String),
-				Description: "The uid of the user",
+				Description: "the uid of the user",
 			},
 		},
 		Resolve: func(p graphql.ResolveParams) (i interface{}, err error) {

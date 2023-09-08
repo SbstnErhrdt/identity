@@ -14,7 +14,7 @@ func IdentityApiTokensField(service identity_controllers.IdentityService) *graph
 		Args: graphql.FieldConfigArgument{
 			"UID": &graphql.ArgumentConfig{
 				Type:        graphql.String,
-				Description: "The uid of the user",
+				Description: "the uid of the user",
 			},
 		},
 		Resolve: func(p graphql.ResolveParams) (i interface{}, err error) {

@@ -16,24 +16,24 @@ func AdminInviteField(service identity_controllers.IdentityService) *graphql.Fie
 		Args: graphql.FieldConfigArgument{
 			"email": &graphql.ArgumentConfig{
 				Type:        graphql.NewNonNull(graphql.String),
-				Description: "The email of the user",
+				Description: "the email of the user",
 			},
 			"firstName": &graphql.ArgumentConfig{
 				Type:        graphql.NewNonNull(graphql.String),
-				Description: "The first name of the user",
+				Description: "the first name of the user",
 			},
 			"lastName": &graphql.ArgumentConfig{
 				Type:        graphql.NewNonNull(graphql.String),
-				Description: "The last name of the user",
+				Description: "the last name of the user",
 			},
 			"subject": &graphql.ArgumentConfig{
 				Type:         graphql.NewNonNull(graphql.String),
-				Description:  "The subject of the email of the invitation",
+				Description:  "the subject of the email of the invitation",
 				DefaultValue: "You have been invited to join",
 			},
 			"link": &graphql.ArgumentConfig{
 				Type:         graphql.String,
-				Description:  "The link to registration form",
+				Description:  "the link to registration form",
 				DefaultValue: "/identity/register",
 			},
 			"content": &graphql.ArgumentConfig{

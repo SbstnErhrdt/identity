@@ -9,7 +9,7 @@ import (
 // ApiTokenGraphQlModel is the graphql model for the api token
 var ApiTokenGraphQlModel = graphql.NewObject(graphql.ObjectConfig{
 	Name:        "ApiToken",
-	Description: "The API token of the identity",
+	Description: "the API token of the identity",
 	Fields: graphql.Fields{
 		"UID": &graphql.Field{
 			Type:        graphql.String,

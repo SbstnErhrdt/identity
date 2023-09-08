@@ -14,19 +14,19 @@ func RegisterField(service identity_controllers.IdentityService) *graphql.Field 
 		Args: graphql.FieldConfigArgument{
 			"identity": &graphql.ArgumentConfig{
 				Type:        graphql.NewNonNull(graphql.String),
-				Description: "The identity",
+				Description: "the identity",
 			},
 			"password": &graphql.ArgumentConfig{
 				Type:        graphql.NewNonNull(graphql.String),
-				Description: "The password",
+				Description: "the password",
 			},
 			"passwordConfirmation": &graphql.ArgumentConfig{
 				Type:        graphql.NewNonNull(graphql.String),
-				Description: "The password confirmation",
+				Description: "the password confirmation",
 			},
 			"acceptTermsAndConditions": &graphql.ArgumentConfig{
 				Type:        graphql.NewNonNull(graphql.Boolean),
-				Description: "The confirmation of the acceptance of the terms and conditions",
+				Description: "the confirmation of the acceptance of the terms and conditions",
 			},
 		},
 		Resolve: func(p graphql.ResolveParams) (i interface{}, err error) {

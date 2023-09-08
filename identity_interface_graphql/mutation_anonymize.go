@@ -15,7 +15,7 @@ func AnonymizeField(service identity_controllers.IdentityService) *graphql.Field
 		Args: graphql.FieldConfigArgument{
 			"password": &graphql.ArgumentConfig{
 				Type:        graphql.NewNonNull(graphql.String),
-				Description: "The current password",
+				Description: "the current password",
 			},
 		},
 		Resolve: func(p graphql.ResolveParams) (i interface{}, err error) {

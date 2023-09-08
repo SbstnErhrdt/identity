@@ -13,7 +13,7 @@ func RegistrationConfirmationField(service identity_controllers.IdentityService)
 		Args: graphql.FieldConfigArgument{
 			"token": &graphql.ArgumentConfig{
 				Type:        graphql.NewNonNull(graphql.String),
-				Description: "The confirmation token",
+				Description: "the confirmation token",
 			},
 		},
 		Resolve: func(p graphql.ResolveParams) (i interface{}, err error) {

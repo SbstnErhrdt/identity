@@ -14,7 +14,7 @@ func InitResetPasswordField(service identity_controllers.IdentityService) *graph
 		Args: graphql.FieldConfigArgument{
 			"identity": &graphql.ArgumentConfig{
 				Type:        graphql.NewNonNull(graphql.String),
-				Description: "The identity",
+				Description: "the identity",
 			},
 		},
 		Resolve: func(p graphql.ResolveParams) (i interface{}, err error) {

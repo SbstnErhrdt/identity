@@ -30,7 +30,7 @@ var IdentitiesPaginationGraphQlModel = graphql.NewObject(graphql.ObjectConfig{
 		},
 		"amount": &graphql.Field{
 			Type:        graphql.Int,
-			Description: "The total amount of identities",
+			Description: "the total amount of identities",
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				if obj, ok := p.Source.(*IdentitiesPaginationDTO); ok {
 					return obj.Amount, nil
@@ -51,17 +51,17 @@ func IdentitiesSearchField(service identity_controllers.IdentityService) *graphq
 			"keyword": &graphql.ArgumentConfig{
 				Type:         graphql.String,
 				DefaultValue: "",
-				Description:  "The searchable keyword",
+				Description:  "the searchable keyword",
 			},
 			"from": &graphql.ArgumentConfig{
 				Type:         graphql.Int,
 				DefaultValue: 0,
-				Description:  "The start of the pagination of the page",
+				Description:  "the start of the pagination of the page",
 			},
 			"size": &graphql.ArgumentConfig{
 				Type:         graphql.Int,
 				DefaultValue: 30,
-				Description:  "The size of the page of the pagination",
+				Description:  "the size of the page of the pagination",
 			},
 			"orderBy": &graphql.ArgumentConfig{
 				Type:         graphql.String,

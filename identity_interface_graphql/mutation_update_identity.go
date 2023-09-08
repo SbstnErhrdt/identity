@@ -45,7 +45,7 @@ func UpdateIdentityField(service identity_controllers.IdentityService) *graphql.
 		Args: graphql.FieldConfigArgument{
 			"data": &graphql.ArgumentConfig{
 				Type:        IdentityMutationObject,
-				Description: "The identity",
+				Description: "the identity",
 			},
 		},
 		Resolve: func(p graphql.ResolveParams) (i interface{}, err error) {

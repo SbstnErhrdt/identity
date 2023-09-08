@@ -16,12 +16,12 @@ func CreateApiTokenField(service identity_controllers.IdentityService) *graphql.
 		Args: graphql.FieldConfigArgument{
 			"name": &graphql.ArgumentConfig{
 				Type:         graphql.NewNonNull(graphql.String),
-				Description:  "The name of the api token",
+				Description:  "the name of the api token",
 				DefaultValue: "default api token",
 			},
 			"expirationDate": &graphql.ArgumentConfig{
 				Type:         graphql.DateTime,
-				Description:  "The expiration date of the api token",
+				Description:  "the expiration date of the api token",
 				DefaultValue: nil,
 			},
 		},

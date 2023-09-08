@@ -10,7 +10,7 @@ import (
 // LoginAttemptGraphQlModel is the graphql model for the login attempts
 var LoginAttemptGraphQlModel = graphql.NewObject(graphql.ObjectConfig{
 	Name:        "LoginAttempt",
-	Description: "The login attempt of identities",
+	Description: "the login attempt of identities",
 	Fields: graphql.Fields{
 		"UID": &graphql.Field{
 			Type:        graphql.String,

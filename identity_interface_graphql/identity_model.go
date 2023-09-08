@@ -9,7 +9,7 @@ import (
 // IdentityGraphQlModel is the identity model for the GraphQL interface
 var IdentityGraphQlModel = graphql.NewObject(graphql.ObjectConfig{
 	Name:        "Identity",
-	Description: "The identity",
+	Description: "the identity",
 	Fields: graphql.Fields{
 		"UID": &graphql.Field{
 			Type:        graphql.String,

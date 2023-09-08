@@ -16,7 +16,7 @@ func DeleteApiTokenField(service identity_controllers.IdentityService) *graphql.
 		Args: graphql.FieldConfigArgument{
 			"UID": &graphql.ArgumentConfig{
 				Type:        graphql.NewNonNull(graphql.String),
-				Description: "The uid of the api token",
+				Description: "the uid of the api token",
 			},
 		},
 		Resolve: func(p graphql.ResolveParams) (i interface{}, err error) {

@@ -14,7 +14,7 @@ func AdminBlockIdentity(service identity_controllers.IdentityService) *graphql.F
 		Args: graphql.FieldConfigArgument{
 			"UID": &graphql.ArgumentConfig{
 				Type:        graphql.NewNonNull(graphql.String),
-				Description: "The uid of the user",
+				Description: "the uid of the user",
 			},
 		},
 		Resolve: func(p graphql.ResolveParams) (i interface{}, err error) {
@@ -45,7 +45,7 @@ func AdminUnBlockIdentity(service identity_controllers.IdentityService) *graphql
 		Args: graphql.FieldConfigArgument{
 			"UID": &graphql.ArgumentConfig{
 				Type:        graphql.NewNonNull(graphql.String),
-				Description: "The uid of the user",
+				Description: "the uid of the user",
 			},
 		},
 		Resolve: func(p graphql.ResolveParams) (i interface{}, err error) {
