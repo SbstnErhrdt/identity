@@ -5,10 +5,11 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
+// CurrentIdentityField is the graphql field that returns the current identity
 func CurrentIdentityField(service identity_controllers.IdentityService) *graphql.Field {
 	field := graphql.Field{
 		Name:        "CurrentIdentity",
-		Description: "Retrieve the identity of the current user",
+		Description: "retrieve the identity information of the current identity",
 		Type:        IdentityGraphQlModel,
 		Args:        graphql.FieldConfigArgument{},
 		Resolve: func(p graphql.ResolveParams) (i interface{}, err error) {

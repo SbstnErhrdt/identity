@@ -7,15 +7,17 @@ import (
 
 // Queries is a struct containing all the graphql queries
 type Queries struct {
-	CurrentIdentity *graphql.Field
-	ApiTokens       *graphql.Field
+	CurrentIdentity             *graphql.Field
+	ApiTokens                   *graphql.Field
+	CurrentIdentityIsAdminField *graphql.Field
 }
 
 // InitGraphQlQueries initializes the graphql queries
 func InitGraphQlQueries(service identity_controllers.IdentityService) *Queries {
 	gql := Queries{
-		CurrentIdentity: CurrentIdentityField(service),
-		ApiTokens:       ApiTokensField(service),
+		CurrentIdentity:             CurrentIdentityField(service),
+		ApiTokens:                   ApiTokensField(service),
+		CurrentIdentityIsAdminField: CurrentIdentityIsAdminField(service),
 	}
 	return &gql
 }
@@ -24,4 +26,5 @@ func InitGraphQlQueries(service identity_controllers.IdentityService) *Queries {
 func (gql *Queries) GenerateQueryObjects(root *graphql.Object) {
 	root.AddFieldConfig(gql.CurrentIdentity.Name, gql.CurrentIdentity)
 	root.AddFieldConfig(gql.ApiTokens.Name, gql.ApiTokens)
+	root.AddFieldConfig(gql.CurrentIdentityIsAdminField.Name, gql.CurrentIdentityIsAdminField)
 }
