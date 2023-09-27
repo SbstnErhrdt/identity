@@ -1,6 +1,7 @@
 package identity_interface_graphql
 
 import (
+	"github.com/SbstnErhrdt/gql_auto"
 	"github.com/SbstnErhrdt/identity/identity_controllers"
 	"github.com/graphql-go/graphql"
 )
@@ -23,8 +24,8 @@ func InitAdminGraphQlQueries(service identity_controllers.IdentityService) *Admi
 }
 
 func (gql *AdminQueries) GenerateQueryObjects(root *graphql.Object) {
-	root.AddFieldConfig(gql.SearchIdentities.Name, gql.SearchIdentities)
-	root.AddFieldConfig(gql.Identity.Name, gql.Identity)
-	root.AddFieldConfig(gql.LoginAttempts.Name, gql.LoginAttempts)
-	root.AddFieldConfig(gql.IdentityApiTokens.Name, gql.IdentityApiTokens)
+	gql_auto.AddField(root, gql.SearchIdentities)
+	gql_auto.AddField(root, gql.Identity)
+	gql_auto.AddField(root, gql.LoginAttempts)
+	gql_auto.AddField(root, gql.IdentityApiTokens)
 }

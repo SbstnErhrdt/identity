@@ -1,6 +1,7 @@
 package identity_interface_graphql
 
 import (
+	"github.com/SbstnErhrdt/gql_auto"
 	"github.com/SbstnErhrdt/identity/identity_controllers"
 	"github.com/graphql-go/graphql"
 )
@@ -40,16 +41,16 @@ func InitGraphQlMutations(service identity_controllers.IdentityService) *Mutatio
 }
 
 func (gql *Mutations) GenerateMutationObjects(root *graphql.Object) {
-	root.AddFieldConfig(gql.Login.Name, gql.Login)
-	root.AddFieldConfig(gql.Register.Name, gql.Register)
-	root.AddFieldConfig(gql.RegistrationConfirmation.Name, gql.RegistrationConfirmation)
-	root.AddFieldConfig(gql.UpdateIdentity.Name, gql.UpdateIdentity)
-	root.AddFieldConfig(gql.ChangePassword.Name, gql.ChangePassword)
-	root.AddFieldConfig(gql.InitResetPassword.Name, gql.InitResetPassword)
-	root.AddFieldConfig(gql.ConfirmResetPassword.Name, gql.ConfirmResetPassword)
-	root.AddFieldConfig(gql.DeleteIdentity.Name, gql.DeleteIdentity)
-	root.AddFieldConfig(gql.AnonymizeIdentity.Name, gql.AnonymizeIdentity)
-	root.AddFieldConfig(gql.CreateApiToken.Name, gql.CreateApiToken)
-	root.AddFieldConfig(gql.DeleteApiToken.Name, gql.DeleteApiToken)
-	root.AddFieldConfig(gql.InvitationConfirmation.Name, gql.InvitationConfirmation)
+	gql_auto.AddField(root, gql.Login)
+	gql_auto.AddField(root, gql.Register)
+	gql_auto.AddField(root, gql.RegistrationConfirmation)
+	gql_auto.AddField(root, gql.UpdateIdentity)
+	gql_auto.AddField(root, gql.ChangePassword)
+	gql_auto.AddField(root, gql.InitResetPassword)
+	gql_auto.AddField(root, gql.ConfirmResetPassword)
+	gql_auto.AddField(root, gql.DeleteIdentity)
+	gql_auto.AddField(root, gql.AnonymizeIdentity)
+	gql_auto.AddField(root, gql.CreateApiToken)
+	gql_auto.AddField(root, gql.DeleteApiToken)
+	gql_auto.AddField(root, gql.InvitationConfirmation)
 }

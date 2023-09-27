@@ -1,6 +1,7 @@
 package identity_interface_graphql
 
 import (
+	"github.com/SbstnErhrdt/gql_auto"
 	"github.com/SbstnErhrdt/identity/identity_controllers"
 	"github.com/graphql-go/graphql"
 )
@@ -38,12 +39,12 @@ func InitAdminGraphQlMutations(service identity_controllers.IdentityService) *Ad
 
 // GenerateMutationObjects generates the mutation objects
 func (gql *AdminMutations) GenerateMutationObjects(root *graphql.Object) {
-	root.AddFieldConfig(gql.AdminInvite.Name, gql.AdminInvite)
-	root.AddFieldConfig(gql.AdminCreateIdentityAndInvite.Name, gql.AdminCreateIdentityAndInvite)
-	root.AddFieldConfig(gql.AdminBlockIdentity.Name, gql.AdminBlockIdentity)
-	root.AddFieldConfig(gql.AdminUnblockIdentity.Name, gql.AdminUnblockIdentity)
-	root.AddFieldConfig(gql.AdminLockIdentity.Name, gql.AdminLockIdentity)
-	root.AddFieldConfig(gql.AdminUnlockIdentity.Name, gql.AdminUnlockIdentity)
-	root.AddFieldConfig(gql.AdminDeleteIdentity.Name, gql.AdminDeleteIdentity)
-	root.AddFieldConfig(gql.AdminActivateIdentity.Name, gql.AdminActivateIdentity)
+	gql_auto.AddField(root, gql.AdminInvite)
+	gql_auto.AddField(root, gql.AdminCreateIdentityAndInvite)
+	gql_auto.AddField(root, gql.AdminBlockIdentity)
+	gql_auto.AddField(root, gql.AdminUnblockIdentity)
+	gql_auto.AddField(root, gql.AdminLockIdentity)
+	gql_auto.AddField(root, gql.AdminUnlockIdentity)
+	gql_auto.AddField(root, gql.AdminDeleteIdentity)
+	gql_auto.AddField(root, gql.AdminActivateIdentity)
 }
