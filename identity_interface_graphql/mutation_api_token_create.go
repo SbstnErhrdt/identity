@@ -40,7 +40,7 @@ func CreateApiTokenField(service identity_controllers.IdentityService) *graphql.
 			// expiration date
 			expirationDate, ok := p.Args["expirationDate"].(time.Time)
 			if !ok {
-				expirationDate = time.Time{}
+				expirationDate = time.Now().Add(time.Hour * 24 * 7 * 30 * 12 * 4) // 4 years
 			}
 			// parse date
 

@@ -130,7 +130,7 @@ func Register(service IdentityService, emailAddress, password string, termAndCon
 	// generate the content of the email
 	content, err := emailTemplate.Content()
 	if err != nil {
-		logger.With("err", err).Error("")
+		logger.With("err", err).Error("can not generate template")
 		return
 	}
 	// Send email
@@ -144,6 +144,12 @@ func Register(service IdentityService, emailAddress, password string, termAndCon
 		// todo: make subject dynamic based on mandate or client
 		"Registration Confirmation",
 		content)
+	if err != nil {
+		logger.With("err", err).Error("can not send email")
+		return
+	}
+	// generate default api token
+	_, _ = CreateApiToken(service, identity.UID, "Default API Token", time.Now().Add(time.Hour*24*7*30*12*4))
 	return
 }
 

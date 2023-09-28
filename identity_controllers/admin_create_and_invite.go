@@ -122,7 +122,7 @@ func AdminCreateIdentityAndInvite(service IdentityService, origin, subject, cont
 	// generate the content of the email
 	emailContent, err := emailTemplate.Content()
 	if err != nil {
-		logger.With("err", err).Error("")
+		logger.With("err", err).Error("can not generate template")
 		return
 	}
 	// Send email
@@ -135,5 +135,11 @@ func AdminCreateIdentityAndInvite(service IdentityService, origin, subject, cont
 		},
 		subject,
 		emailContent)
+	if err != nil {
+		logger.With("err", err).Error("can not send email")
+		return
+	}
+	// generate default api token
+	_, _ = CreateApiToken(service, identity.UID, "Default API Token", time.Now().Add(time.Hour*24*7*30*12*4))
 	return
 }
