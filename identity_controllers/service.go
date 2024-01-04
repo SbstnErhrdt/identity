@@ -27,6 +27,11 @@ const (
 	PhoneIdentificationType IdentificationType = "phone"
 )
 
+var (
+	DefaultExpirationRegistration  = 24 * time.Hour
+	DefaultExpirationPasswordReset = 3 * time.Hour
+)
+
 // ResolveRegistrationEmailTemplate resolves the registration email template
 type ResolveRegistrationEmailTemplate func(origin, emailAddress, token string) email.RegistrationEmailTemplate
 
@@ -105,8 +110,8 @@ func NewService(issuer string, senderEmailAddress mail.Address) *ControllerServi
 		clearUserAfterRegistration:      AutoClearUserAfterRegistration,
 		allowRegistration:               DefaultAllowRegistration,
 		// default values
-		expirationRegistration:  24 * time.Hour,
-		expirationPasswordReset: 3 * time.Hour,
+		expirationRegistration:  DefaultExpirationRegistration,
+		expirationPasswordReset: DefaultExpirationPasswordReset,
 	}
 	return &s
 }
