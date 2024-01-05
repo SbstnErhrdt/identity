@@ -30,6 +30,7 @@ const (
 var (
 	DefaultExpirationRegistration  = 24 * time.Hour
 	DefaultExpirationPasswordReset = 3 * time.Hour
+	DefaultExpirationLoginDuration = 24 * time.Hour * 30
 )
 
 // ResolveRegistrationEmailTemplate resolves the registration email template
@@ -87,6 +88,7 @@ type ControllerService struct {
 	allowRegistration               AllowRegistrationFn
 	expirationRegistration          time.Duration
 	expirationPasswordReset         time.Duration
+	expirationLoginDuration         time.Duration
 }
 
 func (s *ControllerService) GetLogger() *slog.Logger {
@@ -112,6 +114,7 @@ func NewService(issuer string, senderEmailAddress mail.Address) *ControllerServi
 		// default values
 		expirationRegistration:  DefaultExpirationRegistration,
 		expirationPasswordReset: DefaultExpirationPasswordReset,
+		expirationLoginDuration: DefaultExpirationLoginDuration,
 	}
 	return &s
 }
@@ -139,6 +142,10 @@ func (s ControllerService) GetExpirationRegistration() time.Duration {
 
 func (s ControllerService) GetExpirationPasswordReset() time.Duration {
 	return s.expirationPasswordReset
+}
+
+func (s ControllerService) GetExpirationLoginDuration() time.Duration {
+	return s.expirationLoginDuration
 }
 
 // SetSQLClient sets the sql client

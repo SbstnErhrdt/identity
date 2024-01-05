@@ -31,4 +31,5 @@ type IdentityService interface {
 	AllowRegistration(origin string) bool              // checks if a user should be automatically cleared after registration
 	GetExpirationRegistration() time.Duration
 	GetExpirationPasswordReset() time.Duration
+	GetExpirationLoginDuration() time.Duration
 }

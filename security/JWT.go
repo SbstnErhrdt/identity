@@ -73,8 +73,8 @@ func GenerateJWTToken(subjectUID uuid.UUID, audience string, payload map[string]
 	return
 }
 
-// GenerateJWTTokenWithExpirationData generate token for as user and a payload with expiration date
-func GenerateJWTTokenWithExpirationData(subjectUID uuid.UUID, audience string, payload map[string]interface{}, utcExpirationDate time.Time) (tokenString string, tokenUID uuid.UUID, err error) {
+// GenerateJWTTokenWithExpirationDate generate token for as user and a payload with expiration date
+func GenerateJWTTokenWithExpirationDate(subjectUID uuid.UUID, audience string, payload map[string]interface{}, utcExpirationDate time.Time) (tokenString string, tokenUID uuid.UUID, err error) {
 	tokenUID = uuid.New()
 	// Create a new token object, specifying signing method and the claims
 	// you would like it to contain.

@@ -41,7 +41,7 @@ func CreateApiToken(service IdentityService, identityUID uuid.UUID, tokenName st
 	utcTokenExpirationDate = utcTokenExpirationDate.UTC()
 	audience := env.FallbackEnvVariable("SECURITY_JWT_API_AUDIENCE", "API")
 	// generate token
-	tokenString, tokenUID, err := security.GenerateJWTTokenWithExpirationData(identityUID, audience, map[string]interface{}{
+	tokenString, tokenUID, err := security.GenerateJWTTokenWithExpirationDate(identityUID, audience, map[string]interface{}{
 		"tokenName": tokenName,
 	}, utcTokenExpirationDate)
 	// create token db record

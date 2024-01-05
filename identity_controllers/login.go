@@ -6,6 +6,7 @@ import (
 	"github.com/SbstnErhrdt/identity/identity_models"
 	"github.com/SbstnErhrdt/identity/security"
 	"gorm.io/gorm"
+	"time"
 )
 
 // ErrExternalLoginFailedInvalidUserOrPassword is returned when the user or password is invalid
@@ -31,6 +32,9 @@ var ErrWrongPassword = errors.New("wrong password")
 
 // ErrExternalUserLoginNotPossible is returned when the user can not log in
 var ErrExternalUserLoginNotPossible = errors.New("login currently not possible. Please try again later")
+
+// ErrLoginTokenExpirationInPast is returned when the login token expiration date is in the past
+var ErrLoginTokenExpirationInPast = errors.New("login token expiration date is in the past")
 
 // Login logs in a user and returns a JWT token
 func Login(service IdentityService, emailAddress, password, userAgent, ip string) (token string, err error) {
@@ -124,7 +128,16 @@ func Login(service IdentityService, emailAddress, password, userAgent, ip string
 	// generate token
 	logger.Debug("generate token")
 	audience := env.FallbackEnvVariable("SECURITY_JWT_AUDIENCE", "APP")
-	token, tokenUID, errToken := security.GenerateJWTToken(identity.UID, audience, map[string]interface{}{})
+	loginTokenExpiration := service.GetExpirationLoginDuration()
+	// check if login token expiration is greater than 0
+	if loginTokenExpiration <= 0 {
+		err = ErrLoginTokenExpirationInPast
+		logger.With("err", err).Error("login token expiration date is in the past")
+		return "", err
+	}
+	// add the duration to the current time
+	utcLoginTokenExpirationDate := time.Now().UTC().Add(loginTokenExpiration)
+	token, tokenUID, errToken := security.GenerateJWTTokenWithExpirationDate(identity.UID, audience, map[string]interface{}{}, utcLoginTokenExpirationDate)
 	if errToken != nil {
 		logger.With("err", errToken).Error("could not generate token")
 		// OWASP: generic error message
